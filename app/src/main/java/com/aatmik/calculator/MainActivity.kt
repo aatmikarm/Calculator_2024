@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         // Load the banner ad
         loadBannerAd()
 
-        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+
 
         binding.apply {
             buttonClear.setOnClickListener {
