@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.aatmik.calculator.databinding.ActivityMainBinding
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import org.mariuszgromada.math.mxparser.Expression
 import java.text.DecimalFormat
@@ -13,13 +13,14 @@ import java.text.DecimalFormat
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val TEST_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
-    private val PROD_AD_UNIT_ID = "ca-app-pub-5678552217308395/1592290092" // Production ad unit ID
-    private var IS_PRODUCTION = false
+    private lateinit var adView: AdView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Initialize the Mobile Ads SDK
+        MobileAds.initialize(this)
 
         // Load the banner ad
         loadBannerAd()
@@ -102,15 +103,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadBannerAd() {
-        MobileAds.initialize(this)
-
-        binding.bannerAd1.adUnitId = if (IS_PRODUCTION) {
-            PROD_AD_UNIT_ID
-        } else {
-            TEST_AD_UNIT_ID
-        }
+        adView = binding.bannerAd1
         val adRequest = AdRequest.Builder().build()
-        binding.bannerAd1.loadAd(adRequest)
+        adView.loadAd(adRequest)
     }
 
     private fun addToInputText(buttonValue: String): String {
