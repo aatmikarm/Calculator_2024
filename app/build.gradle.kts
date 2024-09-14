@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-
     id("kotlin-android")
 }
 
@@ -13,8 +12,8 @@ android {
         applicationId = "com.aatmik.calculator"
         minSdk = 25
         targetSdk = 34
-        versionCode = 3
-        versionName = "3.0"
+        versionCode = 4
+        versionName = "4.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -86,6 +85,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.5")
     // admob
     implementation("com.google.android.gms:play-services-ads:23.3.0")
+    // gson
+    implementation ("com.google.code.gson:gson:2.11.0")
 
 
 }

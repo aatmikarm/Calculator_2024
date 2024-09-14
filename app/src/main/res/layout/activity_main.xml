@@ -1,229 +1,298 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/window_background"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        ads:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        ads:layout_constraintEnd_toEndOf="parent"
+        ads:layout_constraintStart_toStartOf="parent"
+        ads:layout_constraintTop_toTopOf="parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:gravity="bottom"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="30dp"
+                android:fontFamily="sans-serif-light"
+                android:gravity="end"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                tools:text="5+10-3" />
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/io_background"
-        android:gravity="bottom"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="30dp">
-
-        <TextView
-            android:id="@+id/input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-light"
-            android:gravity="end"
-            android:maxLines="3"
-            android:textColor="@color/text_main"
-            android:textSize="30sp"
-            tools:text="5+10-3" />
+        ads:layout_constraintBottom_toBottomOf="parent"
+        ads:layout_constraintEnd_toEndOf="parent"
+        ads:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/output"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="30dp"
             android:fontFamily="sans-serif"
             android:gravity="end"
-            android:maxLines="2"
-            android:textColor="@color/green"
+            android:hint="0"
+            android:textColor="@color/colorPrimary"
             android:textSize="50sp"
+            android:textStyle="bold"
             tools:text="12" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginBottom="5dp"
+            android:stretchColumns="*">
+
+            <TableRow>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_clear"
+                    style="@style/Dark_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="C"
+                    android:textSize="33sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_bracket"
+                    style="@style/Dark_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="("
+                    android:textSize="33sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_bracket_r"
+                    style="@style/Dark_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text=")"
+                    android:textSize="33sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_division"
+                    style="@style/Dark_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="÷"
+                    android:textSize="33sp"
+                    android:textStyle="bold" />
+
+            </TableRow>
+
+            <TableRow>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_7"
+                    style="@style/Light_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="7"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_8"
+                    style="@style/Light_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="8"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_9"
+                    style="@style/Light_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="9"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_multiply"
+                    style="@style/Dark_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="×"
+
+                    android:textSize="33sp"
+                    android:textStyle="bold" />
+
+            </TableRow>
+
+            <TableRow>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_4"
+                    style="@style/Light_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="4"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_5"
+                    style="@style/Light_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="5"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_6"
+                    style="@style/Light_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="6"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_subtraction"
+                    style="@style/Dark_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="-"
+
+                    android:textSize="33sp"
+                    android:textStyle="bold" />
+
+            </TableRow>
+
+            <TableRow>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_1"
+                    style="@style/Light_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="1"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_2"
+                    style="@style/Light_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="2"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_3"
+                    style="@style/Light_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="3"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_addition"
+                    style="@style/Dark_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="+"
+
+                    android:textSize="33sp"
+                    android:textStyle="bold" />
+
+            </TableRow>
+
+            <TableRow>
+
+                <ImageView
+                    android:id="@+id/button_croxx"
+                    style="@style/Dark_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:padding="25dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/backspace" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_0"
+                    style="@style/Light_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_dot"
+                    style="@style/Dark_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="."
+                    android:textSize="33sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_equals"
+                    style="@style/equal_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_weight="1"
+                    android:text="="
+                    android:textSize="33sp"
+                    android:textStyle="bold" />
+
+            </TableRow>
+        </TableLayout>
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/bannerAd1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/testBannerAd"
+            ads:layout_constraintBottom_toBottomOf="parent" />
 
     </LinearLayout>
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="*">
-
-        <TableRow>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_clear"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="C"
-                android:textColor="@color/red" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_bracket"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="("
-                android:textColor="@color/green" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_bracket_r"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text=")"
-                android:textColor="@color/green" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_division"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="÷"
-                android:textColor="@color/green" />
-
-        </TableRow>
-
-        <TableRow>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_7"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="7" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_8"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="8" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_9"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="9" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_multiply"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="×"
-                android:textColor="@color/green" />
-
-        </TableRow>
-
-        <TableRow>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_4"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="4" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_5"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="5" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_6"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="6" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_subtraction"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="-"
-                android:textColor="@color/green"
-                android:textSize="40sp" />
-
-        </TableRow>
-
-        <TableRow>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_1"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="1" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_2"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="2" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_3"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="3" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_addition"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="+"
-                android:textColor="@color/green" />
-
-        </TableRow>
-
-        <TableRow>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_croxx"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="AC" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_0"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="0" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_dot"
-                style="@style/Button_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="90dp"
-                android:text="." />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_equals"
-                style="@style/Button_Style"
-                android:layout_width="0dp"
-                android:layout_height="90dp"
-                android:layout_weight="1"
-                android:text="="
-                android:textColor="@color/green" />
-
-        </TableRow>
-    </TableLayout>
-
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/bannerAd1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/testBannerAd" />
-
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
