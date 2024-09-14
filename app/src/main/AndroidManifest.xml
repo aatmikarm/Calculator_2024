@@ -5,6 +5,7 @@
     <!-- Required permissions for ads -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -15,6 +16,9 @@
         android:roundIcon="@mipmap/calculator_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Calculator">
+        <activity android:name=".activity.UnitConverterActivity" />
+        <activity android:name=".activity.TimerActivity" />
+        <activity android:name=".activity.CalculatorActivity" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">

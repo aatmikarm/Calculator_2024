@@ -18,10 +18,10 @@ class TimerActivity : AppCompatActivity() {
         binding = ActivityTimerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val actionBar = supportActionBar
+       /* val actionBar = supportActionBar
         actionBar!!.title = getString(R.string.timer)
         actionBar.setDisplayHomeAsUpEnabled(true)
-        actionBar.setBackgroundDrawable(ColorDrawable(Color.BLACK))
+        actionBar.setBackgroundDrawable(ColorDrawable(Color.BLACK))*/
 
         setUpTabs()
     }

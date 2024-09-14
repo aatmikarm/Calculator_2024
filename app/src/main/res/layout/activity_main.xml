@@ -1,298 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".activity.MainActivity">
 
-    <ScrollView
-        android:id="@+id/scrollView2"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        ads:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        ads:layout_constraintEnd_toEndOf="parent"
-        ads:layout_constraintStart_toStartOf="parent"
-        ads:layout_constraintTop_toTopOf="parent">
+    <ImageButton
+        android:id="@+id/btCalculator"
+        style="@style/mainMenuIcons"
+        app:layout_constraintBottom_toTopOf="@+id/btConverter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_outline_calculate_108" />
 
+    <ImageButton
+        android:id="@+id/btConverter"
+        style="@style/mainMenuIcons"
+        app:layout_constraintBottom_toTopOf="@+id/btTimer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btCalculator"
+        app:srcCompat="@drawable/ic_outline_repeat_108" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom"
-            android:gravity="bottom"
-            android:orientation="vertical">
+    <ImageButton
+        android:id="@+id/btTimer"
+        style="@style/mainMenuIcons"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btConverter"
+        app:srcCompat="@drawable/ic_outline_timer_108" />
 
-            <TextView
-                android:id="@+id/input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="30dp"
-                android:fontFamily="sans-serif-light"
-                android:gravity="end"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                tools:text="5+10-3" />
-
-
-        </LinearLayout>
-
-
-    </ScrollView>
-
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/bannerAd1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        ads:layout_constraintBottom_toBottomOf="parent"
-        ads:layout_constraintEnd_toEndOf="parent"
-        ads:layout_constraintStart_toStartOf="parent">
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/testBannerAd"
+        ads:layout_constraintBottom_toBottomOf="parent" />
 
-        <TextView
-            android:id="@+id/output"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="30dp"
-            android:fontFamily="sans-serif"
-            android:gravity="end"
-            android:hint="0"
-            android:textColor="@color/colorPrimary"
-            android:textSize="50sp"
-            android:textStyle="bold"
-            tools:text="12" />
-
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="5dp"
-            android:layout_marginBottom="5dp"
-            android:stretchColumns="*">
-
-            <TableRow>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_clear"
-                    style="@style/Dark_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="C"
-                    android:textSize="33sp"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_bracket"
-                    style="@style/Dark_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="("
-                    android:textSize="33sp"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_bracket_r"
-                    style="@style/Dark_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text=")"
-                    android:textSize="33sp"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_division"
-                    style="@style/Dark_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="÷"
-                    android:textSize="33sp"
-                    android:textStyle="bold" />
-
-            </TableRow>
-
-            <TableRow>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_7"
-                    style="@style/Light_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="7"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_8"
-                    style="@style/Light_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="8"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_9"
-                    style="@style/Light_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="9"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_multiply"
-                    style="@style/Dark_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="×"
-
-                    android:textSize="33sp"
-                    android:textStyle="bold" />
-
-            </TableRow>
-
-            <TableRow>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_4"
-                    style="@style/Light_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="4"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_5"
-                    style="@style/Light_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="5"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_6"
-                    style="@style/Light_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="6"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_subtraction"
-                    style="@style/Dark_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="-"
-
-                    android:textSize="33sp"
-                    android:textStyle="bold" />
-
-            </TableRow>
-
-            <TableRow>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_1"
-                    style="@style/Light_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="1"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_2"
-                    style="@style/Light_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="2"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_3"
-                    style="@style/Light_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="3"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_addition"
-                    style="@style/Dark_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="+"
-
-                    android:textSize="33sp"
-                    android:textStyle="bold" />
-
-            </TableRow>
-
-            <TableRow>
-
-                <ImageView
-                    android:id="@+id/button_croxx"
-                    style="@style/Dark_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:padding="25dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/backspace" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_0"
-                    style="@style/Light_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="0"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_dot"
-                    style="@style/Dark_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="."
-                    android:textSize="33sp"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_equals"
-                    style="@style/equal_Button_Style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/button_height"
-                    android:layout_weight="1"
-                    android:text="="
-                    android:textSize="33sp"
-                    android:textStyle="bold" />
-
-            </TableRow>
-        </TableLayout>
-
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/bannerAd1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            ads:adSize="BANNER"
-            ads:adUnitId="@string/testBannerAd"
-            ads:layout_constraintBottom_toBottomOf="parent" />
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

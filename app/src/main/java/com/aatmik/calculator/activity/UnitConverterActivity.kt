@@ -214,10 +214,10 @@ class UnitConverterActivity : AppCompatActivity() {
         binding = ActivityUnitConverterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val actionBar = supportActionBar
+   /*     val actionBar = supportActionBar
         actionBar!!.title = getString(R.string.unit_converter)
         actionBar.setDisplayHomeAsUpEnabled(true)
-        actionBar.setBackgroundDrawable(ColorDrawable(Color.BLACK))
+        actionBar.setBackgroundDrawable(ColorDrawable(Color.BLACK))*/
 
         popupMenu()
 
