@@ -637,6 +637,7 @@
     <string name="long_ton">Long ton (lt)</string>
     <string name="short_ton">Short ton (st)</string>
     <string name="favorites">FAVORITES</string>
+    <string name="searchEtHint">Search</string>
 
     <string-array name="weight">
         <item>@string/microgram</item>

@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -47,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         interstitialAd()
         search()
 
+
     }
 
     private fun search() {
@@ -57,13 +60,36 @@ class MainActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 filter(s.toString())
+                // Show the clear (cross) button if there's text
+                if (!s.isNullOrEmpty()) {
+                    binding.clearTextIv.visibility = View.VISIBLE
+                } else {
+                    binding.clearTextIv.visibility = View.GONE
+                }
+                // Restore cursor visibility when the user starts typing again
+                if (s.isNullOrEmpty().not()) {
+                    binding.searchEt.isCursorVisible = true
+                }
             }
 
             override fun afterTextChanged(p0: Editable?) {
                 filter(p0.toString())
             }
-
         })
+
+        // Set up click listener for clear (cross) button
+        binding.clearTextIv.setOnClickListener {
+            // Clear the text
+            binding.searchEt.text.clear()
+            // Hide the clear button
+            binding.clearTextIv.visibility = View.GONE
+            // Hide the keyboard
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.searchEt.windowToken, 0)
+            // Hide the cursor when text is cleared
+            binding.searchEt.isCursorVisible = false
+        }
+
     }
 
     private fun recyclerView() {
@@ -120,7 +146,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         if (filteredList.isEmpty()) {
-            Toast.makeText(this, "Calculator Not Found...", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "Calculator Not Found...", Toast.LENGTH_SHORT).show()
         } else {
             calculatorAdapter.filterList(filteredList)
         }

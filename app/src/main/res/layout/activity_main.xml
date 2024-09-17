@@ -23,24 +23,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:padding="15dp">
+            android:padding="5dp">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="10dp"
                 android:src="@drawable/search" />
 
             <EditText
                 android:id="@+id/searchEt"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/transparent"
                 android:focusableInTouchMode="true"
-                android:hint="What are you looking for"
-                android:textColor="#A19B9B"
-                android:textSize="12sp" />
+                android:hint="@string/searchEtHint"
+                android:padding="10dp"
+                android:textColor="#A19B9B" />
+
+            <ImageView
+                android:id="@+id/clearTextIv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:src="@drawable/close"
+                android:visibility="gone" />
 
         </LinearLayout>
 
