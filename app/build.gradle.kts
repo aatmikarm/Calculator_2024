@@ -25,8 +25,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -38,7 +37,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
-        compose = true
+        // compose = true
         viewBinding = true
     }
     composeOptions {
@@ -52,17 +51,23 @@ android {
 }
 
 dependencies {
+    // compose (app size will increase)
+    //    implementation("androidx.activity:activity-compose:1.9.2")
+//    implementation(platform("androidx.compose:compose-bom:2024.09.01"))
+//    implementation("androidx.compose.ui:ui")
+//    implementation("androidx.compose.ui:ui-graphics")
+//    implementation("androidx.compose.ui:ui-tooling-preview")
+//    implementation("androidx.compose.material3:material3")
+//    implementation("androidx.wear.compose:compose-material:1.4.0")
+//    implementation("androidx.wear.compose:compose-material3:1.0.0-alpha24")
+//    androidTestImplementation(platform("androidx.compose:compose-bom:2024.09.01"))
+//    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+//    debugImplementation("androidx.compose.ui:ui-tooling")
+//    debugImplementation("androidx.compose.ui:ui-test-manifest")
+//    implementation("androidx.compose.foundation:foundation-layout:1.7.1")
 
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.5")
-    implementation("androidx.activity:activity-compose:1.9.2")
-    implementation(platform("androidx.compose:compose-bom:2024.09.01"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.wear.compose:compose-material:1.4.0")
-    implementation("androidx.wear.compose:compose-material3:1.0.0-alpha24")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.activity:activity-ktx:1.9.2")
@@ -71,13 +76,8 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2024.09.01"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
-
     implementation("net.objecthunter:exp4j:0.4.8")
-    implementation("androidx.compose.foundation:foundation-layout:1.7.1")
+
 
     // new dependancies
 
@@ -86,7 +86,7 @@ dependencies {
     // admob
     implementation("com.google.android.gms:play-services-ads:23.3.0")
     // gson
-    implementation ("com.google.code.gson:gson:2.11.0")
+    implementation("com.google.code.gson:gson:2.11.0")
 
 
 }

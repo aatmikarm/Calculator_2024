@@ -19,6 +19,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -105,12 +106,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun createCalculatorList(): ArrayList<Calculator> {
         return arrayListOf(
-            Calculator("Basic", R.drawable.abacus),
+            Calculator("Basic", R.drawable.calculator_new),
             Calculator("Convertor", R.drawable.convert),
             Calculator("Stopwatch", R.drawable.stopwatch),
             Calculator("Percentage", R.drawable.percentage),
             Calculator("Equation", R.drawable.equation_xy),
-            Calculator("Shapes", R.drawable.shapes),
+            Calculator("Shapes", R.drawable.shapes_new),
             Calculator("Bodies", R.drawable.bodies),
             Calculator("Length", R.drawable.length),
             Calculator("Speed", R.drawable.speed),
@@ -125,7 +126,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+
     }
+
+
 
     private fun handleCalculatorSelection(calculatorName: String) {
         val intent = when (calculatorName) {
@@ -141,7 +145,7 @@ class MainActivity : AppCompatActivity() {
     private fun filter(text: String) {
         val filteredList: ArrayList<Calculator> = ArrayList()
         for (item in calculatorList) {
-            if (item.name.toLowerCase().contains(text.toLowerCase())) {
+            if (item.name.lowercase(Locale.getDefault()).contains(text.lowercase(Locale.getDefault()))) {
                 filteredList.add(item)
             }
         }
