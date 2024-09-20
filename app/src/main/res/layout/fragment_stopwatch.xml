@@ -9,7 +9,6 @@
 
     <TextView
         android:id="@+id/tvStopwatch"
-        style="@style/tvStyle"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_margin="16dp"
@@ -23,57 +22,52 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabPauseSW"
-        style="@style/fabBigInv"
-        app:srcCompat="@drawable/ic_baseline_pause_24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvStopwatch"
-        app:layout_constraintVertical_bias="0.3" />
+        app:layout_constraintVertical_bias="0.3"
+        app:srcCompat="@drawable/ic_baseline_pause_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabStopSW"
-        style="@style/fabBigInv"
-        app:srcCompat="@drawable/ic_baseline_stop_24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/fabStartSW"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvStopwatch"
-        app:layout_constraintVertical_bias="0.3" />
+        app:layout_constraintVertical_bias="0.3"
+        app:srcCompat="@drawable/ic_baseline_stop_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabLap"
-        style="@style/fabBigInv"
-        app:srcCompat="@drawable/ic_baseline_tour_24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/fabStartSW"
         app:layout_constraintTop_toBottomOf="@+id/tvStopwatch"
-        app:layout_constraintVertical_bias="0.3" />
+        app:layout_constraintVertical_bias="0.3"
+        app:srcCompat="@drawable/ic_baseline_tour_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabStartSW"
-        style="@style/fabBig"
-        app:srcCompat="@drawable/ic_baseline_play_arrow_24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvStopwatch"
-        app:layout_constraintVertical_bias="0.3" />
+        app:layout_constraintVertical_bias="0.3"
+        app:srcCompat="@drawable/ic_baseline_play_arrow_24" />
 
-    <View
-        android:id="@+id/vLine"
-        style="@style/line"
-        android:layout_marginBottom="16dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/ll"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/ll"
@@ -104,8 +98,8 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabClear"
-            style="@style/fabBigInv"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginStart="20dp"
             android:layout_marginBottom="20dp"

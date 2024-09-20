@@ -22,7 +22,7 @@
 
             <TextView
                 android:id="@+id/tvInput"
-                style="@style/tvStyle"
+
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
@@ -34,7 +34,7 @@
 
             <TextView
                 android:id="@+id/tvInputUnit"
-                style="@style/tvStyle"
+
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="16dp"
@@ -52,10 +52,6 @@
             android:visibility="invisible"
             tools:visibility="visible">
 
-            <View
-                style="@style/line"
-                android:layout_width="0dp"
-                android:layout_weight="8" />
 
             <TextView
                 android:layout_width="0dp"
@@ -77,7 +73,7 @@
 
             <TextView
                 android:id="@+id/tvOutput"
-                style="@style/tvStyle"
+
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
@@ -88,7 +84,7 @@
 
             <TextView
                 android:id="@+id/tvOutputUnit"
-                style="@style/tvStyle"
+
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="16dp"
@@ -106,7 +102,8 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabForward"
-            style="@style/fabBigInv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/spTo"
             app:layout_constraintHorizontal_bias="0.0"
@@ -117,7 +114,8 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabBackward"
-            style="@style/fabBigInv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/fabForward"
             app:layout_constraintHorizontal_bias="0.0"
@@ -128,7 +126,7 @@
 
         <Button
             android:id="@+id/btUnitSelect"
-            style="@style/fontStyle"
+
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
@@ -143,7 +141,8 @@
 
         <Spinner
             android:id="@+id/spFrom"
-            style="@style/sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/fabForward"
             app:layout_constraintHorizontal_bias="0.5"
@@ -153,7 +152,8 @@
 
         <Spinner
             android:id="@+id/spTo"
-            style="@style/sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -163,7 +163,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View style="@style/line" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -172,95 +171,118 @@
         android:orientation="vertical">
 
         <LinearLayout
-            style="@style/btRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="0.7">
 
             <Button
                 android:id="@+id/btAC"
-                style="@style/btOpBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="AC"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btDelete"
-                style="@style/btOpBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="⌫"
                 android:textStyle="bold" />
 
         </LinearLayout>
 
-        <LinearLayout style="@style/btRow">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/bt7"
-                style="@style/btNumBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="7" />
 
             <Button
                 android:id="@+id/bt8"
-                style="@style/btNumBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="8" />
 
             <Button
                 android:id="@+id/bt9"
-                style="@style/btNumBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="9" />
 
         </LinearLayout>
 
-        <LinearLayout style="@style/btRow">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/bt4"
-                style="@style/btNumBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="4" />
 
             <Button
                 android:id="@+id/bt5"
-                style="@style/btNumBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="5" />
 
             <Button
                 android:id="@+id/bt6"
-                style="@style/btNumBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="6" />
 
         </LinearLayout>
 
-        <LinearLayout style="@style/btRow">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/bt1"
-                style="@style/btNumBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="1" />
 
             <Button
                 android:id="@+id/bt2"
-                style="@style/btNumBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="2" />
 
             <Button
                 android:id="@+id/bt3"
-                style="@style/btNumBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="3" />
 
         </LinearLayout>
 
-        <LinearLayout style="@style/btRow">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/btDot"
-                style="@style/btNumBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="." />
 
             <Button
                 android:id="@+id/bt0"
-                style="@style/btNumBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="0" />
 
             <Button
                 android:id="@+id/btEqual"
-                style="@style/btNumBig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="@drawable/ripple_effect"
                 android:text="="
                 android:textColor="@color/white" />

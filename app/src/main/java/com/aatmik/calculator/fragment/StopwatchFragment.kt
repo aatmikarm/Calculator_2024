@@ -125,12 +125,7 @@ class StopwatchFragment : Fragment() {
                             R.anim.fade_in_500
                         )
                     )
-                    vLine.startAnimation(
-                        AnimationUtils.loadAnimation(
-                            requireContext(),
-                            R.anim.fade_in_1000
-                        )
-                    )
+
 
                     tvStopwatch.animate().translationY(-450f).duration = 200
                     fabStartSW.animate().translationY(-650f).duration = 200
@@ -156,12 +151,7 @@ class StopwatchFragment : Fragment() {
                         R.anim.fade_out_200
                     )
                 )
-                vLine.startAnimation(
-                    AnimationUtils.loadAnimation(
-                        requireContext(),
-                        R.anim.fade_out_200
-                    )
-                )
+
                 fabClear.startAnimation(
                     AnimationUtils.loadAnimation(
                         requireContext(),
@@ -300,7 +290,6 @@ class StopwatchFragment : Fragment() {
             svLaps.fullScroll(View.FOCUS_DOWN)
 
             ll.visibility = View.VISIBLE
-            vLine.visibility = View.VISIBLE
             fabClear.visibility = View.VISIBLE
             fabClear.isEnabled = true
         }

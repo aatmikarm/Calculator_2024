@@ -1,166 +1,300 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".fragment.BasicCalculatorFragment">
+    tools:context=".activity.MainActivity">
 
-    <LinearLayout
-        style="@style/llCalculator"
-        android:layout_weight="1">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvSecondaryBC"
-            style="@style/tvSecondary" />
+        <ScrollView
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            ads:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            ads:layout_constraintEnd_toEndOf="parent"
+            ads:layout_constraintStart_toStartOf="parent"
+            ads:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tvPrimaryBC"
-            style="@style/tvPrimary" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:orientation="vertical">
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/tvSecondaryBC"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_weight="1"
+                    android:autoSizeTextType="uniform"
+                    android:fontFamily="sans-serif-light"
+                    android:gravity="end|center"
+                    android:maxLength="15"
+                    android:maxLines="1"
+                    android:textStyle="bold"
+                    tools:text="5+10-3" />
 
-    <View style="@style/line" />
 
-    <LinearLayout
-        style="@style/llCalculator"
-        android:layout_weight="2">
+                <TextView
+                    android:id="@+id/tvPrimaryBC"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_weight="1"
+                    android:autoSizeTextType="uniform"
+                    android:fontFamily="sans-serif"
+                    android:gravity="end|center"
+                    android:hint="0"
+                    android:maxLength="15"
+                    android:maxLines="1"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="50sp"
+                    android:textStyle="bold"
+                    tools:text="12" />
+            </LinearLayout>
 
-        <LinearLayout style="@style/btRow">
+        </ScrollView>
 
-            <Button
-                android:id="@+id/btACBC"
-                style="@style/btOpBig"
-                android:text="AC" />
 
-            <Button
-                android:id="@+id/btDeleteBC"
-                style="@style/btOpBig"
-                android:text="⌫" />
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            ads:layout_constraintBottom_toBottomOf="parent"
+            ads:layout_constraintEnd_toEndOf="parent"
+            ads:layout_constraintStart_toStartOf="parent">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_marginBottom="5dp">
+
+                <TableRow>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btACBC"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="C"
+                        android:textSize="33sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btBracketOpenBC"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="("
+                        android:textSize="33sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btBracketCloseBC"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text=")"
+                        android:textSize="33sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btDivisionBC"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="÷"
+                        android:textSize="33sp"
+                        android:textStyle="bold" />
+
+                </TableRow>
+
+                <TableRow>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/bt7BC"
+                        style="@style/Light_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="7"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/bt8BC"
+                        style="@style/Light_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="8"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/bt9BC"
+                        style="@style/Light_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="9"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btMultiplicationBC"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="×"
+
+                        android:textSize="33sp"
+                        android:textStyle="bold" />
+
+                </TableRow>
+
+                <TableRow>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/bt4BC"
+                        style="@style/Light_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="4"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/bt5BC"
+                        style="@style/Light_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="5"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/bt6BC"
+                        style="@style/Light_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="6"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btSubtractionBC"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="-"
+
+                        android:textSize="33sp"
+                        android:textStyle="bold" />
+
+                </TableRow>
+
+                <TableRow>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/bt1BC"
+                        style="@style/Light_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="1"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/bt2BC"
+                        style="@style/Light_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="2"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/bt3BC"
+                        style="@style/Light_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="3"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btAdditionBC"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="+"
+
+                        android:textSize="33sp"
+                        android:textStyle="bold" />
+
+                </TableRow>
+
+                <TableRow>
+
+                    <ImageView
+                        android:id="@+id/btDeleteBC"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:padding="25dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/backspace" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/bt0BC"
+                        style="@style/Light_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="0"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btDotBC"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="."
+                        android:textSize="33sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btEqualBC"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:text="="
+                        android:textColor="@color/white"
+                        android:textSize="33sp"
+                        android:textStyle="bold" />
+
+                </TableRow>
+            </TableLayout>
 
         </LinearLayout>
 
-        <LinearLayout style="@style/btRow">
 
-            <Button
-                android:id="@+id/btBracketOpenBC"
-                style="@style/btOpBig"
-                android:text="(" />
-
-            <Button
-                android:id="@+id/btBracketCloseBC"
-                style="@style/btOpBig"
-                android:text=")" />
-
-            <Button
-                android:id="@+id/btPercentage"
-                style="@style/btOpBig"
-                android:text="%" />
-
-            <Button
-                android:id="@+id/btDivisionBC"
-                style="@style/btOpBig"
-                android:text="÷" />
-
-        </LinearLayout>
-
-        <LinearLayout style="@style/btRow">
-
-            <Button
-                android:id="@+id/bt7BC"
-                style="@style/btNumBig"
-                android:text="7" />
-
-            <Button
-                android:id="@+id/bt8BC"
-                style="@style/btNumBig"
-                android:text="8" />
-
-            <Button
-                android:id="@+id/bt9BC"
-                style="@style/btNumBig"
-                android:text="9" />
-
-            <Button
-                android:id="@+id/btMultiplicationBC"
-                style="@style/btOpBig"
-                android:text="×" />
-
-        </LinearLayout>
-
-        <LinearLayout style="@style/btRow">
-
-            <Button
-                android:id="@+id/bt4BC"
-                style="@style/btNumBig"
-                android:text="4" />
-
-            <Button
-                android:id="@+id/bt5BC"
-                style="@style/btNumBig"
-                android:text="5" />
-
-            <Button
-                android:id="@+id/bt6BC"
-                style="@style/btNumBig"
-                android:text="6" />
-
-            <Button
-                android:id="@+id/btSubtractionBC"
-                style="@style/btOpBig"
-                android:text="-" />
-
-        </LinearLayout>
-
-        <LinearLayout style="@style/btRow">
-
-            <Button
-                android:id="@+id/bt1BC"
-                style="@style/btNumBig"
-                android:text="1" />
-
-            <Button
-                android:id="@+id/bt2BC"
-                style="@style/btNumBig"
-                android:text="2" />
-
-            <Button
-                android:id="@+id/bt3BC"
-                style="@style/btNumBig"
-                android:text="3" />
-
-            <Button
-                android:id="@+id/btAdditionBC"
-                style="@style/btOpSmall"
-                android:text="+" />
-
-        </LinearLayout>
-
-        <LinearLayout style="@style/btRow">
-
-            <Button
-                style="@style/btOpBig"
-                android:enabled="false" />
-
-            <Button
-                android:id="@+id/bt0BC"
-                style="@style/btNumBig"
-                android:text="0" />
-
-            <Button
-                android:id="@+id/btDotBC"
-                style="@style/btNumBig"
-                android:text="." />
-
-            <Button
-                android:id="@+id/btEqualBC"
-                style="@style/btOpBig"
-                android:background="@drawable/ripple_effect"
-                android:text="="
-                android:textColor="@color/white" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-</LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

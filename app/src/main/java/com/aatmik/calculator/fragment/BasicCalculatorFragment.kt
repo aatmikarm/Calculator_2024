@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import com.aatmik.calculator.databinding.FragmentBasicCalculatorBinding
 import com.aatmik.calculator.util.ButtonUtil.addNumberValueToText
 import com.aatmik.calculator.util.ButtonUtil.addOperatorValueToText
-import com.aatmik.calculator.util.ButtonUtil.enterNumberToast
 import com.aatmik.calculator.util.ButtonUtil.invalidInputToast
 import com.aatmik.calculator.util.ButtonUtil.vibratePhone
 import com.aatmik.calculator.util.CalculationUtil
@@ -58,22 +57,6 @@ class BasicCalculatorFragment : Fragment() {
                 vibratePhone(requireContext())
                 if (!tvPrimaryBC.text.contains(".")) tvPrimaryBC.text =
                     tvPrimaryBC.text.toString() + "."
-            }
-
-            btPercentage.setOnClickListener {
-                vibratePhone(requireContext())
-
-                try {
-                    if (tvPrimaryBC.text.isEmpty()) enterNumberToast(requireContext())
-                    else {
-                        val input = tvPrimaryBC.text.toString()
-                        val result = (input.toFloat() / 100).toString()
-                        tvPrimaryBC.text = CalculationUtil.trimResult(result)
-                        tvSecondaryBC.text = "${input}%"
-                    }
-                } catch (e: Exception) {
-                    invalidInputToast(requireContext())
-                }
             }
 
             btACBC.setOnClickListener {

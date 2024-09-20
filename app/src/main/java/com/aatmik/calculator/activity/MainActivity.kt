@@ -130,7 +130,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun handleCalculatorSelection(calculatorName: String) {
         val intent = when (calculatorName) {
             "Basic" -> Intent(this, CalculatorActivity::class.java)
@@ -145,7 +144,9 @@ class MainActivity : AppCompatActivity() {
     private fun filter(text: String) {
         val filteredList: ArrayList<Calculator> = ArrayList()
         for (item in calculatorList) {
-            if (item.name.lowercase(Locale.getDefault()).contains(text.lowercase(Locale.getDefault()))) {
+            if (item.name.lowercase(Locale.getDefault())
+                    .contains(text.lowercase(Locale.getDefault()))
+            ) {
                 filteredList.add(item)
             }
         }

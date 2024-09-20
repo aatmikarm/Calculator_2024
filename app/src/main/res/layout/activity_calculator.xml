@@ -6,29 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".activity.CalculatorActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        ads:layout_constraintEnd_toEndOf="parent"
-        ads:layout_constraintStart_toStartOf="parent"
-        ads:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            style="@style/tabs" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewPager"
+    <FrameLayout
+        android:id="@+id/calculatorFragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@+id/appBarLayout"
         ads:layout_constraintBottom_toTopOf="@+id/bannerAd1"
         ads:layout_constraintEnd_toEndOf="parent"
         ads:layout_constraintStart_toStartOf="parent"
-        ads:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+        ads:layout_constraintTop_toBottomOf="@+id/scientificCalculatorButton" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/scientificCalculatorButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/dollor"
+        ads:backgroundTint="@color/colorPrimary"
+        ads:layout_constraintEnd_toEndOf="parent"
+        ads:layout_constraintTop_toTopOf="parent" />
+
 
     <com.google.android.gms.ads.AdView
         android:id="@+id/bannerAd1"

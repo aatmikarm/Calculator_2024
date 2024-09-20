@@ -227,7 +227,7 @@
                     android:id="@+id/toggleBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#FFA500"
+                    android:background="@color/colorPrimary"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="8dp">
@@ -237,7 +237,7 @@
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:rotation="0"
-                        android:src="@drawable/dollor" />
+                        android:src="@drawable/arrow_down" />
                 </LinearLayout>
 
                 <TableRow>
