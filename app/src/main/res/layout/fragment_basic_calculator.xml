@@ -71,7 +71,189 @@
             ads:layout_constraintEnd_toEndOf="parent"
             ads:layout_constraintStart_toStartOf="parent">
 
+            <!-- Scientific buttons panel-->
             <TableLayout
+                android:id="@+id/scientificButtonsPanel"
+                android:layout_width="match_parent"
+                android:layout_margin="5dp"
+                android:layout_height="wrap_content"
+                android:visibility="visible">
+
+                <!-- First Row (deg, sin, cos, tan) -->
+                <TableRow>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btSecond"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="2nd"
+                        android:textAllCaps="false"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btDeg"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="deg"
+                        android:textAllCaps="false"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btSin"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="sin"
+                        android:textAllCaps="false"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btCos"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="cos"
+                        android:textAllCaps="false"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btTan"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="tan"
+                        android:textAllCaps="false"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btRootX"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="√x"
+                        android:textAllCaps="false"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+                </TableRow>
+
+                <!-- Second Row (x^y, lg, ln, 2nd) -->
+                <TableRow>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btPowerXY"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="x^y"
+                        android:textAllCaps="false"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btLg"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="lg"
+                        android:textAllCaps="false"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btLn"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="ln"
+                        android:textAllCaps="false"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btFactorial"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="x!"
+                        android:textAllCaps="false"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btInverse"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="1/x"
+                        android:textAllCaps="false"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btPi"
+                        style="@style/Dark_Button_Style"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="π"
+                        android:textAllCaps="false"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                </TableRow>
+
+
+            </TableLayout>
+
+            <!-- Orange Bar (Toggle Button) -->
+            <LinearLayout
+                android:id="@+id/toggleBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/colorPrimary"
+                    ads:cardCornerRadius="10dp">
+
+                    <ImageView
+                        android:id="@+id/toggleArrow"
+                        android:layout_width="15dp"
+                        android:layout_height="7dp"
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="10dp"
+                        android:background="@drawable/arrow_up" />
+
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+            <!-- Basic Calculator-->
+            <TableLayout
+                android:id="@+id/basicButtonsPanel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5dp"

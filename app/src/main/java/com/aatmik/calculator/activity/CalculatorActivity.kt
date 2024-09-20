@@ -22,7 +22,6 @@ class CalculatorActivity : AppCompatActivity() {
         setContentView(binding.root)
         //runAds()
         setUpCalculator()
-        floatingActionButton()
     }
 
     private fun setUpCalculator() {
@@ -41,21 +40,6 @@ class CalculatorActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
-    }
-
-    private var isScientificCalculatorOpen = false
-
-    fun floatingActionButton() {
-        // Set up FloatingActionButton to toggle between calculators
-        binding.scientificCalculatorButton.setOnClickListener {
-            if (isScientificCalculatorOpen) {
-                loadBasicCalculatorFragment()
-            } else {
-                loadScientificCalculatorFragment()
-            }
-            // Toggle the state
-            isScientificCalculatorOpen = !isScientificCalculatorOpen
-        }
     }
 
     private fun loadScientificCalculatorFragment() {
