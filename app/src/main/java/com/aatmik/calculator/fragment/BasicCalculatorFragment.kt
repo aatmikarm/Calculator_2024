@@ -17,6 +17,9 @@ import com.aatmik.calculator.util.ButtonUtil.vibratePhone
 import com.aatmik.calculator.util.CalculationUtil
 import com.aatmik.calculator.util.PrefUtil
 import kotlin.math.PI
+import kotlin.math.acos
+import kotlin.math.asin
+import kotlin.math.atan
 import kotlin.math.cos
 import kotlin.math.ln
 import kotlin.math.log10
@@ -133,9 +136,9 @@ class BasicCalculatorFragment : Fragment() {
 
     private var isPowerMode = false
     private var baseValue: Double? = null
-
-    // Variables to track the state of inverse functions
     var isSecondMode = false
+    var isInDegreesMode = true
+
     private fun setupScientificButtons() {
         binding.apply {
             // Adding vibration to each button click
@@ -149,31 +152,59 @@ class BasicCalculatorFragment : Fragment() {
                     btSin.text = "sin⁻¹"
                     btCos.text = "cos⁻¹"
                     btTan.text = "tan⁻¹"
-                    btDeg.isEnabled = false // Disable deg button
+
+                    // Disable and fade out the DEG/RAD button
+                    btDeg.isEnabled = false
+                    btDeg.alpha = 0.5f // Set alpha to fade it out (make it look dull)
                 } else {
                     // Change back to normal functions
                     btSin.text = "sin"
                     btCos.text = "cos"
                     btTan.text = "tan"
-                    btDeg.isEnabled = true // Enable deg button
+
+                    // Enable and bring back the full opacity of the DEG/RAD button
+                    btDeg.isEnabled = true
+                    btDeg.alpha = 1.0f // Restore full opacity
                 }
             }
 
             btSin.setOnClickListener {
-                onScientificFunctionClicked("sin")
                 vibratePhone(requireContext())
+                if (isSecondMode) {
+                    onScientificFunctionClicked("asin") // Inverse sine
+                } else {
+                    onScientificFunctionClicked("sin")  // Regular sine
+                }
             }
             btCos.setOnClickListener {
-                onScientificFunctionClicked("cos")
                 vibratePhone(requireContext())
+                if (isSecondMode) {
+                    onScientificFunctionClicked("acos") // Inverse cosine
+                } else {
+                    onScientificFunctionClicked("cos")  // Regular cosine
+                }
             }
             btTan.setOnClickListener {
-                onScientificFunctionClicked("tan")
                 vibratePhone(requireContext())
+                if (isSecondMode) {
+                    onScientificFunctionClicked("atan") // Inverse tangent
+                } else {
+                    onScientificFunctionClicked("tan")  // Regular tangent
+                }
             }
             btDeg.setOnClickListener {
-                onScientificFunctionClicked("deg")
-                vibratePhone(requireContext())  // Call vibrate function
+                vibratePhone(requireContext())
+
+                // Toggle between degrees and radians mode
+                isInDegreesMode = !isInDegreesMode
+
+                if (!isInDegreesMode) { // Radian mode selected
+                    btDeg.text = "rad" // Update the button text
+                    disableSecondButton() // Disable and fade out the 2nd button
+                } else { // Degree mode selected
+                    btDeg.text = "deg" // Update the button text
+                    enableSecondButton() // Enable and restore the 2nd button
+                }
             }
             btRootX.setOnClickListener {
                 onScientificFunctionClicked("sqrt")
@@ -220,6 +251,17 @@ class BasicCalculatorFragment : Fragment() {
         }
     }
 
+    // Function to disable and fade out the 2nd button
+    fun disableSecondButton() {
+        binding.btSecond.isEnabled = false // Disable the button
+        binding.btSecond.alpha = 0.5f // Set opacity to make it look faded
+    }
+
+    // Function to enable and restore the 2nd button
+    fun enableSecondButton() {
+        binding.btSecond.isEnabled = true // Enable the button
+        binding.btSecond.alpha = 1.0f // Restore full opacity
+    }
 
     private fun onScientificFunctionClicked(function: String) {
         val currentInput = binding.tvPrimaryBC.text.toString().toDoubleOrNull()
@@ -230,10 +272,12 @@ class BasicCalculatorFragment : Fragment() {
         }
 
         val result: Double = when (function) {
-            "sin" -> sin(Math.toRadians(currentInput))
-            "cos" -> cos(Math.toRadians(currentInput))
-            "tan" -> tan(Math.toRadians(currentInput))
-            "deg" -> Math.toDegrees(currentInput)
+            "sin" -> if (isInDegreesMode) sin(Math.toRadians(currentInput)) else sin(currentInput)
+            "cos" -> if (isInDegreesMode) cos(Math.toRadians(currentInput)) else cos(currentInput)
+            "tan" -> if (isInDegreesMode) tan(Math.toRadians(currentInput)) else tan(currentInput)
+            "asin" -> Math.toDegrees(asin(currentInput)) // Always return in degrees
+            "acos" -> Math.toDegrees(acos(currentInput)) // Always return in degrees
+            "atan" -> Math.toDegrees(atan(currentInput)) // Always return in degrees
             "sqrt" -> sqrt(currentInput)
             "lg" -> log10(currentInput)
             "ln" -> ln(currentInput)
@@ -243,8 +287,19 @@ class BasicCalculatorFragment : Fragment() {
             else -> currentInput
         }
 
+        // Format the result to 6 decimal places
+        val formattedResult = String.format("%.9f", result)
+
+        // Check if we are in inverse mode and append degree symbol accordingly
+        val displayResult =
+            if (isSecondMode && (function == "asin" || function == "acos" || function == "atan")) {
+                "$formattedResult°" // Append degree symbol in inverse mode
+            } else {
+                formattedResult // Display the result as it is for other functions
+            }
+
         // Update the input text view with the result
-        binding.tvPrimaryBC.text = result.toString()
+        binding.tvPrimaryBC.text = displayResult
     }
 
     // Factorial function for integers

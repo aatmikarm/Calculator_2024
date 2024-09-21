@@ -17,7 +17,6 @@ object ButtonUtil {
             textViewId.text = "${textViewId.text}${buttonId.text}"
             when (id) {
                 0 -> addedBC = false
-                1 -> addedSC = false
             }
         }
     }
@@ -31,11 +30,6 @@ object ButtonUtil {
                     if (addedBC) textViewId.text = textViewId.text.subSequence(0, textViewId.length() - 1)
                     textViewId.text = textViewId.text.toString() + text
                     addedBC = true
-                }
-                1 -> {
-                    if (addedSC) textViewId.text = textViewId.text.subSequence(0, textViewId.length() - 1)
-                    textViewId.text = textViewId.text.toString() + text
-                    addedSC = true
                 }
             }
         }
