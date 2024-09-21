@@ -9,7 +9,6 @@ import android.widget.TextView
 import android.widget.Toast
 import com.aatmik.calculator.R
 import com.aatmik.calculator.fragment.BasicCalculatorFragment.Companion.addedBC
-import com.aatmik.calculator.fragment.ScientificCalculatorFragment.Companion.addedSC
 
 object ButtonUtil {
     fun addNumberValueToText(context: Context, buttonId: Button, textViewId: TextView, id: Int?) {

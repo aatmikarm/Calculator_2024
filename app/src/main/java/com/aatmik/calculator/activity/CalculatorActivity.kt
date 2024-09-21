@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.aatmik.calculator.R
 import com.aatmik.calculator.databinding.ActivityCalculatorBinding
 import com.aatmik.calculator.fragment.BasicCalculatorFragment
-import com.aatmik.calculator.fragment.ScientificCalculatorFragment
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
@@ -40,13 +39,6 @@ class CalculatorActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
-    }
-
-    private fun loadScientificCalculatorFragment() {
-        val fragment = ScientificCalculatorFragment()
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.calculatorFragmentContainer, fragment)
-        transaction.commit()
     }
 
     private fun loadBasicCalculatorFragment() {
