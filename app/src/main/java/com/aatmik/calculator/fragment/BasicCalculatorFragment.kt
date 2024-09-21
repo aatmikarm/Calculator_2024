@@ -9,7 +9,11 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.aatmik.calculator.adapter.HistoryAdapter
 import com.aatmik.calculator.databinding.FragmentBasicCalculatorBinding
+import com.aatmik.calculator.model.CalculationHistory
 import com.aatmik.calculator.util.ButtonUtil.addNumberValueToText
 import com.aatmik.calculator.util.ButtonUtil.addOperatorValueToText
 import com.aatmik.calculator.util.ButtonUtil.invalidInputToast
@@ -32,6 +36,9 @@ class BasicCalculatorFragment : Fragment() {
 
     private lateinit var binding: FragmentBasicCalculatorBinding
     private var isPanelVisible = false // Track visibility state of the panel
+    private val calculationHistory = mutableListOf<CalculationHistory>()
+    private lateinit var historyAdapter: HistoryAdapter
+    private lateinit var recyclerView: RecyclerView
 
     companion object {
         var addedBC = false
@@ -52,7 +59,34 @@ class BasicCalculatorFragment : Fragment() {
         toggleBarLogic()
         setupBasicButtons()
         setupScientificButtons()
+        historyView()
 
+    }
+
+    private fun historyView() {
+        // Set up the RecyclerView for history
+        recyclerView = binding.rvHistory
+        historyAdapter = HistoryAdapter(calculationHistory) { historyItem ->
+            // Handle clicking a history item
+            binding.tvPrimaryBC.text = historyItem.result
+        }
+
+        recyclerView.adapter = historyAdapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
+        // Show history button
+        binding.btHistory.setOnClickListener {
+            binding.rvHistory.visibility =
+                if (binding.rvHistory.visibility == View.GONE) View.VISIBLE else View.GONE
+        }
+    }
+
+    // Function to add a new calculation history item
+    fun addNewCalculationHistory(expression: String, result: String) {
+        val newHistoryItem = CalculationHistory(expression, result)
+        historyAdapter.addHistoryItem(newHistoryItem)
+        // Scroll to the bottom
+        recyclerView.scrollToPosition(historyAdapter.itemCount - 1)
     }
 
     private fun setupBasicButtons() {
@@ -112,6 +146,11 @@ class BasicCalculatorFragment : Fragment() {
                         binding.tvSecondaryBC.text = "${baseValue}^$exponentInput = $result"
                         isPowerMode = false // Reset power mode
                         baseValue = null // Clear the base value
+
+                        // Save to history
+                        addNewCalculationHistory("${baseValue}^$exponentInput", result.toString())
+
+
                     } else {
                         invalidInputToast(requireContext())
                     }
@@ -124,6 +163,10 @@ class BasicCalculatorFragment : Fragment() {
                             tvPrimaryBC.text = CalculationUtil.trimResult(result)
                             tvSecondaryBC.text = input
                             addedBC = false
+
+                            // Save to history
+                            addNewCalculationHistory(input, result)
+
                         }
                     } catch (e: Exception) {
                         invalidInputToast(requireContext())
@@ -307,16 +350,12 @@ class BasicCalculatorFragment : Fragment() {
         return try {
             if (n < 0) {
                 Toast.makeText(
-                    context,
-                    "Factorial is not defined for negative numbers",
-                    Toast.LENGTH_SHORT
+                    context, "Factorial is not defined for negative numbers", Toast.LENGTH_SHORT
                 ).show()
                 1.0
             } else if (n > 170) {
                 Toast.makeText(
-                    context,
-                    "Number too large for factorial calculation",
-                    Toast.LENGTH_SHORT
+                    context, "Number too large for factorial calculation", Toast.LENGTH_SHORT
                 ).show()
                 Double.POSITIVE_INFINITY
             } else {

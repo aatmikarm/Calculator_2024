@@ -22,7 +22,6 @@
 
             <TextView
                 android:id="@+id/tvInput"
-
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
@@ -30,15 +29,17 @@
                 android:layout_weight="8"
                 android:maxLength="15"
                 android:textAlignment="textEnd"
+                android:textSize="23sp"
                 tools:text="100000" />
 
             <TextView
                 android:id="@+id/tvInputUnit"
-
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="16dp"
+
                 android:layout_weight="2"
+                android:textSize="23sp"
                 tools:text="m" />
 
         </LinearLayout>
@@ -60,8 +61,10 @@
                 android:layout_weight="2"
                 android:fontFamily="sans-serif-thin"
                 android:text="@string/equals_to"
+
                 android:textAlignment="center"
-                android:textColor="@color/dayNightColor" />
+                android:textColor="@color/dayNightColor"
+                android:textSize="23sp" />
 
         </LinearLayout>
 
@@ -73,22 +76,24 @@
 
             <TextView
                 android:id="@+id/tvOutput"
-
                 android:layout_width="0dp"
+
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_weight="8"
                 android:textAlignment="textEnd"
+                android:textSize="23sp"
                 tools:text="100" />
 
             <TextView
                 android:id="@+id/tvOutputUnit"
-
                 android:layout_width="0dp"
+
                 android:layout_height="match_parent"
                 android:layout_marginEnd="16dp"
                 android:layout_weight="2"
+                android:textSize="23sp"
                 tools:text="km" />
 
         </LinearLayout>
@@ -104,6 +109,7 @@
             android:id="@+id/fabForward"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/spTo"
             app:layout_constraintHorizontal_bias="0.0"
@@ -116,6 +122,7 @@
             android:id="@+id/fabBackward"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/fabForward"
             app:layout_constraintHorizontal_bias="0.0"
@@ -126,40 +133,36 @@
 
         <Button
             android:id="@+id/btUnitSelect"
-
-            android:layout_width="200dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
             android:background="@color/colorPrimary"
             android:text="@string/select_a_unit"
             android:textAllCaps="false"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
             android:id="@+id/spFrom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/fabForward"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/btUnitSelect"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.763" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
             android:id="@+id/spTo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/fabForward"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.763" />
+            app:layout_constraintStart_toEndOf="@+id/btUnitSelect"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -171,121 +174,168 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.7">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/btAC"
+                style="@style/Dark_Button_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
                 android:text="AC"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btDelete"
+                style="@style/Dark_Button_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
                 android:text="⌫"
                 android:textStyle="bold" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/bt7"
+                style="@style/Light_Button_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:text="7" />
 
             <Button
                 android:id="@+id/bt8"
+                style="@style/Light_Button_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:text="8" />
 
             <Button
                 android:id="@+id/bt9"
+                style="@style/Light_Button_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:text="9" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/bt4"
+                style="@style/Light_Button_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:text="4" />
 
             <Button
                 android:id="@+id/bt5"
+                style="@style/Light_Button_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:text="5" />
 
             <Button
                 android:id="@+id/bt6"
+                style="@style/Light_Button_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:text="6" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/bt1"
+                style="@style/Light_Button_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:text="1" />
 
             <Button
                 android:id="@+id/bt2"
+                style="@style/Light_Button_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:text="2" />
 
             <Button
                 android:id="@+id/bt3"
+                style="@style/Light_Button_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:text="3" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/btDot"
+                style="@style/Dark_Button_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:text="." />
 
             <Button
                 android:id="@+id/bt0"
+                style="@style/Light_Button_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:text="0" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btEqual"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ripple_effect"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/dark_btn_bg"
+                android:backgroundTint="@color/colorPrimary"
+                android:elevation="4dp"
+                android:fontFamily="sans-serif-light"
+                android:foreground="@drawable/button_ripple"
+                android:gravity="center"
                 android:text="="
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="33sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 

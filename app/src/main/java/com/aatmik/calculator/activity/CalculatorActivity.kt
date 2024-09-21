@@ -2,9 +2,13 @@ package com.aatmik.calculator.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.aatmik.calculator.R
 import com.aatmik.calculator.databinding.ActivityCalculatorBinding
 import com.aatmik.calculator.fragment.BasicCalculatorFragment
+import com.aatmik.calculator.fragment.CounterFragment
+import com.aatmik.calculator.fragment.PercentageFragment
+import com.aatmik.calculator.fragment.StopwatchFragment
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
@@ -20,13 +24,28 @@ class CalculatorActivity : AppCompatActivity() {
         binding = ActivityCalculatorBinding.inflate(layoutInflater)
         setContentView(binding.root)
         //runAds()
-        setUpCalculator()
+        // Get the calculator type passed from MainActivity
+        val calculatorType = intent.getStringExtra("calculatorName")
+        setUpCalculator(calculatorType)
     }
 
-    private fun setUpCalculator() {
+    private fun setUpCalculator(calculatorType: String?) {
         if (supportFragmentManager.findFragmentById(R.id.calculatorFragmentContainer) == null) {
-            loadBasicCalculatorFragment()
+            when (calculatorType) {
+                "Basic" -> loadFragment(BasicCalculatorFragment())
+                "Convertor" -> loadFragment(CounterFragment())
+                "Stopwatch" -> loadFragment(StopwatchFragment())
+                "Percentage" -> loadFragment(PercentageFragment())
+                // Add more fragments as needed
+                else -> loadFragment(BasicCalculatorFragment()) // Default fragment
+            }
         }
+    }
+
+    private fun loadFragment(fragment: Fragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.calculatorFragmentContainer, fragment)
+        transaction.commit()
     }
 
     private fun runAds() {
@@ -41,20 +60,12 @@ class CalculatorActivity : AppCompatActivity() {
         return true
     }
 
-    private fun loadBasicCalculatorFragment() {
-        val fragment = BasicCalculatorFragment()
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.calculatorFragmentContainer, fragment)
-        transaction.commit()
-    }
-
     private fun showInterstitialAd() {
         interstitialAd1.show(this@CalculatorActivity)
     }
 
     private fun interstitialAd() {
-        InterstitialAd.load(
-            this,
+        InterstitialAd.load(this,
             "ca-app-pub-3940256099942544/1033173712",
             adRequest,
             object : InterstitialAdLoadCallback() {

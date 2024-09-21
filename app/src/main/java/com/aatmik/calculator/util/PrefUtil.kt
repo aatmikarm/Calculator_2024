@@ -37,6 +37,36 @@ object PrefUtil {
     private const val COUNT = "count"
     private const val INTERVAL = "interval"
 
+    /*** Calculation history consts ***/
+    private const val CALCULATION_HISTORY = "calculation_history"
+
+    /*** Favorites consts ***/
+    private const val FAVORITES_LIST = "favorites_list"
+
+    fun addCalculationToHistory(context: Context, calculation: String) {
+        val history = getCalculationHistory(context).toMutableList()
+        history.add(calculation)
+        setCalculationHistory(context, history)
+    }
+
+    fun setCalculationHistory(context: Context, history: List<String>) {
+        val jsonString = Gson().toJson(history)
+        context
+            .getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+            .edit()
+            .putString(CALCULATION_HISTORY, jsonString)
+            .apply()
+    }
+
+    fun getCalculationHistory(context: Context): List<String> {
+        val json = context
+            .getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+            .getString(CALCULATION_HISTORY, "[]") ?: "[]"
+        val type = object : TypeToken<List<String>>() {}
+        return Gson().fromJson(json, type.type)
+    }
+
+
     /*** Basic calculator prefs ***/
     fun setPrimaryTextBC(context: Context, value: String) {
         context

@@ -11,14 +11,51 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:id="@+id/btHistory"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="top"
+            android:orientation="vertical"
+            android:padding="8dp"
+            ads:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+            ads:layout_constraintEnd_toEndOf="parent"
+            ads:layout_constraintStart_toStartOf="parent"
+            ads:layout_constraintTop_toTopOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="end"
+                android:backgroundTint="@color/colorPrimary"
+                ads:cardCornerRadius="50dp">
+
+                <ImageView
+                    android:id="@+id/historyArrow"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:layout_marginVertical="10dp"
+                    android:background="@drawable/file_search"
+                    android:backgroundTint="@color/white" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvHistory"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible" />
+
+        </LinearLayout>
+
         <ScrollView
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             ads:layout_constraintBottom_toTopOf="@+id/linearLayout"
             ads:layout_constraintEnd_toEndOf="parent"
-            ads:layout_constraintStart_toStartOf="parent"
-            ads:layout_constraintTop_toTopOf="parent">
+            ads:layout_constraintStart_toStartOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -75,9 +112,9 @@
             <TableLayout
                 android:id="@+id/scientificButtonsPanel"
                 android:layout_width="match_parent"
-                android:layout_margin="5dp"
                 android:layout_height="wrap_content"
-                android:visibility="visible">
+                android:layout_margin="5dp"
+                android:visibility="gone">
 
                 <!-- First Row (deg, sin, cos, tan) -->
                 <TableRow>
@@ -245,7 +282,8 @@
                         android:layout_height="7dp"
                         android:layout_gravity="center"
                         android:layout_marginVertical="10dp"
-                        android:background="@drawable/arrow_up" />
+                        android:background="@drawable/arrow_up"
+                        android:backgroundTint="@color/white" />
 
                 </androidx.cardview.widget.CardView>
 
@@ -423,7 +461,6 @@
                         android:layout_height="@dimen/button_height"
                         android:layout_weight="1"
                         android:text="+"
-
                         android:textSize="33sp"
                         android:textStyle="bold" />
 
@@ -462,11 +499,16 @@
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btEqualBC"
-                        style="@style/Dark_Button_Style"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/button_height"
+                        android:layout_margin="5dp"
                         android:layout_weight="1"
+                        android:background="@drawable/dark_btn_bg"
                         android:backgroundTint="@color/colorPrimary"
+                        android:elevation="4dp"
+                        android:fontFamily="sans-serif-light"
+                        android:foreground="@drawable/button_ripple"
+                        android:gravity="center"
                         android:text="="
                         android:textColor="@color/white"
                         android:textSize="33sp"

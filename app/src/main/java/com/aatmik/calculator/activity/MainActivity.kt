@@ -10,10 +10,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.aatmik.calculator.R
 import com.aatmik.calculator.adapter.CalculatorAdapter
 import com.aatmik.calculator.databinding.ActivityMainBinding
 import com.aatmik.calculator.model.Calculator
+import com.aatmik.calculator.util.CalculatorUtils
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
@@ -102,101 +102,12 @@ class MainActivity : AppCompatActivity() {
     private fun recyclerView() {
         calculatorRV = binding.calculatorRV
         calculatorRV.layoutManager = GridLayoutManager(this, GRID_COLUMN_COUNT)
-        calculatorList = createCalculatorList()
+        calculatorList = CalculatorUtils.calculatorList
         calculatorAdapter = CalculatorAdapter(calculatorList) { calculator ->
             showToast("Clicked: ${calculator.name}")
             handleCalculatorSelection(calculator.name)
         }
         calculatorRV.adapter = calculatorAdapter
-    }
-
-    private fun createCalculatorList(): ArrayList<Calculator> {
-        return arrayListOf(
-            Calculator("Basic", R.drawable.calculator_new),
-            Calculator("Convertor", R.drawable.convert),
-            Calculator("Stopwatch", R.drawable.stopwatch),
-            Calculator("Percentage", R.drawable.percentage),
-            Calculator("Equation", R.drawable.equation_xy),
-            Calculator("Shapes", R.drawable.shapes_new),
-            Calculator("Bodies", R.drawable.bodies),
-            Calculator("Length", R.drawable.length),
-            Calculator("Speed", R.drawable.speed),
-            Calculator("Temperature", R.drawable.temp),
-            Calculator("Weight", R.drawable.weight),
-            Calculator("Currency Converter", R.drawable.dollor),
-            Calculator("Tip", R.drawable.tip),
-            Calculator("Body Mass Index", R.drawable.bmi),
-            Calculator("Age", R.drawable.cake),
-
-
-            Calculator("Basic", R.drawable.calculator_new),
-            Calculator("Convertor", R.drawable.convert),
-            Calculator("Stopwatch", R.drawable.stopwatch),
-            Calculator("Percentage", R.drawable.percentage),
-            Calculator("Equation", R.drawable.equation_xy),
-            Calculator("Shapes", R.drawable.shapes_new),
-            Calculator("Bodies", R.drawable.bodies),
-            Calculator("Length", R.drawable.length),
-            Calculator("Speed", R.drawable.speed),
-            Calculator("Temperature", R.drawable.temp),
-            Calculator("Weight", R.drawable.weight),
-            Calculator("Currency Converter", R.drawable.dollor),
-            Calculator("Tip", R.drawable.tip),
-            Calculator("Body Mass Index", R.drawable.bmi),
-            Calculator("Age", R.drawable.cake),
-
-            Calculator("Basic", R.drawable.calculator_new),
-            Calculator("Convertor", R.drawable.convert),
-            Calculator("Stopwatch", R.drawable.stopwatch),
-            Calculator("Percentage", R.drawable.percentage),
-            Calculator("Equation", R.drawable.equation_xy),
-            Calculator("Shapes", R.drawable.shapes_new),
-            Calculator("Bodies", R.drawable.bodies),
-            Calculator("Length", R.drawable.length),
-            Calculator("Speed", R.drawable.speed),
-            Calculator("Temperature", R.drawable.temp),
-            Calculator("Weight", R.drawable.weight),
-            Calculator("Currency Converter", R.drawable.dollor),
-            Calculator("Tip", R.drawable.tip),
-            Calculator("Body Mass Index", R.drawable.bmi),
-            Calculator("Age", R.drawable.cake),
-
-
-            Calculator("Basic", R.drawable.calculator_new),
-            Calculator("Convertor", R.drawable.convert),
-            Calculator("Stopwatch", R.drawable.stopwatch),
-            Calculator("Percentage", R.drawable.percentage),
-            Calculator("Equation", R.drawable.equation_xy),
-            Calculator("Shapes", R.drawable.shapes_new),
-            Calculator("Bodies", R.drawable.bodies),
-            Calculator("Length", R.drawable.length),
-            Calculator("Speed", R.drawable.speed),
-            Calculator("Temperature", R.drawable.temp),
-            Calculator("Weight", R.drawable.weight),
-            Calculator("Currency Converter", R.drawable.dollor),
-            Calculator("Tip", R.drawable.tip),
-            Calculator("Body Mass Index", R.drawable.bmi),
-            Calculator("Age", R.drawable.cake),
-
-
-            Calculator("Basic", R.drawable.calculator_new),
-            Calculator("Convertor", R.drawable.convert),
-            Calculator("Stopwatch", R.drawable.stopwatch),
-            Calculator("Percentage", R.drawable.percentage),
-            Calculator("Equation", R.drawable.equation_xy),
-            Calculator("Shapes", R.drawable.shapes_new),
-            Calculator("Bodies", R.drawable.bodies),
-            Calculator("Length", R.drawable.length),
-            Calculator("Speed", R.drawable.speed),
-            Calculator("Temperature", R.drawable.temp),
-            Calculator("Weight", R.drawable.weight),
-            Calculator("Currency Converter", R.drawable.dollor),
-            Calculator("Tip", R.drawable.tip),
-            Calculator("Body Mass Index", R.drawable.bmi),
-            Calculator("Age", R.drawable.cake),
-        )
-
-
     }
 
     private fun showToast(message: String) {
@@ -207,9 +118,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleCalculatorSelection(calculatorName: String) {
         val intent = when (calculatorName) {
-            "Basic" -> Intent(this, CalculatorActivity::class.java)
-            "Convertor" -> Intent(this, UnitConverterActivity::class.java)
-            "Stopwatch" -> Intent(this, TimerActivity::class.java)
+            "Basic" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+
+            "Convertor" -> Intent(this, UnitConverterActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+
+            "Stopwatch" -> Intent(this, TimerActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+
+            "Percentage" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+
             else -> null
         }
 
