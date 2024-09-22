@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.R
 import com.aatmik.calculator.model.Calculator
+import java.util.Collections
 
 class CalculatorAdapter(
     private var calculatorList: ArrayList<Calculator>,
@@ -29,6 +30,13 @@ class CalculatorAdapter(
         notifyDataSetChanged()
     }
 
+    // Method to update the list of calculators (e.g., from SharedPreferences)
+    fun updateCalculatorList(updatedList: ArrayList<Calculator>) {
+        calculatorList.clear()
+        calculatorList.addAll(updatedList)
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: CalculatorAdapter.CalculatorViewHolder, position: Int) {
         holder.itemName.text = calculatorList.get(position).name
         holder.itemImage.setImageResource(calculatorList.get(position).image)
@@ -36,6 +44,11 @@ class CalculatorAdapter(
 
     override fun getItemCount(): Int {
         return calculatorList.size
+    }
+
+    fun swapItems(fromPosition: Int, toPosition: Int) {
+        Collections.swap(calculatorList, fromPosition, toPosition)
+        notifyItemMoved(fromPosition, toPosition)
     }
 
     inner class CalculatorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -48,4 +61,9 @@ class CalculatorAdapter(
             }
         }
     }
+
+    fun getCalculatorList(): ArrayList<Calculator> {
+        return calculatorList
+    }
+
 }

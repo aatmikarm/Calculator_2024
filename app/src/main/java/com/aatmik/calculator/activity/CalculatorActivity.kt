@@ -23,7 +23,7 @@ class CalculatorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCalculatorBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //runAds()
+        runAds()
         // Get the calculator type passed from MainActivity
         val calculatorType = intent.getStringExtra("calculatorName")
         setUpCalculator(calculatorType)
@@ -52,7 +52,6 @@ class CalculatorActivity : AppCompatActivity() {
         MobileAds.initialize(this)
         adRequest = AdRequest.Builder().build()
         bannerAd()
-        interstitialAd()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -79,6 +78,12 @@ class CalculatorActivity : AppCompatActivity() {
                 }
             })
 
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // its much better this way
+        interstitialAd()
     }
 
     private fun bannerAd() {

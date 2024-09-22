@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.adapter.CalculatorAdapter
 import com.aatmik.calculator.databinding.ActivityMainBinding
@@ -45,7 +46,10 @@ class MainActivity : AppCompatActivity() {
         MobileAds.initialize(this)
         adRequest = AdRequest.Builder().build()
 
-        recyclerView()
+        // Load saved calculator order
+        loadCalculatorOrder()
+        //recyclerView()
+        setupRecyclerView()
         bannerAd()
         interstitialAd()
         search()
@@ -58,6 +62,32 @@ class MainActivity : AppCompatActivity() {
             intent?.let { startActivity(it) }
         }
     }
+
+    private fun loadCalculatorOrder() {
+        val sharedPreferences = getSharedPreferences("CalculatorPrefs", MODE_PRIVATE)
+        val savedOrder = sharedPreferences.getString("CalculatorOrder", null)
+
+        if (savedOrder != null) {
+            val orderedNames = savedOrder.split(",")
+            val orderedList = arrayListOf<Calculator>()
+
+            // Rebuild the calculator list based on saved order
+            for (name in orderedNames) {
+                val calculator = CalculatorUtils.calculatorList.find { it.name == name }
+                calculator?.let {
+                    orderedList.add(it)
+                }
+            }
+            // Update the adapter with the ordered list
+            //calculatorAdapter.updateCalculatorList(orderedList)
+            calculatorList = orderedList
+        } else {
+            // Load default list if no saved order exists
+            calculatorList = CalculatorUtils.calculatorList
+            //calculatorAdapter.updateCalculatorList(calculatorList)
+        }
+    }
+
 
     private fun search() {
         binding.searchEt.addTextChangedListener(object : TextWatcher {
@@ -108,7 +138,70 @@ class MainActivity : AppCompatActivity() {
             handleCalculatorSelection(calculator.name)
         }
         calculatorRV.adapter = calculatorAdapter
+        // Enable drag and drop functionality
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+            0
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder,
+            ): Boolean {
+                val fromPosition = viewHolder.adapterPosition
+                val toPosition = target.adapterPosition
+                calculatorAdapter.swapItems(fromPosition, toPosition)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                // No swiping action required for now
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(calculatorRV)
     }
+
+
+    private fun setupRecyclerView() {
+        calculatorRV = binding.calculatorRV
+        calculatorRV.layoutManager = GridLayoutManager(this, GRID_COLUMN_COUNT)
+
+        calculatorAdapter = CalculatorAdapter(calculatorList) { calculator ->
+            showToast("Clicked: ${calculator.name}")
+            handleCalculatorSelection(calculator.name)
+        }
+
+        calculatorRV.adapter = calculatorAdapter
+
+        // Set up drag-and-drop functionality
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+            0 // No swipe
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder,
+            ): Boolean {
+                val fromPosition = viewHolder.adapterPosition
+                val toPosition = target.adapterPosition
+
+                // Swap items in the adapter
+                calculatorAdapter.swapItems(fromPosition, toPosition)
+                saveCalculatorOrder()
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                // Not handling swipe actions, so do nothing here
+            }
+        })
+
+        itemTouchHelper.attachToRecyclerView(calculatorRV)
+    }
+
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -180,5 +273,25 @@ class MainActivity : AppCompatActivity() {
     private fun bannerAd() {
         binding.bannerAd1.loadAd(adRequest)
     }
+
+    private fun saveCalculatorOrder() {
+        val sharedPreferences = getSharedPreferences("CalculatorPrefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        // Get the current list of calculators from the adapter
+        val updatedCalculatorList = calculatorAdapter.getCalculatorList()
+
+        // Convert the list to a string and save it
+        val order = updatedCalculatorList.joinToString(",") { it.name }
+        editor.putString("CalculatorOrder", order)
+        editor.apply() // Save changes
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Save the calculator order when the activity is stopped
+        saveCalculatorOrder()
+    }
+
 
 }

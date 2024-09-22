@@ -1,8 +1,38 @@
 package com.aatmik.calculator.util
 
-import kotlin.math.*
+import java.text.NumberFormat
+import java.util.Locale
+import kotlin.math.cos
+import kotlin.math.ln
+import kotlin.math.log10
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.tan
 
 object CalculationUtil {
+
+    fun formatNumberWithCommas(number: Double): String {
+        val numberFormat =
+            NumberFormat.getNumberInstance(Locale.US) // or Locale("en", "IN") for Indian format
+        return numberFormat.format(number)
+    }
+
+    // Function to format the string with commas
+    fun formatWithCommas(number: String): String {
+        return try {
+            // Parse the input string to a double, then format it with commas
+            val parsedNumber = number.toDoubleOrNull()
+            if (parsedNumber != null) {
+                val formatter = NumberFormat.getInstance(Locale.US)
+                formatter.format(parsedNumber)
+            } else {
+                number // Return the original string if it can't be parsed to a number
+            }
+        } catch (e: Exception) {
+            number // Return the original input in case of any exception
+        }
+    }
+
     fun evaluate(input: String): Float {
         return object : Any() {
             var position = -1
