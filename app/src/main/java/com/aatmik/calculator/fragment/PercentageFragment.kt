@@ -147,39 +147,6 @@ class PercentageFragment : Fragment() {
         }
     }
 
-    private fun hideKeyboardFunctionality(view: View) {
-        // Set up the touch listener for non-text box views
-        view.setOnTouchListener { v, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                hideKeyboardOnOutsideTouch(v)
-            }
-            false
-        }
-    }
-
-    // Method to hide the keyboard
-    private fun hideKeyboardOnOutsideTouch(view: View) {
-        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        // Get the currently focused view (e.g., EditText)
-        val currentFocusView = activity?.currentFocus
-        if (currentFocusView != null) {
-            imm.hideSoftInputFromWindow(currentFocusView.windowToken, 0)
-            currentFocusView.clearFocus() // Clear focus to remove cursor from EditText
-        }
-    }
-
-
-    private fun animateView(view: View) {
-        // Use coroutine to stop the animation after 5 seconds
-        lifecycleScope.launch(Dispatchers.Main) {
-            var glowAnimator: ObjectAnimator? = null
-            // Start the glow animation and store the animator reference
-            glowAnimator = view.startGlowAnimation()
-            delay(3000)  // Wait for 5 seconds
-            view.stopGlowAnimation(glowAnimator)  // Stop the animation after delay
-        }
-    }
-
     private fun calculatePercentage() {
         binding.apply {
             val originalAmountStr = etOriginalAmount.text.toString()
@@ -224,6 +191,34 @@ class PercentageFragment : Fragment() {
         val inputMethodManager =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
+    private fun hideKeyboardFunctionality(view: View) {
+        // Set up the touch listener for non-text box views
+        view.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val imm =
+                    activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                // Get the currently focused view (e.g., EditText)
+                val currentFocusView = activity?.currentFocus
+                if (currentFocusView != null) {
+                    imm.hideSoftInputFromWindow(currentFocusView.windowToken, 0)
+                    currentFocusView.clearFocus() // Clear focus to remove cursor from EditText
+                }
+            }
+            false
+        }
+    }
+
+    private fun animateView(view: View) {
+        // Use coroutine to stop the animation after 5 seconds
+        lifecycleScope.launch(Dispatchers.Main) {
+            var glowAnimator: ObjectAnimator? = null
+            // Start the glow animation and store the animator reference
+            glowAnimator = view.startGlowAnimation()
+            delay(3000)  // Wait for 5 seconds
+            view.stopGlowAnimation(glowAnimator)  // Stop the animation after delay
+        }
     }
 
     companion object {

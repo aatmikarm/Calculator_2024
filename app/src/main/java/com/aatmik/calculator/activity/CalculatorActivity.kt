@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.aatmik.calculator.R
 import com.aatmik.calculator.databinding.ActivityCalculatorBinding
+import com.aatmik.calculator.fragment.AgeFragment
 import com.aatmik.calculator.fragment.BasicCalculatorFragment
 import com.aatmik.calculator.fragment.CounterFragment
 import com.aatmik.calculator.fragment.PercentageFragment
@@ -23,7 +24,7 @@ class CalculatorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCalculatorBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //runAds()
+        runAds()
         // Get the calculator type passed from MainActivity
         val calculatorType = intent.getStringExtra("calculatorName")
         setUpCalculator(calculatorType)
@@ -36,6 +37,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Convertor" -> loadFragment(CounterFragment())
                 "Stopwatch" -> loadFragment(StopwatchFragment())
                 "Percentage" -> loadFragment(PercentageFragment())
+                "Age" -> loadFragment(AgeFragment())
                 // Add more fragments as needed
                 else -> loadFragment(BasicCalculatorFragment()) // Default fragment
             }
