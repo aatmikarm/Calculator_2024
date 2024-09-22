@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.aatmik.calculator.databinding.FragmentPercentageBinding
 
@@ -40,19 +41,35 @@ class PercentageFragment : Fragment() {
 
                 // Check if inputs are valid (not empty)
                 if (originalAmountStr.isNotEmpty() && percentageStr.isNotEmpty()) {
-                    // Parse input to Double
                     val originalAmount = originalAmountStr.toDouble()
                     val percentage = percentageStr.toDouble()
 
-                    // Calculate percentage
-                    val result = (originalAmount * percentage) / 100
+                    // Calculated percentage of the original amount
+                    val percentageOfAmount = (originalAmount * percentage) / 100
 
-                    // Display result
-                    tvResult.text = "Result: $result"
+                    // Remaining amount after subtracting percentage
+                    val remainingAmount = originalAmount - percentageOfAmount
+
+                    // Original amount after adding the percentage
+                    val amountWithAddedPercentage = originalAmount + percentageOfAmount
+
+                    // Fraction representation of percentage
+                    val fractionRepresentation = "$percentage% = 1/${100 / percentage}"
+
+                    // Multiplication factor (percentage divided by 100)
+                    val multiplicationFactor = percentage / 100
+
+                    // Display all the results in TextViews
+                    tvPercentageValue.text = "$percentageOfAmount"
+                    tvRemainingValue.text = "$remainingAmount"
+                    tvAmountWithAddedValue.text = "$amountWithAddedPercentage"
+                    tvFractionValue.text = "$fractionRepresentation"
+                    tvMultiplicationValue.text = "$multiplicationFactor"
                 } else {
                     // Show error if inputs are invalid
-                    tvResult.text = "Please enter both fields."
+                    Toast.makeText(context, "Please enter both fields.", Toast.LENGTH_SHORT).show()
                 }
+
             }
         }
     }
