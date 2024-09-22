@@ -23,7 +23,7 @@ class CalculatorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCalculatorBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        runAds()
+        //runAds()
         // Get the calculator type passed from MainActivity
         val calculatorType = intent.getStringExtra("calculatorName")
         setUpCalculator(calculatorType)
@@ -64,21 +64,24 @@ class CalculatorActivity : AppCompatActivity() {
     }
 
     private fun interstitialAd() {
-        InterstitialAd.load(this,
-            "ca-app-pub-3940256099942544/1033173712",
-            adRequest,
-            object : InterstitialAdLoadCallback() {
-                override fun onAdFailedToLoad(adError: LoadAdError) {
-                    // mInterstitialAd = null
-                }
+        if (::adRequest.isInitialized) {
+            InterstitialAd.load(this,
+                "ca-app-pub-3940256099942544/1033173712",
+                adRequest,
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        // mInterstitialAd = null
+                    }
 
-                override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                    interstitialAd1 = interstitialAd
-                    interstitialAd.show(this@CalculatorActivity)
-                }
-            })
+                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                        interstitialAd1 = interstitialAd
+                        interstitialAd.show(this@CalculatorActivity)
+                    }
+                })
+        }
 
     }
+
 
     override fun onStop() {
         super.onStop()
@@ -87,7 +90,9 @@ class CalculatorActivity : AppCompatActivity() {
     }
 
     private fun bannerAd() {
-        binding.bannerAd1.loadAd(adRequest)
+        if (::adRequest.isInitialized) {
+            binding.bannerAd1.loadAd(adRequest)
+        }
     }
 
 

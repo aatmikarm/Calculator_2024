@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -40,6 +41,7 @@ class PercentageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         animateView(binding.percentageLayout)
+        hideKeyboardFunctionality(view)
 
         binding.apply {
             backIv.setOnClickListener {
@@ -129,6 +131,40 @@ class PercentageFragment : Fragment() {
                 }
             }
 
+            // Set up the editor action listener to handle "Done" action
+            etPercentage.setOnEditorActionListener { _, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE ||
+                    (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+                ) {
+                    hideKeyboard() // Move focus to etPercentage
+                    true // Indicate that the event was handled
+                } else {
+                    hideKeyboard()
+                    false // Not handled
+                }
+            }
+
+        }
+    }
+
+    private fun hideKeyboardFunctionality(view: View) {
+        // Set up the touch listener for non-text box views
+        view.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                hideKeyboardOnOutsideTouch(v)
+            }
+            false
+        }
+    }
+
+    // Method to hide the keyboard
+    private fun hideKeyboardOnOutsideTouch(view: View) {
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        // Get the currently focused view (e.g., EditText)
+        val currentFocusView = activity?.currentFocus
+        if (currentFocusView != null) {
+            imm.hideSoftInputFromWindow(currentFocusView.windowToken, 0)
+            currentFocusView.clearFocus() // Clear focus to remove cursor from EditText
         }
     }
 
