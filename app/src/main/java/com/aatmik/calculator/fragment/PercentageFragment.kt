@@ -54,7 +54,7 @@ class PercentageFragment : Fragment() {
                     val amountWithAddedPercentage = originalAmount + percentageOfAmount
 
                     // Fraction representation of percentage
-                    val fractionRepresentation = "$percentage% = 1/${100 / percentage}"
+                    val fractionRepresentation = "1/${100 / percentage}"
 
                     // Multiplication factor (percentage divided by 100)
                     val multiplicationFactor = percentage / 100
