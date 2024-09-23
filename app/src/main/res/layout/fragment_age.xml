@@ -130,7 +130,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="10dp"
                         android:paddingVertical="20dp"
-                        android:text="03 Nov 1999"
+                        android:text="02 Feb 2017"
                         android:textColor="@color/colorPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold" />

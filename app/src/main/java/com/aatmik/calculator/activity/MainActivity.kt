@@ -1,6 +1,7 @@
 package com.aatmik.calculator.activity
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.adapter.CalculatorAdapter
 import com.aatmik.calculator.databinding.ActivityMainBinding
+import com.aatmik.calculator.databinding.BottomSheetLayoutBinding
 import com.aatmik.calculator.model.Calculator
 import com.aatmik.calculator.util.CalculatorUtils
 import com.google.android.gms.ads.AdRequest
@@ -20,6 +22,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -55,12 +58,58 @@ class MainActivity : AppCompatActivity() {
         search()
 
         binding.menuIv.setOnClickListener {
-            showToast("menu clicked")
+            //showToast("menu clicked")
+            showBottomSheet()
         }
         binding.calculatorCv.setOnClickListener {
             val intent = Intent(this, CalculatorActivity::class.java)
             intent?.let { startActivity(it) }
         }
+    }
+
+    private fun showBottomSheet() {
+        val bottomSheetDialog = BottomSheetDialog(this)
+        val bottomSheetBinding = BottomSheetLayoutBinding.inflate(layoutInflater)
+
+
+        bottomSheetBinding.rateApp.setOnClickListener {
+            rateApp()
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetBinding.btnRemoveAds.setOnClickListener {
+            removeAds()
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetBinding.btnGetUpdate.setOnClickListener {
+            getUpdate()
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetDialog.setContentView(bottomSheetBinding.root)
+        bottomSheetDialog.show()
+    }
+
+    private fun rateApp() {
+        val appPackageName = "com.aatmik.calculator"
+        startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName&showRating=true")
+            )
+        )
+    }
+
+    private fun removeAds() {
+        // Implement your logic to remove ads or start premium subscription process
+        Toast.makeText(this, "Removing ads / Starting premium subscription", Toast.LENGTH_SHORT)
+            .show()
+    }
+
+    private fun getUpdate() {
+        // Implement your logic to check for and get new updates
+        Toast.makeText(this, "Checking for updates", Toast.LENGTH_SHORT).show()
     }
 
     private fun loadCalculatorOrder() {

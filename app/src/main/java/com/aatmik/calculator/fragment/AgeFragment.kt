@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -14,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.aatmik.calculator.R
 import com.aatmik.calculator.databinding.FragmentAgeBinding
 import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.coroutines.Dispatchers
@@ -48,6 +50,10 @@ class AgeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
+
+            //send default dob to UI
+            updateAgeCalculation(getDefaultDate())
+
             // Set current date as default for "Today"
             val currentDate = Calendar.getInstance().time
             val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
@@ -100,19 +106,30 @@ class AgeFragment : Fragment() {
     private fun showDatePicker() {
         val builder = MaterialDatePicker.Builder.datePicker()
         builder.setTitleText("Select Date of Birth")
+        // Apply the custom theme to the Material Date Picker
+        builder.setTheme(R.style.CustomMaterialDatePicker)
         val picker = builder.build()
 
         picker.addOnPositiveButtonClickListener { selection ->
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             calendar.timeInMillis = selection
-            val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("ddw MMM yyyy", Locale.getDefault())
             binding.dobTextView.text = dateFormat.format(calendar.time)
 
             // Here you can add logic to calculate and update the age
+            Log.d(TAG, "showDatePicker: time = ${calendar.time}")
             updateAgeCalculation(calendar.time)
         }
 
         picker.show(parentFragmentManager, picker.toString())
+
+    }
+
+    private fun getDefaultDate(): Date {
+        val calendar = Calendar.getInstance()
+        calendar.set(2017, Calendar.FEBRUARY, 2, 5, 30, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.time // This returns a Date object with the specified default date
     }
 
     private fun updateAgeCalculation(dob: Date) {

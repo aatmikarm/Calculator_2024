@@ -37,4 +37,12 @@
         <item name="android:layout_margin">6dp</item>
     </style>
 
+    <!-- Custom theme for the Material Date Picker -->
+    <style name="CustomMaterialDatePicker" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <!-- Background color for the dialog -->
+        <item name="android:background">@color/gray_light</item>
+        <!-- Button text color (Set your desired color) -->
+        <item name="colorOnPrimary">@color/colorPrimary</item>
+    </style>
+
 </resources>
