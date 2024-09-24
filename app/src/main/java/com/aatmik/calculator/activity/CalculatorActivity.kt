@@ -1,8 +1,10 @@
 package com.aatmik.calculator.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.aatmik.calculator.R
 import com.aatmik.calculator.databinding.ActivityCalculatorBinding
 import com.aatmik.calculator.fragment.AgeFragment
@@ -11,11 +13,15 @@ import com.aatmik.calculator.fragment.CounterFragment
 import com.aatmik.calculator.fragment.LengthFragment
 import com.aatmik.calculator.fragment.PercentageFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
+import com.aatmik.calculator.fragment.WeightFragment
+import com.aatmik.calculator.util.NetworkUtil
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CalculatorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCalculatorBinding
@@ -28,8 +34,13 @@ class CalculatorActivity : AppCompatActivity() {
         //runAds()
         // Get the calculator type passed from MainActivity
         val calculatorType = intent.getStringExtra("calculatorName")
-        setUpCalculator(calculatorType)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            setUpCalculator(calculatorType)
+        }
+
     }
+
 
     private fun setUpCalculator(calculatorType: String?) {
         if (supportFragmentManager.findFragmentById(R.id.calculatorFragmentContainer) == null) {
@@ -40,6 +51,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Percentage" -> loadFragment(PercentageFragment())
                 "Age" -> loadFragment(AgeFragment())
                 "Length" -> loadFragment(LengthFragment())
+                "Weight" -> loadFragment(WeightFragment())
                 // Add more fragments as needed
                 else -> loadFragment(BasicCalculatorFragment()) // Default fragment
             }
@@ -53,9 +65,16 @@ class CalculatorActivity : AppCompatActivity() {
     }
 
     private fun runAds() {
-        MobileAds.initialize(this)
-        adRequest = AdRequest.Builder().build()
-        bannerAd()
+
+        if (NetworkUtil.isNetworkAvailable(this)) {
+            MobileAds.initialize(this)
+            adRequest = AdRequest.Builder().build()
+            bannerAd()
+        } else {
+            // Handle the case where there's no network available
+            Log.d("NetworkCheck", "No internet connection available.")
+        }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -68,9 +87,12 @@ class CalculatorActivity : AppCompatActivity() {
     }
 
     private fun interstitialAd() {
+        val prod = "ca-app-pub-5678552217308395/9237780167"
+        val test = "ca-app-pub-3940256099942544/1033173712"
+
         if (::adRequest.isInitialized) {
             InterstitialAd.load(this,
-                "ca-app-pub-3940256099942544/1033173712",
+                test,
                 adRequest,
                 object : InterstitialAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {

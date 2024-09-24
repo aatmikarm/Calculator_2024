@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -17,6 +18,7 @@ import com.aatmik.calculator.databinding.ActivityMainBinding
 import com.aatmik.calculator.databinding.BottomSheetLayoutBinding
 import com.aatmik.calculator.model.Calculator
 import com.aatmik.calculator.util.CalculatorUtils
+import com.aatmik.calculator.util.NetworkUtil
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
@@ -45,16 +47,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        MobileAds.initialize(this)
-        adRequest = AdRequest.Builder().build()
-
-        // Load saved calculator order
+        runAds()
         loadCalculatorOrder()
-        //recyclerView()
         setupRecyclerView()
-        bannerAd()
-        interstitialAd()
         search()
 
         binding.menuIv.setOnClickListener {
@@ -65,6 +60,51 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, CalculatorActivity::class.java)
             intent?.let { startActivity(it) }
         }
+    }
+
+    private fun runAds() {
+
+        if (NetworkUtil.isNetworkAvailable(this)) {
+            MobileAds.initialize(this)
+            adRequest = AdRequest.Builder().build()
+            bannerAd()
+        } else {
+            // Handle the case where there's no network available
+            Log.d("NetworkCheck", "No internet connection available.")
+        }
+
+    }
+
+    private fun bannerAd() {
+        if (::adRequest.isInitialized) {
+            binding.bannerAd1.loadAd(adRequest)
+        }
+    }
+
+    private fun showInterstitialAd() {
+        interstitialAd1.show(this@MainActivity)
+    }
+
+    private fun interstitialAd() {
+        val prod = "ca-app-pub-5678552217308395/9237780167"
+        val test = "ca-app-pub-3940256099942544/1033173712"
+
+        if (::adRequest.isInitialized) {
+            InterstitialAd.load(this,
+                test,
+                adRequest,
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        // mInterstitialAd = null
+                    }
+
+                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                        interstitialAd1 = interstitialAd
+                        interstitialAd.show(this@MainActivity)
+                    }
+                })
+        }
+
     }
 
     private fun saveColorPreference(colorResId: Int) {
@@ -194,7 +234,7 @@ class MainActivity : AppCompatActivity() {
         calculatorRV.layoutManager = GridLayoutManager(this, GRID_COLUMN_COUNT)
         calculatorList = CalculatorUtils.calculatorList
         calculatorAdapter = CalculatorAdapter(calculatorList) { calculator ->
-            showToast("Clicked: ${calculator.name}")
+           // showToast("Clicked: ${calculator.name}")
             handleCalculatorSelection(calculator.name)
         }
         calculatorRV.adapter = calculatorAdapter
@@ -229,7 +269,7 @@ class MainActivity : AppCompatActivity() {
         calculatorRV.layoutManager = GridLayoutManager(this, GRID_COLUMN_COUNT)
 
         calculatorAdapter = CalculatorAdapter(calculatorList) { calculator ->
-            showToast("Clicked: ${calculator.name}")
+            //showToast("Clicked: ${calculator.name}")
             handleCalculatorSelection(calculator.name)
         }
 
@@ -295,6 +335,10 @@ class MainActivity : AppCompatActivity() {
                 putExtra("calculatorName", calculatorName)
             }
 
+            "Weight" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+
             else -> null
         }
 
@@ -315,31 +359,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             calculatorAdapter.filterList(filteredList)
         }
-    }
-
-
-    private fun showInterstitialAd() {
-        interstitialAd1.show(this@MainActivity)
-    }
-
-    private fun interstitialAd() {
-        InterstitialAd.load(this,
-            "ca-app-pub-3940256099942544/1033173712",
-            adRequest,
-            object : InterstitialAdLoadCallback() {
-                override fun onAdFailedToLoad(adError: LoadAdError) {
-                    // mInterstitialAd = null
-                }
-
-                override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                    interstitialAd1 = interstitialAd
-                }
-            })
-
-    }
-
-    private fun bannerAd() {
-        binding.bannerAd1.loadAd(adRequest)
     }
 
     private fun saveCalculatorOrder() {
