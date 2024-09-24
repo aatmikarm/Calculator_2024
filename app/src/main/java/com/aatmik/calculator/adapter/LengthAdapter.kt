@@ -9,9 +9,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.databinding.ItemUnitBinding
 import com.aatmik.calculator.model.LengthUnit
+import java.util.Collections
 
 class LengthAdapter(
-    private val units: List<LengthUnit>,
+    private val units: ArrayList<LengthUnit>,
     private val onValueChanged: (Int, String) -> Unit,
 ) : RecyclerView.Adapter<LengthAdapter.UnitViewHolder>() {
 
@@ -49,6 +50,11 @@ class LengthAdapter(
         }
     }
 
+    fun swapItems(fromPosition: Int, toPosition: Int) {
+        Collections.swap(units, fromPosition, toPosition)
+        notifyItemMoved(fromPosition, toPosition)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UnitViewHolder {
         val binding = ItemUnitBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return UnitViewHolder(binding)
@@ -70,5 +76,9 @@ class LengthAdapter(
         Handler(Looper.getMainLooper()).post {
             notifyItemChanged(position)
         }
+    }
+
+    fun getLengthUnitList(): ArrayList<LengthUnit> {
+        return units
     }
 }

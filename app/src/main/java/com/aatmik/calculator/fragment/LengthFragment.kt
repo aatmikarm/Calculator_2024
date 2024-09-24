@@ -4,17 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.adapter.LengthAdapter
 import com.aatmik.calculator.databinding.FragmentLengthBinding
 import com.aatmik.calculator.model.LengthUnit
+import com.aatmik.calculator.util.CalculatorUtils
 
 class LengthFragment : Fragment() {
 
     private lateinit var binding: FragmentLengthBinding
     private lateinit var adapter: LengthAdapter
-    private val units = mutableListOf<LengthUnit>()
+    private lateinit var units: ArrayList<LengthUnit>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -24,18 +28,45 @@ class LengthFragment : Fragment() {
         binding.backIv.setOnClickListener {
             activity?.onBackPressedDispatcher?.onBackPressed()
         }
-        initializeUnits()
+        loadCalculatorOrder()
         setupAddButton()
-        adapterCode()
+        recyclerViewCode()
     }
 
-    private fun adapterCode() {
+    private fun recyclerViewCode() {
         adapter = LengthAdapter(units) { position, newValue ->
             convertUnits(position, newValue)
         }
 
         binding.unitsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.unitsRecyclerView.adapter = adapter
+
+
+        // Set up drag-and-drop functionality
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+            0 // No swipe
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder,
+            ): Boolean {
+                val fromPosition = viewHolder.adapterPosition
+                val toPosition = target.adapterPosition
+
+                // Swap items in the adapter
+                adapter.swapItems(fromPosition, toPosition)
+                saveLengthOrder()
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                // Not handling swipe actions, so do nothing here
+            }
+        })
+
+        itemTouchHelper.attachToRecyclerView(binding.unitsRecyclerView)
 
     }
 
@@ -71,19 +102,49 @@ class LengthFragment : Fragment() {
         return binding.root
     }
 
-    private fun initializeUnits() {
-        units.apply {
-            add(LengthUnit("Meter", "m", 1.0))
-            add(LengthUnit("Kilometer", "km", 1000.0))
-            add(LengthUnit("Centimeter", "cm", 0.01))
-            add(LengthUnit("Millimeter", "mm", 0.001))
-            add(LengthUnit("Inch", "in", 0.0254))
-            add(LengthUnit("Foot", "ft", 0.3048))
-            add(LengthUnit("Yard", "yd", 0.9144))
-            add(LengthUnit("Mile", "mi", 1609.34))
+
+    private fun saveLengthOrder() {
+        val sharedPreferences =
+            requireContext().getSharedPreferences("CalculatorPrefs", AppCompatActivity.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        // Get the current list of units from the adapter
+        val updatedLengthList = adapter.getLengthUnitList()
+
+        // Convert the list to a string and save it
+        val order = updatedLengthList.joinToString(",") { it.name }
+        editor.putString("LengthUnitOrder", order)
+        editor.apply() // Save changes
+    }
+
+    private fun loadCalculatorOrder() {
+        val sharedPreferences =
+            requireContext().getSharedPreferences("CalculatorPrefs", AppCompatActivity.MODE_PRIVATE)
+        val savedOrder = sharedPreferences.getString("LengthUnitOrder", null)
+
+        if (savedOrder != null) {
+            val orderedNames = savedOrder.split(",")
+            val orderedList = arrayListOf<LengthUnit>()
+
+            // Rebuild the calculator list based on saved order
+            for (name in orderedNames) {
+                val calculator = CalculatorUtils.lengthUnitList.find { it.name == name }
+                calculator?.let {
+                    orderedList.add(it)
+                }
+            }
+            units = orderedList
+        } else {
+            // Load default list if no saved order exists
+            units = CalculatorUtils.lengthUnitList
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        // Save the calculator order when the activity is stopped
+        saveLengthOrder()
+    }
 
     companion object {
         private const val TAG = "LengthFragment"
