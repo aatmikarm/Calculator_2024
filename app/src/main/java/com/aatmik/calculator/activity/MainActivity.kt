@@ -67,6 +67,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun saveColorPreference(colorResId: Int) {
+        val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("colorPrimary", colorResId)
+        editor.apply()
+    }
+
+
     private fun showBottomSheet() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val bottomSheetBinding = BottomSheetLayoutBinding.inflate(layoutInflater)
@@ -84,6 +92,9 @@ class MainActivity : AppCompatActivity() {
 
         bottomSheetBinding.btnGetUpdate.setOnClickListener {
             getUpdate()
+            bottomSheetDialog.dismiss()
+        }
+        bottomSheetBinding.btnTheme.setOnClickListener {
             bottomSheetDialog.dismiss()
         }
 
@@ -277,6 +288,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             "Age" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+
+            "Length" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }
 

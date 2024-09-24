@@ -25,7 +25,7 @@
                 android:layout_height="16dp"
                 android:layout_margin="10dp"
                 android:backgroundTint="@color/white"
-                android:src="@drawable/star" />
+                android:src="@drawable/star_color" />
 
 
         </androidx.cardview.widget.CardView>
@@ -60,7 +60,7 @@
                 android:layout_height="16dp"
                 android:layout_margin="10dp"
                 android:backgroundTint="@color/white"
-                android:src="@drawable/lock_open" />
+                android:src="@drawable/premium_color" />
 
 
         </androidx.cardview.widget.CardView>
@@ -93,7 +93,7 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_margin="10dp"
-                android:src="@drawable/download" />
+                android:src="@drawable/download_two" />
 
 
         </androidx.cardview.widget.CardView>
@@ -104,6 +104,39 @@
             android:layout_gravity="center"
             android:layout_marginHorizontal="20dp"
             android:text="Update App"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btnTheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:backgroundTint="@color/gray_dark"
+            app:cardCornerRadius="10dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/theme" />
+
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="20dp"
+            android:text="Change Theme"
             android:textColor="@color/black"
             android:textSize="16sp" />
 

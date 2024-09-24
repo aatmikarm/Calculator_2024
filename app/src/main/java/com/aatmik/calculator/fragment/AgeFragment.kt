@@ -51,6 +51,10 @@ class AgeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
 
+            backIv.setOnClickListener {
+                activity?.onBackPressedDispatcher?.onBackPressed()
+            }
+
             //send default dob to UI
             updateAgeCalculation(getDefaultDate())
 

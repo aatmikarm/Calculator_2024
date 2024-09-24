@@ -6,6 +6,12 @@
     <color name="gray_light">#F0F1F6</color>
     <color name="gray_medium">#DEE1EC</color>
     <color name="gray_dark">#45454F</color>
-    <color name="colorPrimary">#FE7433</color>
+    <color name="colorPrimary">#009688</color>
     <color name="dayNightColor">#000000</color>
+
+
+    <!--Extra colors for color primary in themes-->
+    <color name="red">#F44336</color>
+    <color name="green">#4CAF50</color>
+    <color name="blue">#2196F3</color>
 </resources>

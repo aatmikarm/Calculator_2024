@@ -276,7 +276,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center"
                                         android:text="Next birthday"
-                                        android:textColor="#FF5722"
+                                        android:textColor="@color/colorPrimary"
                                         android:textSize="18sp" />
 
                                     <ImageView
@@ -320,7 +320,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:text="Summary"
-                                android:textColor="#FF5722"
+                                android:textColor="@color/colorPrimary"
                                 android:textSize="18sp" />
 
                             <GridLayout
