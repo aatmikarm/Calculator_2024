@@ -10,6 +10,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +26,8 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -47,10 +50,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        runAds()
-        loadCalculatorOrder()
-        setupRecyclerView()
-        search()
+        lifecycleScope.launch(Dispatchers.Main) {
+            runAds()
+            loadCalculatorOrder()
+            setupRecyclerView()
+            search()
+        }
 
         binding.menuIv.setOnClickListener {
             //showToast("menu clicked")
@@ -234,7 +239,7 @@ class MainActivity : AppCompatActivity() {
         calculatorRV.layoutManager = GridLayoutManager(this, GRID_COLUMN_COUNT)
         calculatorList = CalculatorUtils.calculatorList
         calculatorAdapter = CalculatorAdapter(calculatorList) { calculator ->
-           // showToast("Clicked: ${calculator.name}")
+            // showToast("Clicked: ${calculator.name}")
             handleCalculatorSelection(calculator.name)
         }
         calculatorRV.adapter = calculatorAdapter
@@ -372,12 +377,6 @@ class MainActivity : AppCompatActivity() {
         val order = updatedCalculatorList.joinToString(",") { it.name }
         editor.putString("CalculatorOrder", order)
         editor.apply() // Save changes
-    }
-
-    override fun onStop() {
-        super.onStop()
-        // Save the calculator order when the activity is stopped
-        saveCalculatorOrder()
     }
 
 

@@ -31,6 +31,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/search_icon"
                 android:padding="10dp"
                 android:src="@drawable/search" />
 
@@ -39,6 +40,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:autofillHints="length"
                 android:background="@drawable/transparent"
                 android:focusableInTouchMode="true"
                 android:hint="@string/searchEtHint"
@@ -154,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="10dp"
-                android:text="Calculator"
+                android:text="@string/calculator"
                 android:textColor="@color/white"
                 android:textSize="14sp" />
 

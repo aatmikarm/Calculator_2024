@@ -638,6 +638,7 @@
     <string name="short_ton">Short ton (st)</string>
     <string name="favorites">FAVORITES</string>
     <string name="searchEtHint">Search</string>
+    <string name="search_icon">search icon</string>
 
     <string-array name="weight">
         <item>@string/microgram</item>
