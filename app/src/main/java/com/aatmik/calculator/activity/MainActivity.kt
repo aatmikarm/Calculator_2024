@@ -106,13 +106,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun saveColorPreference(colorResId: Int) {
-        val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putInt("colorPrimary", colorResId)
-        editor.apply()
-    }
-
 
     private fun showBottomSheet() {
         val bottomSheetDialog = BottomSheetDialog(this)
@@ -228,40 +221,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun recyclerView() {
-        calculatorRV = binding.calculatorRV
-        calculatorRV.layoutManager = GridLayoutManager(this, GRID_COLUMN_COUNT)
-        calculatorList = CalculatorUtils.calculatorList
-        calculatorAdapter = CalculatorAdapter(calculatorList) { calculator ->
-            // showToast("Clicked: ${calculator.name}")
-            handleCalculatorSelection(calculator.name)
-        }
-        calculatorRV.adapter = calculatorAdapter
-        // Enable drag and drop functionality
-        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
-            0
-        ) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder,
-            ): Boolean {
-                val fromPosition = viewHolder.adapterPosition
-                val toPosition = target.adapterPosition
-                calculatorAdapter.swapItems(fromPosition, toPosition)
-                return true
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                // No swiping action required for now
-            }
-        }
-
-        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
-        itemTouchHelper.attachToRecyclerView(calculatorRV)
-    }
-
 
     private fun setupRecyclerView() {
         calculatorRV = binding.calculatorRV
@@ -299,12 +258,6 @@ class MainActivity : AppCompatActivity() {
         })
 
         itemTouchHelper.attachToRecyclerView(calculatorRV)
-    }
-
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-
     }
 
 
