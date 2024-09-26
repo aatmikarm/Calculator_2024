@@ -33,6 +33,8 @@ import java.util.TimeZone
 
 class AgeFragment : Fragment() {
 
+    private var isDatePickerOpen = false // Flag to track if picker is open
+
     private lateinit var binding: FragmentAgeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,21 +110,31 @@ class AgeFragment : Fragment() {
     }
 
     private fun showDatePicker() {
+        if (isDatePickerOpen) return // Prevent opening multiple instances
         val builder = MaterialDatePicker.Builder.datePicker()
         builder.setTitleText("Select Date of Birth")
         // Apply the custom theme to the Material Date Picker
         builder.setTheme(R.style.CustomMaterialDatePicker)
         val picker = builder.build()
 
+        // Set the flag when the picker is shown
+        isDatePickerOpen = true
+
         picker.addOnPositiveButtonClickListener { selection ->
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             calendar.timeInMillis = selection
-            val dateFormat = SimpleDateFormat("ddw MMM yyyy", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
             binding.dobTextView.text = dateFormat.format(calendar.time)
 
             // Here you can add logic to calculate and update the age
             Log.d(TAG, "showDatePicker: time = ${calendar.time}")
             updateAgeCalculation(calendar.time)
+        }
+
+
+        // Reset the flag when the picker is dismissed or a date is selected
+        picker.addOnDismissListener {
+            isDatePickerOpen = false
         }
 
         picker.show(parentFragmentManager, picker.toString())
