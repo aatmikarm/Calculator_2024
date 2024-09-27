@@ -35,10 +35,23 @@ class CalculatorActivity : AppCompatActivity() {
         // Get the calculator type passed from MainActivity
         val calculatorType = intent.getStringExtra("calculatorName")
 
+        if (calculatorType == "Stopwatch") {
+            normalLaunch(calculatorType)
+        } else {
+            coroutineLaunch(calculatorType)
+        }
+
+
+    }
+
+    private fun coroutineLaunch(calculatorType: String?) {
         lifecycleScope.launch(Dispatchers.IO) {
             setUpCalculator(calculatorType)
         }
+    }
 
+    private fun normalLaunch(calculatorType: String) {
+        setUpCalculator(calculatorType)
     }
 
 

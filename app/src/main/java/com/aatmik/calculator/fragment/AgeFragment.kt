@@ -49,7 +49,6 @@ class AgeFragment : Fragment() {
     private lateinit var sharedPreferences: SharedPreferences
     private val ageListKey = "AGE_LIST"
 
-    private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: AgeHistoryAdapter
 
     private lateinit var binding: FragmentAgeBinding

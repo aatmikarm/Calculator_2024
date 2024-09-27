@@ -45,4 +45,37 @@
         <item name="colorOnPrimary">@color/colorPrimary</item>
     </style>
 
+    <style name="fabBigInv">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="backgroundTint">@color/colorPrimary</item>
+        <item name="borderWidth">0dp</item>
+        <item name="fabSize">mini</item>
+        <item name="android:visibility">invisible</item>
+        <item name="android:enabled">false</item>
+    </style>
+
+    <style name="line">
+        <item name="android:layout_width">370dp</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@color/dayNightColor</item>
+    </style>
+
+    <style name="fabBig">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="backgroundTint">@color/colorPrimary</item>
+        <item name="borderWidth">0dp</item>
+        <item name="fabSize">mini</item>
+    </style>
+
+    <style name="tvStyle">
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/dayNightColor</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="fontFamily">sans-serif-light</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:maxLines">1</item>
+    </style>
 </resources>
