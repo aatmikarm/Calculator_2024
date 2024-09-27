@@ -3,6 +3,7 @@ package com.aatmik.calculator.fragment
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
@@ -12,11 +13,19 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.R
+import com.aatmik.calculator.adapter.AgeHistoryAdapter
+import com.aatmik.calculator.databinding.DialogSaveUserBinding
 import com.aatmik.calculator.databinding.FragmentAgeBinding
+import com.aatmik.calculator.viewmodel.AgeViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -34,8 +43,14 @@ import java.util.TimeZone
 class AgeFragment : Fragment() {
 
     private var isDatePickerOpen = false // Flag to track if picker is open
+    private lateinit var sharedPreferences: SharedPreferences
+    private val ageListKey = "AGE_LIST"
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: AgeHistoryAdapter
 
     private lateinit var binding: FragmentAgeBinding
+    private lateinit var ageViewModel: AgeViewModel // Declare ViewModel variable
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,11 +61,20 @@ class AgeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         binding = FragmentAgeBinding.inflate(inflater, container, false)
+        // Initialize SharedPreferences here
+        sharedPreferences =
+            requireActivity().getSharedPreferences("age_history", Context.MODE_PRIVATE)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Initialize the ViewModel using ViewModelProvider
+        ageViewModel = ViewModelProvider(this).get(AgeViewModel::class.java)
+
+
         binding.apply {
 
             backIv.setOnClickListener {
@@ -72,7 +96,153 @@ class AgeFragment : Fragment() {
             shareBt.setOnClickListener {
                 captureAndShareScreenshot()
             }
+
+            // Display saved age history
+            displayAgeHistory()
+
+            swipeDelete()
         }
+    }
+
+    private fun swipeDelete() {
+        // Set up ItemTouchHelper for swipe-to-delete
+        val itemTouchHelperCallback = object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder,
+            ): Boolean {
+                return false // We are not implementing drag-and-drop here
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val age = adapter.getItem(position)
+
+                // Remove the item from adapter and shared preferences
+                adapter.removeItem(position)
+                removeAgeFromHistory(age)
+            }
+        }
+
+        // Attach the ItemTouchHelper to the RecyclerView
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(binding.ageHistoryRecyclerView)
+    }
+
+    private fun removeAgeFromHistory(age: String) {
+        val ageHistory = getAgeHistory() // Get the current age history
+        if (ageHistory.contains(age)) {
+            ageHistory.remove(age) // Remove the specified age from the list
+            saveAgeHistory(ageHistory) // Save the updated list back to SharedPreferences
+        }
+    }
+
+    private fun saveAgeHistory(ageList: List<String>) {
+        val updatedAges = ageList.joinToString(",") // Convert list back to comma-separated string
+        sharedPreferences.edit().putString(ageListKey, updatedAges).apply() // Save the updated list
+    }
+
+    // Step 1: Display Dialog for User Information (Name)
+    private fun showUserInfoDialog(dob: Date, age: Int) {
+        val dialogBinding = DialogSaveUserBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Enter User Information")
+            .setView(dialogBinding.root)
+            .setPositiveButton("Save") { dialog, _ ->
+                val userName = dialogBinding.etUserName.text.toString()
+                if (userName.isNotEmpty()) {
+                    // Save the name, dob, and age to history
+                    saveAgeToHistory(userName, dob, age)
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+
+        dialog.show()
+    }
+
+    // Step 2: Save User Data (Name, DOB, Age)
+    /* private fun saveAgeToHistory(userName: String, dob: Date, age: Int) {
+         val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+         val dobString = dateFormat.format(dob)
+
+         // Create the user info string
+         val userInfo = "$userName - DOB: $dobString - Age: $age"
+
+         val ageList = getAgeHistory().toMutableList()
+         ageList.add(userInfo)
+
+         val editor = sharedPreferences.edit()
+         editor.putString(
+             ageListKey,
+             ageList.joinToString(",")
+         ) // Save list as comma-separated string
+         editor.apply()
+
+         // Update RecyclerView
+         displayAgeHistory()
+     }*/
+
+    private fun saveAgeToHistory(userName: String, dob: Date, age: Int) {
+        val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        val dobString = dateFormat.format(dob)
+
+        // Create the user info string
+        val userInfo = "$userName - DOB: $dobString - Age: $age"
+
+        // Fetch the current age list from shared preferences
+        val ageList = getAgeHistory().toMutableList()
+
+        // Add the new user info to the list
+        ageList.add(userInfo)
+
+        // Save the updated list back to SharedPreferences
+        val editor = sharedPreferences.edit()
+        editor.putString(
+            ageListKey,
+            ageList.joinToString(",") // Convert list to a comma-separated string
+        )
+        editor.apply()
+
+        // Notify RecyclerView adapter that data has changed
+        adapter.updateList(ageList)
+    }
+
+
+    // Step 3: Retrieve Age History
+    private fun getAgeHistory(): MutableList<String> {
+        val savedAges = sharedPreferences.getString(ageListKey, "") ?: ""
+        return if (savedAges.isNotEmpty()) {
+            savedAges.split(",").toMutableList() // Convert to MutableList
+        } else {
+            mutableListOf() // Return empty MutableList instead of emptyList()
+        }
+    }
+
+
+    private fun displayAgeHistory() {
+        val ageList = getAgeHistory() // Ensure this returns a valid list
+
+        if (ageList.isEmpty()) {
+            // Show the TextView and hide the RecyclerView
+            binding.ageHistoryTextView.visibility = View.VISIBLE
+            binding.ageHistoryRecyclerView.visibility = View.GONE
+        } else {
+            // Hide the TextView and show the RecyclerView
+            binding.ageHistoryTextView.visibility = View.GONE
+            binding.ageHistoryRecyclerView.visibility = View.VISIBLE
+
+            adapter = AgeHistoryAdapter(ageList)
+            binding.ageHistoryRecyclerView.layoutManager = LinearLayoutManager(context)
+            binding.ageHistoryRecyclerView.adapter = adapter
+        }
+
+        Log.d(TAG, "Age List Size: ${ageList.size}")
     }
 
     private fun captureAndShareScreenshot() {
@@ -126,11 +296,23 @@ class AgeFragment : Fragment() {
             val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
             binding.dobTextView.text = dateFormat.format(calendar.time)
 
-            // Here you can add logic to calculate and update the age
+            // Calculate and update the age
             Log.d(TAG, "showDatePicker: time = ${calendar.time}")
             updateAgeCalculation(calendar.time)
-        }
 
+            // Calculate age
+            val today = Calendar.getInstance()
+            val birthDate = Calendar.getInstance()
+            birthDate.time = calendar.time
+
+            var age = today.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR)
+            if (today.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
+                age--
+            }
+
+            // Show dialog to enter user name
+            showUserInfoDialog(calendar.time, age)
+        }
 
         // Reset the flag when the picker is dismissed or a date is selected
         picker.addOnDismissListener {
@@ -138,8 +320,8 @@ class AgeFragment : Fragment() {
         }
 
         picker.show(parentFragmentManager, picker.toString())
-
     }
+
 
     private fun getDefaultDate(): Date {
         val calendar = Calendar.getInstance()
