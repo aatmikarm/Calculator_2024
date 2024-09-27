@@ -331,7 +331,7 @@ class BasicCalculatorFragment : Fragment() {
         }
 
         // Format the result to 6 decimal places
-        val formattedResult = String.format("%.9f", result)
+        val formattedResult = String.format("%.12f", result)
 
         // Check if we are in inverse mode and append degree symbol accordingly
         val displayResult =

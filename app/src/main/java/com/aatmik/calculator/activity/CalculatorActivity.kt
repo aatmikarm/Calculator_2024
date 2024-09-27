@@ -14,6 +14,7 @@ import com.aatmik.calculator.fragment.LengthFragment
 import com.aatmik.calculator.fragment.PercentageFragment
 import com.aatmik.calculator.fragment.SpeedFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
+import com.aatmik.calculator.fragment.TipFragment
 import com.aatmik.calculator.fragment.WeightFragment
 import com.aatmik.calculator.util.NetworkUtil
 import com.google.android.gms.ads.AdRequest
@@ -67,6 +68,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Length" -> loadFragment(LengthFragment())
                 "Weight" -> loadFragment(WeightFragment())
                 "Speed" -> loadFragment(SpeedFragment())
+                "Tip" -> loadFragment(TipFragment())
                 // Add more fragments as needed
                 else -> loadFragment(BasicCalculatorFragment()) // Default fragment
             }

@@ -473,7 +473,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_marginTop="16dp"
-                                android:text="Powered by Aatmik Calculator 2024"
+                                android:text="@string/powered_by"
                                 android:textColor="#808080"
                                 android:textSize="10sp" />
 

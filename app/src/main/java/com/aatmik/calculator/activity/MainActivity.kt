@@ -89,19 +89,16 @@ class MainActivity : AppCompatActivity() {
         val test = "ca-app-pub-3940256099942544/1033173712"
 
         if (::adRequest.isInitialized) {
-            InterstitialAd.load(this,
-                test,
-                adRequest,
-                object : InterstitialAdLoadCallback() {
-                    override fun onAdFailedToLoad(adError: LoadAdError) {
-                        // mInterstitialAd = null
-                    }
+            InterstitialAd.load(this, test, adRequest, object : InterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    // mInterstitialAd = null
+                }
 
-                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                        interstitialAd1 = interstitialAd
-                        interstitialAd.show(this@MainActivity)
-                    }
-                })
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    interstitialAd1 = interstitialAd
+                    interstitialAd.show(this@MainActivity)
+                }
+            })
         }
 
     }
@@ -292,6 +289,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             "Speed" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+
+            "Tip" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }
 
