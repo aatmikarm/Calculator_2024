@@ -3,6 +3,7 @@ package com.aatmik.calculator.util
 import com.aatmik.calculator.R
 import com.aatmik.calculator.model.Calculator
 import com.aatmik.calculator.model.LengthUnit
+import com.aatmik.calculator.model.SpeedUnit
 import com.aatmik.calculator.model.WeightUnit
 
 object CalculatorUtils {
@@ -17,6 +18,10 @@ object CalculatorUtils {
 
     val weightUnitList: ArrayList<WeightUnit> by lazy {
         createWeightList()
+    }
+
+    val speedUnitList: ArrayList<SpeedUnit> by lazy {
+        createSpeedList()
     }
 
     private fun createCalculatorList(): ArrayList<Calculator> {
@@ -68,6 +73,19 @@ object CalculatorUtils {
             WeightUnit("Imperial Ton", "ton", 1016.05),
             WeightUnit("US Ton", "ton", 907.185),
             WeightUnit("Carat", "ct", 0.0002),
+        )
+    }
+
+    private fun createSpeedList(): ArrayList<SpeedUnit> {
+        return arrayListOf(
+            SpeedUnit("Meters per second", "m/s", 1.0),
+            SpeedUnit("Kilometers per hour", "km/h", 0.277778),
+            SpeedUnit("Miles per hour", "mph", 0.44704),
+            SpeedUnit("Feet per second", "ft/s", 0.3048),
+            SpeedUnit("Knot", "kn", 0.514444),
+            SpeedUnit("Mach (at sea level)", "Mach", 340.29),
+            SpeedUnit("Centimeters per second", "cm/s", 0.01),
+            SpeedUnit("Inches per second", "in/s", 0.0254)
         )
     }
 

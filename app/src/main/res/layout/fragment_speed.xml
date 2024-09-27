@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.LengthFragment">
+    tools:context=".fragment.SpeedFragment">
 
     <LinearLayout
         android:id="@+id/linearLayout5"
@@ -78,7 +78,7 @@
                             android:layout_width="35dp"
                             android:layout_height="35dp"
                             android:layout_margin="15dp"
-                            android:src="@drawable/length"
+                            android:src="@drawable/speed"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -96,7 +96,7 @@
                     android:layout_marginHorizontal="10dp"
                     android:layout_marginVertical="20dp"
                     android:gravity="center"
-                    android:text="Length"
+                    android:text="Speed"
                     android:textSize="23sp" />
 
 
@@ -112,7 +112,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/unitsRecyclerView"
+                    android:id="@+id/speedRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp" />

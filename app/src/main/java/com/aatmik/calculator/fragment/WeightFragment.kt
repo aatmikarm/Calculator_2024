@@ -30,7 +30,6 @@ class WeightFragment : Fragment() {
             activity?.onBackPressedDispatcher?.onBackPressed()
         }
         loadCalculatorOrder()
-        setupAddButton()
         recyclerViewCode()
     }
 
@@ -84,12 +83,6 @@ class WeightFragment : Fragment() {
                 unit.value = formattedValue
                 adapter.updateUnit(index, formattedValue)
             }
-        }
-    }
-
-    private fun setupAddButton() {
-        binding.addButton.setOnClickListener {
-            // Implement add unit functionality
         }
     }
 
