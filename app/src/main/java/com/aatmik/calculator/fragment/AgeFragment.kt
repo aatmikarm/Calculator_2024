@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -124,6 +127,71 @@ class AgeFragment : Fragment() {
                 adapter.removeItem(position)
                 removeAgeFromHistory(age)
             }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean,
+            ) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    val itemView = viewHolder.itemView
+                    val icon = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_delete
+                    ) // Your delete icon
+                    val backgroundColor = ColorDrawable(Color.RED) // Red background
+
+                    // Calculate bounds for the icon and background
+                    val iconMargin = (itemView.height - icon!!.intrinsicHeight) / 2
+                    val iconTop = itemView.top + iconMargin
+                    val iconBottom = iconTop + icon.intrinsicHeight
+
+                    if (dX < 0) { // Swiping left
+                        val iconLeft = itemView.right - iconMargin - icon.intrinsicWidth
+                        val iconRight = itemView.right - iconMargin
+                        icon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+
+                        backgroundColor.setBounds(
+                            itemView.right + dX.toInt(),
+                            itemView.top,
+                            itemView.right,
+                            itemView.bottom
+                        )
+                    } else if (dX > 0) { // Swiping right
+                        val iconLeft = itemView.left + iconMargin
+                        val iconRight = itemView.left + iconMargin + icon.intrinsicWidth
+                        icon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+
+                        backgroundColor.setBounds(
+                            itemView.left,
+                            itemView.top,
+                            itemView.left + dX.toInt(),
+                            itemView.bottom
+                        )
+                    } else { // No swipe (reset bounds)
+                        backgroundColor.setBounds(0, 0, 0, 0)
+                    }
+
+                    // Draw the background and icon
+                    backgroundColor.draw(c)
+                    icon.draw(c)
+                }
+
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+            }
+
         }
 
         // Attach the ItemTouchHelper to the RecyclerView
@@ -166,28 +234,6 @@ class AgeFragment : Fragment() {
         dialog.show()
     }
 
-    // Step 2: Save User Data (Name, DOB, Age)
-    /* private fun saveAgeToHistory(userName: String, dob: Date, age: Int) {
-         val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-         val dobString = dateFormat.format(dob)
-
-         // Create the user info string
-         val userInfo = "$userName - DOB: $dobString - Age: $age"
-
-         val ageList = getAgeHistory().toMutableList()
-         ageList.add(userInfo)
-
-         val editor = sharedPreferences.edit()
-         editor.putString(
-             ageListKey,
-             ageList.joinToString(",")
-         ) // Save list as comma-separated string
-         editor.apply()
-
-         // Update RecyclerView
-         displayAgeHistory()
-     }*/
-
     private fun saveAgeToHistory(userName: String, dob: Date, age: Int) {
         val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
         val dobString = dateFormat.format(dob)
@@ -209,8 +255,7 @@ class AgeFragment : Fragment() {
         )
         editor.apply()
 
-        // Notify RecyclerView adapter that data has changed
-        adapter.updateList(ageList)
+        displayAgeHistory()
     }
 
 
@@ -237,7 +282,11 @@ class AgeFragment : Fragment() {
             binding.ageHistoryTextView.visibility = View.GONE
             binding.ageHistoryRecyclerView.visibility = View.VISIBLE
 
-            adapter = AgeHistoryAdapter(ageList)
+            adapter = AgeHistoryAdapter(ageList) {
+                // Handle item click here
+                Log.d(TAG, "displayAgeHistory: $it")
+                extractDobAndUpdate(it)
+            }
             binding.ageHistoryRecyclerView.layoutManager = LinearLayoutManager(context)
             binding.ageHistoryRecyclerView.adapter = adapter
         }
@@ -390,6 +439,26 @@ class AgeFragment : Fragment() {
         }
     }
 
+
+    private fun extractDobAndUpdate(data: String) {
+        // Split the string to get the DOB part
+        val dobPart = data.split("-")[1].trim() // "DOB: 11 Apr 1957"
+
+        // Extract the date string
+        val dobString = dobPart.removePrefix("DOB: ").trim() // "11 Apr 1957"
+
+        // Parse the date string into a Date object
+        val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        val dob: Date? = dateFormat.parse(dobString)
+
+        // Check if dob is valid
+        if (dob != null) {
+            updateAgeCalculation(dob) // Call the function with the Date object
+        } else {
+            // Handle invalid date parsing if needed
+            Log.e("AgeHistory", "Invalid date format: $dobString")
+        }
+    }
 
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
