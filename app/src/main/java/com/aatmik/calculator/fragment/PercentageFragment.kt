@@ -25,14 +25,11 @@ import stopGlowAnimation
 class PercentageFragment : Fragment() {
 
     private lateinit var binding: FragmentPercentageBinding
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = FragmentPercentageBinding.inflate(inflater, container, false)
         return binding.root
     }

@@ -212,7 +212,7 @@ class ConverterFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = FragmentConverterBinding.inflate(inflater, container, false)
         return binding.root
     }

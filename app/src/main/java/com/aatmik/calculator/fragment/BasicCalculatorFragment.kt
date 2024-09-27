@@ -47,7 +47,7 @@ class BasicCalculatorFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentBasicCalculatorBinding.inflate(inflater, container, false)
         return binding.root
@@ -396,7 +396,7 @@ class BasicCalculatorFragment : Fragment() {
         animator.duration = 300
         animator.interpolator = AccelerateDecelerateInterpolator()
         animator.start()
-        animator.addListener(object : android.animation.Animator.AnimatorListener {
+        animator.addListener(object : Animator.AnimatorListener {
 
             override fun onAnimationStart(p0: Animator) {
                 TODO("Not yet implemented")

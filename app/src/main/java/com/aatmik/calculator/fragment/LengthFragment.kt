@@ -22,9 +22,6 @@ class LengthFragment : Fragment() {
     private lateinit var binding: FragmentLengthBinding
     private lateinit var adapter: LengthAdapter
     private lateinit var units: ArrayList<LengthUnit>
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -101,7 +98,7 @@ class LengthFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = FragmentLengthBinding.inflate(inflater, container, false)
         return binding.root
     }

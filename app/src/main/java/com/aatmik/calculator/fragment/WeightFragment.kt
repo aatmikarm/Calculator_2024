@@ -23,10 +23,6 @@ class WeightFragment : Fragment() {
     private lateinit var adapter: WeightAdapter
     private lateinit var units: ArrayList<WeightUnit>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hideKeyboardFunctionality(view)
@@ -100,7 +96,7 @@ class WeightFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = FragmentWeightBinding.inflate(inflater, container, false)
         return binding.root
     }

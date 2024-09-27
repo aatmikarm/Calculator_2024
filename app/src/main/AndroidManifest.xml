@@ -16,8 +16,6 @@
         android:roundIcon="@mipmap/calculator_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Calculator">
-        <activity android:name=".activity.UnitConverterActivity" />
-        <activity android:name=".activity.TimerActivity" />
         <activity android:name=".activity.CalculatorActivity" />
         <activity
             android:name=".activity.MainActivity"

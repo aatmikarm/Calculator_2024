@@ -21,13 +21,20 @@ object ButtonUtil {
         }
     }
 
-    fun addOperatorValueToText(context: Context, buttonId: Button, textViewId: TextView, text: String, id: Int) {
+    fun addOperatorValueToText(
+        context: Context,
+        buttonId: Button,
+        textViewId: TextView,
+        text: String,
+        id: Int,
+    ) {
         buttonId.setOnClickListener {
             vibratePhone(context)
 
             when (id) {
                 0 -> {
-                    if (addedBC) textViewId.text = textViewId.text.subSequence(0, textViewId.length() - 1)
+                    if (addedBC) textViewId.text =
+                        textViewId.text.subSequence(0, textViewId.length() - 1)
                     textViewId.text = textViewId.text.toString() + text
                     addedBC = true
                 }
@@ -37,7 +44,11 @@ object ButtonUtil {
 
     fun vibratePhone(context: Context) {
         val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (Build.VERSION.SDK_INT >= 29) vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
+        if (Build.VERSION.SDK_INT >= 29) vibrator.vibrate(
+            VibrationEffect.createPredefined(
+                VibrationEffect.EFFECT_CLICK
+            )
+        )
         else vibrator.vibrate(10)
     }
 
@@ -46,6 +57,7 @@ object ButtonUtil {
     }
 
     fun invalidInputToast(context: Context) {
-        Toast.makeText(context, context.getString(R.string.invalid_input), Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.invalid_input), Toast.LENGTH_SHORT)
+            .show()
     }
 }

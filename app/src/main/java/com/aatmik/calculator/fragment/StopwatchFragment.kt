@@ -51,7 +51,7 @@ class StopwatchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = FragmentStopwatchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -274,7 +274,7 @@ class StopwatchFragment : Fragment() {
             val inflater =
                 requireActivity().getSystemService(AppCompatActivity.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val inflatedView = inflater.inflate(R.layout.scroll_row, null)
-            val lapText = inflatedView.findViewById(R.id.sr_text) as TextView
+            val lapText: TextView = inflatedView.findViewById(R.id.sr_text)
 
             if (isFragmentStopped) {
                 lapText.text = map?.get(index)
