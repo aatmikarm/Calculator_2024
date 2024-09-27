@@ -9,7 +9,7 @@ import com.aatmik.calculator.R
 import com.aatmik.calculator.databinding.ActivityCalculatorBinding
 import com.aatmik.calculator.fragment.AgeFragment
 import com.aatmik.calculator.fragment.BasicCalculatorFragment
-import com.aatmik.calculator.fragment.CounterFragment
+import com.aatmik.calculator.fragment.ConverterFragment
 import com.aatmik.calculator.fragment.LengthFragment
 import com.aatmik.calculator.fragment.PercentageFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
@@ -35,7 +35,7 @@ class CalculatorActivity : AppCompatActivity() {
         // Get the calculator type passed from MainActivity
         val calculatorType = intent.getStringExtra("calculatorName")
 
-        if (calculatorType == "Stopwatch") {
+        if (calculatorType == "Stopwatch" || calculatorType == "Convertor") {
             normalLaunch(calculatorType)
         } else {
             coroutineLaunch(calculatorType)
@@ -59,7 +59,7 @@ class CalculatorActivity : AppCompatActivity() {
         if (supportFragmentManager.findFragmentById(R.id.calculatorFragmentContainer) == null) {
             when (calculatorType) {
                 "Basic" -> loadFragment(BasicCalculatorFragment())
-                "Convertor" -> loadFragment(CounterFragment())
+                "Convertor" -> loadFragment(ConverterFragment())
                 "Stopwatch" -> loadFragment(StopwatchFragment())
                 "Percentage" -> loadFragment(PercentageFragment())
                 "Age" -> loadFragment(AgeFragment())

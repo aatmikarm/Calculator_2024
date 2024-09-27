@@ -1,20 +1,20 @@
-package com.aatmik.calculator.activity
+package com.aatmik.calculator.fragment
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.aatmik.calculator.R
-import com.aatmik.calculator.databinding.ActivityUnitConverterBinding
+import com.aatmik.calculator.databinding.FragmentConverterBinding
 import com.aatmik.calculator.util.ButtonUtil.addNumberValueToText
 import com.aatmik.calculator.util.ButtonUtil.invalidInputToast
 import com.aatmik.calculator.util.ButtonUtil.vibratePhone
@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.URL
 
-class UnitConverterActivity : AppCompatActivity() {
+class ConverterFragment : Fragment() {
 
     enum class Unit {
         Other, Currency, Temperature
@@ -207,55 +207,56 @@ class UnitConverterActivity : AppCompatActivity() {
     private var conversionRate = 0.0
 
     private var animStateSaver = false
-    private lateinit var binding: ActivityUnitConverterBinding
+    private lateinit var binding: FragmentConverterBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityUnitConverterBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
+        binding = FragmentConverterBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-   /*     val actionBar = supportActionBar
-        actionBar!!.title = getString(R.string.unit_converter)
-        actionBar.setDisplayHomeAsUpEnabled(true)
-        actionBar.setBackgroundDrawable(ColorDrawable(Color.BLACK))*/
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         popupMenu()
 
         binding.apply {
-            addNumberValueToText(this@UnitConverterActivity, bt0, tvInput, null)
-            addNumberValueToText(this@UnitConverterActivity, bt1, tvInput, null)
-            addNumberValueToText(this@UnitConverterActivity, bt2, tvInput, null)
-            addNumberValueToText(this@UnitConverterActivity, bt3, tvInput, null)
-            addNumberValueToText(this@UnitConverterActivity, bt4, tvInput, null)
-            addNumberValueToText(this@UnitConverterActivity, bt5, tvInput, null)
-            addNumberValueToText(this@UnitConverterActivity, bt6, tvInput, null)
-            addNumberValueToText(this@UnitConverterActivity, bt7, tvInput, null)
-            addNumberValueToText(this@UnitConverterActivity, bt8, tvInput, null)
-            addNumberValueToText(this@UnitConverterActivity, bt9, tvInput, null)
+            addNumberValueToText(requireContext(), bt0BC, tvInput, null)
+            addNumberValueToText(requireContext(), bt1BC, tvInput, null)
+            addNumberValueToText(requireContext(), bt2BC, tvInput, null)
+            addNumberValueToText(requireContext(), bt3BC, tvInput, null)
+            addNumberValueToText(requireContext(), bt4BC, tvInput, null)
+            addNumberValueToText(requireContext(), bt5BC, tvInput, null)
+            addNumberValueToText(requireContext(), bt6BC, tvInput, null)
+            addNumberValueToText(requireContext(), bt7BC, tvInput, null)
+            addNumberValueToText(requireContext(), bt8BC, tvInput, null)
+            addNumberValueToText(requireContext(), bt9BC, tvInput, null)
 
-            btDot.setOnClickListener {
-                vibratePhone(this@UnitConverterActivity)
+            btDotBC.setOnClickListener {
+                vibratePhone(requireContext())
                 if (!tvInput.text.contains(".")) tvInput.text = tvInput.text.toString() + "."
             }
 
-            btAC.setOnClickListener {
-                vibratePhone(this@UnitConverterActivity)
+            btACBC.setOnClickListener {
+                vibratePhone(requireContext())
                 tvInput.text = ""
                 tvOutput.text = ""
             }
 
-            btDelete.setOnClickListener {
-                vibratePhone(this@UnitConverterActivity)
+            btDeleteBC.setOnClickListener {
+                vibratePhone(requireContext())
                 if (tvInput.text.isNotEmpty()) tvInput.text =
                     tvInput.text.subSequence(0, tvInput.length() - 1)
             }
 
-            btEqual.setOnClickListener {
+            btEqualBC.setOnClickListener {
                 try {
-                    vibratePhone(this@UnitConverterActivity)
+                    vibratePhone(requireContext())
                     convert()
                 } catch (e: Exception) {
-                    invalidInputToast(this@UnitConverterActivity)
+                    invalidInputToast(requireContext())
                 }
             }
 
@@ -289,19 +290,14 @@ class UnitConverterActivity : AppCompatActivity() {
 
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
-    }
-
     private fun popupMenu() {
         binding.apply {
-            val popupMenu = PopupMenu(this@UnitConverterActivity, btUnitSelect)
+            val popupMenu = PopupMenu(requireContext(), btUnitSelect)
             popupMenu.inflate(R.menu.menu_unit)
             popupMenu.setOnMenuItemClickListener {
                 if (!animStateSaver) ll.startAnimation(
                     AnimationUtils.loadAnimation(
-                        this@UnitConverterActivity,
+                        requireContext(),
                         R.anim.fade_in_500
                     )
                 )
@@ -439,7 +435,7 @@ class UnitConverterActivity : AppCompatActivity() {
 
             spFrom.startAnimation(
                 AnimationUtils.loadAnimation(
-                    this@UnitConverterActivity,
+                    requireContext(),
                     R.anim.fade_in_500
                 )
             )
@@ -447,7 +443,7 @@ class UnitConverterActivity : AppCompatActivity() {
 
             spTo.startAnimation(
                 AnimationUtils.loadAnimation(
-                    this@UnitConverterActivity,
+                    requireContext(),
                     R.anim.fade_in_500
                 )
             )
@@ -455,14 +451,14 @@ class UnitConverterActivity : AppCompatActivity() {
 
             fabForward.startAnimation(
                 AnimationUtils.loadAnimation(
-                    this@UnitConverterActivity,
+                    requireContext(),
                     R.anim.fade_in_500
                 )
             )
             fabForward.isEnabled = true
 
             ArrayAdapter.createFromResource(
-                this@UnitConverterActivity,
+                requireContext(),
                 textArrayResId,
                 android.R.layout.simple_spinner_item
             )
@@ -484,7 +480,7 @@ class UnitConverterActivity : AppCompatActivity() {
                     tvInputUnit.text = abbreviationArray[position]
                     tvInputUnit.startAnimation(
                         AnimationUtils.loadAnimation(
-                            this@UnitConverterActivity,
+                            requireContext(),
                             R.anim.fade_in_500
                         )
                     )
@@ -513,7 +509,7 @@ class UnitConverterActivity : AppCompatActivity() {
                     tvOutputUnit.text = abbreviationArray[position]
                     tvOutputUnit.startAnimation(
                         AnimationUtils.loadAnimation(
-                            this@UnitConverterActivity,
+                            requireContext(),
                             R.anim.fade_in_500
                         )
                     )
@@ -571,7 +567,7 @@ class UnitConverterActivity : AppCompatActivity() {
                             } catch (e: Exception) {
                                 Handler(Looper.getMainLooper()).post {
                                     Toast.makeText(
-                                        this@UnitConverterActivity,
+                                        requireContext(),
                                         getString(R.string.api_error),
                                         Toast.LENGTH_SHORT
                                     ).show()
