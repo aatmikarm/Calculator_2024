@@ -13,6 +13,7 @@ import com.aatmik.calculator.databinding.FragmentBodyMassIndexBinding
 class BodyMassIndexFragment : Fragment() {
 
     private lateinit var binding: FragmentBodyMassIndexBinding
+    private var isMetric: Boolean = true // By default, set to Metric
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,9 +27,14 @@ class BodyMassIndexFragment : Fragment() {
                 activity?.onBackPressedDispatcher?.onBackPressed()
             }
 
-            // Add text watchers for height and weight inputs to enable BMI calculation in real-time
+            // Text Watcher for height and weight fields
             etHeight.addTextChangedListener(bmiTextWatcher)
             etWeight.addTextChangedListener(bmiTextWatcher)
+
+            // Toggle between Metric and Imperial units
+            btnUnitToggle.setOnClickListener {
+                toggleUnitSystem()
+            }
 
             // Calculate BMI when the button is pressed
             btnCalculateBmi.setOnClickListener {
@@ -37,14 +43,22 @@ class BodyMassIndexFragment : Fragment() {
         }
     }
 
-    // TextWatcher to listen for changes in height and weight fields
-    private val bmiTextWatcher = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-        override fun afterTextChanged(s: Editable?) {
-            // Automatically calculate BMI when the height and weight fields are filled
+    // Method to toggle between Metric and Imperial units
+    private fun toggleUnitSystem() {
+        isMetric = !isMetric // Toggle the boolean value
+        binding.apply {
+            if (isMetric) {
+                // Update UI for Metric
+                btnUnitToggle.text = "Switch to Imperial"
+                tvHeightLabel.text = "Height (cm)"
+                tvWeightLabel.text = "Weight (kg)"
+            } else {
+                // Update UI for Imperial
+                btnUnitToggle.text = "Switch to Metric"
+                tvHeightLabel.text = "Height (in)"
+                tvWeightLabel.text = "Weight (lb)"
+            }
+            // Recalculate BMI in the new unit system
             calculateAndDisplayBmi()
         }
     }
@@ -61,12 +75,18 @@ class BodyMassIndexFragment : Fragment() {
             }
 
             try {
-                val heightInCm = heightText.toDouble()
-                val weightInKg = weightText.toDouble()
+                var bmi: Double
+                val height = heightText.toDouble()
+                val weight = weightText.toDouble()
 
-                // Convert height to meters and calculate BMI
-                val heightInMeters = heightInCm / 100
-                val bmi = weightInKg / (heightInMeters * heightInMeters)
+                if (isMetric) {
+                    // Metric system: height in cm, weight in kg
+                    val heightInMeters = height / 100
+                    bmi = weight / (heightInMeters * heightInMeters)
+                } else {
+                    // Imperial system: height in inches, weight in pounds
+                    bmi = 703 * (weight / (height * height))
+                }
 
                 // Format and display the result
                 tvBmiResult.text = "Your BMI is %.2f".format(bmi)
@@ -84,6 +104,18 @@ class BodyMassIndexFragment : Fragment() {
                 Log.e(TAG, "Invalid number format", e)
                 tvBmiResult.text = "Please enter valid numerical values"
             }
+        }
+    }
+
+    // TextWatcher to handle real-time input
+    private val bmiTextWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+        override fun afterTextChanged(s: Editable?) {
+            // Automatically calculate BMI when height and weight fields are filled
+            calculateAndDisplayBmi()
         }
     }
 
