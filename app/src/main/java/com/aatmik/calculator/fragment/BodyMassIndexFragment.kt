@@ -15,10 +15,6 @@ class BodyMassIndexFragment : Fragment() {
     private lateinit var binding: FragmentBodyMassIndexBinding
     private var isMetric: Boolean = true // By default, set to Metric
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
@@ -122,7 +118,7 @@ class BodyMassIndexFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = FragmentBodyMassIndexBinding.inflate(inflater, container, false)
         return binding.root
     }

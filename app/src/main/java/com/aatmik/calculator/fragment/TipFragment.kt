@@ -18,10 +18,6 @@ class TipFragment : Fragment() {
 
     private lateinit var binding: FragmentTipBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
@@ -111,7 +107,7 @@ class TipFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = FragmentTipBinding.inflate(inflater, container, false)
         return binding.root
     }

@@ -13,6 +13,7 @@ import com.aatmik.calculator.fragment.BodyMassIndexFragment
 import com.aatmik.calculator.fragment.ConverterFragment
 import com.aatmik.calculator.fragment.LengthFragment
 import com.aatmik.calculator.fragment.PercentageFragment
+import com.aatmik.calculator.fragment.ShapesFragment
 import com.aatmik.calculator.fragment.SpeedFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
 import com.aatmik.calculator.fragment.TipFragment
@@ -71,6 +72,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Speed" -> loadFragment(SpeedFragment())
                 "Tip" -> loadFragment(TipFragment())
                 "Body Mass Index" -> loadFragment(BodyMassIndexFragment())
+                "Shapes" -> loadFragment(ShapesFragment())
                 // Add more fragments as needed
                 else -> loadFragment(BasicCalculatorFragment()) // Default fragment
             }

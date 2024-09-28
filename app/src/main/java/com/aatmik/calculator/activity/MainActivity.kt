@@ -300,6 +300,10 @@ class MainActivity : AppCompatActivity() {
                 putExtra("calculatorName", calculatorName)
             }
 
+            "Shapes" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+
             else -> null
         }
 
