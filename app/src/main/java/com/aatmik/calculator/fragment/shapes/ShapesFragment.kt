@@ -1,4 +1,4 @@
-package com.aatmik.calculator.fragment
+package com.aatmik.calculator.fragment.shapes
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.R
+import com.aatmik.calculator.adapter.ShapesAdapter
 import com.aatmik.calculator.databinding.FragmentShapesBinding
-import com.aatmik.calculator.databinding.ItemShapeBinding
+import com.aatmik.calculator.fragment.CircleFragment
+import com.aatmik.calculator.fragment.RectangleFragment
 import com.aatmik.calculator.model.Shape
 
 class ShapesFragment : Fragment() {
@@ -46,7 +47,7 @@ class ShapesFragment : Fragment() {
         )
 
         shapesAdapter = ShapesAdapter(shapes) { shape ->
-            //openShapeDetailsFragment(shape)
+            openShapeDetailsFragment(shape)
         }
 
         binding.shapesRecyclerView.apply {
@@ -55,42 +56,24 @@ class ShapesFragment : Fragment() {
         }
     }
 
-    /*  private fun openShapeDetailsFragment(shape: Shape) {
-          val shapeDetailsFragment = ShapeDetailsFragment.newInstance(shape.name)
-          parentFragmentManager.beginTransaction()
-              .replace(R.id.fragmentContainer, shapeDetailsFragment)
-              .addToBackStack(null)
-              .commit()
-      }*/
+    private fun openShapeDetailsFragment(shape: Shape) {
+        val fragment = when (shape.name) {
+            "Square" -> SquareFragment()
+            "Circle" -> CircleFragment()
+            "Rectangle" -> RectangleFragment()
+            //"Triangle" -> TriangleFragment()
+            //Pentagon" -> PentagonFragment()
+            //"Hexagon" -> HexagonFragment()
+            else -> throw IllegalArgumentException("Unknown shape: ${shape.name}")
+        }
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.calculatorFragmentContainer, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
 
     companion object {
         private const val TAG = "ShapesFragment"
     }
-}
-
-// Adapter class for the RecyclerView
-class ShapesAdapter(
-    private val shapes: List<Shape>,
-    private val onShapeClick: (Shape) -> Unit,
-) : RecyclerView.Adapter<ShapesAdapter.ShapeViewHolder>() {
-
-    inner class ShapeViewHolder(private val binding: ItemShapeBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(shape: Shape) {
-            binding.shapeNameTv.text = shape.name
-            binding.shapeImageIv.setImageResource(shape.imageResId)
-            binding.root.setOnClickListener { onShapeClick(shape) }
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShapeViewHolder {
-        val binding = ItemShapeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ShapeViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: ShapeViewHolder, position: Int) {
-        holder.bind(shapes[position])
-    }
-
-    override fun getItemCount() = shapes.size
 }
