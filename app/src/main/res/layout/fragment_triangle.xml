@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.shapes.SquareFragment">
+    tools:context=".fragment.shapes.TriangleFragment">
 
     <LinearLayout
         android:id="@+id/linearLayout5"
@@ -64,7 +64,7 @@
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:layout_margin="15dp"
-                        android:src="@drawable/square"
+                        android:src="@drawable/triangle"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -82,15 +82,19 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginVertical="20dp"
                 android:gravity="center"
-                android:text="Square"
+                android:text="Triangle"
                 android:textSize="23sp" />
 
 
         </LinearLayout>
 
+
         <ScrollView
-            android:layout_width="match_parent"
+            android:id="@+id/scrollView4"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -102,7 +106,7 @@
                     android:id="@+id/titleTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Square Calculator"
+                    android:text="Triangle Calculator"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -125,13 +129,43 @@
                         android:padding="16dp">
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/sideInputLayout"
+                            android:id="@+id/sideAInputLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Side Length">
+                            android:hint="Side A">
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/sideEt"
+                                android:id="@+id/sideAEt"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="numberDecimal" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/sideBInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="Side B">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/sideBEt"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="numberDecimal" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/sideCInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="Side C">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/sideCEt"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="numberDecimal" />
@@ -178,19 +212,19 @@
                             android:textSize="16sp" />
 
                         <TextView
-                            android:id="@+id/diagonalTv"
+                            android:id="@+id/anglesTv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="16sp" />
 
                         <TextView
-                            android:id="@+id/volumeTv"
+                            android:id="@+id/inradiusTv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="16sp" />
 
                         <TextView
-                            android:id="@+id/surfaceAreaTv"
+                            android:id="@+id/circumradiusTv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="16sp" />

@@ -11,6 +11,8 @@ import com.aatmik.calculator.adapter.ShapesAdapter
 import com.aatmik.calculator.databinding.FragmentShapesBinding
 import com.aatmik.calculator.fragment.CircleFragment
 import com.aatmik.calculator.fragment.RectangleFragment
+import com.aatmik.calculator.fragment.SquareFragment
+import com.aatmik.calculator.fragment.TriangleFragment
 import com.aatmik.calculator.model.Shape
 
 class ShapesFragment : Fragment() {
@@ -61,7 +63,7 @@ class ShapesFragment : Fragment() {
             "Square" -> SquareFragment()
             "Circle" -> CircleFragment()
             "Rectangle" -> RectangleFragment()
-            //"Triangle" -> TriangleFragment()
+            "Triangle" -> TriangleFragment()
             //Pentagon" -> PentagonFragment()
             //"Hexagon" -> HexagonFragment()
             else -> throw IllegalArgumentException("Unknown shape: ${shape.name}")
