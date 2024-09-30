@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.shapes.SquareFragment">
+    tools:context=".fragment.shapes.PentagonFragment">
 
     <LinearLayout
         android:id="@+id/linearLayout5"
@@ -64,12 +64,11 @@
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:layout_margin="15dp"
-                        android:src="@drawable/square"
+                        android:src="@drawable/pentagon"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
-
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -82,15 +81,17 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginVertical="20dp"
                 android:gravity="center"
-                android:text="Square"
+                android:text="Pentagon"
                 android:textSize="23sp" />
-
 
         </LinearLayout>
 
         <ScrollView
-            android:layout_width="match_parent"
+            android:id="@+id/scrollView4"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -102,7 +103,7 @@
                     android:id="@+id/titleTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Square Calculator"
+                    android:text="Pentagon Calculator"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -141,9 +142,8 @@
                         <Button
                             android:id="@+id/calculateBtn"
                             android:layout_width="wrap_content"
-                            android:textColor="@color/black"
-
                             android:layout_height="wrap_content"
+                            android:textColor="@color/black"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="16dp"
                             android:text="Calculate" />
@@ -180,19 +180,25 @@
                             android:textSize="16sp" />
 
                         <TextView
-                            android:id="@+id/diagonalTv"
+                            android:id="@+id/inradiusTv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="16sp" />
 
                         <TextView
-                            android:id="@+id/volumeTv"
+                            android:id="@+id/circumradiusTv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="16sp" />
 
                         <TextView
-                            android:id="@+id/surfaceAreaTv"
+                            android:id="@+id/centralAngleTv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/interiorAngleTv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="16sp" />
@@ -206,6 +212,5 @@
         </ScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

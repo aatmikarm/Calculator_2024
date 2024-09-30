@@ -38,21 +38,39 @@ class TriangleFragment : Fragment() {
         val c = binding.sideCEt.text.toString().toDoubleOrNull()
 
         if (a != null && b != null && c != null) {
-            val s = (a + b + c) / 2 // Semi-perimeter
-            val area = sqrt(s * (s - a) * (s - b) * (s - c))
-            val perimeter = a + b + c
+            if (isValidTriangle(a, b, c)) {
+                val s = (a + b + c) / 2 // Semi-perimeter
+                val area = sqrt(s * (s - a) * (s - b) * (s - c))
+                val perimeter = a + b + c
 
-            // Calculate angles using the law of cosines
-            val angleA = acos((b * b + c * c - a * a) / (2 * b * c)) * (180 / PI)
-            val angleB = acos((a * a + c * c - b * b) / (2 * a * c)) * (180 / PI)
-            val angleC = 180 - angleA - angleB
+                // Calculate angles using the law of cosines
+                val angleA = acos((b * b + c * c - a * a) / (2 * b * c)) * (180 / PI)
+                val angleB = acos((a * a + c * c - b * b) / (2 * a * c)) * (180 / PI)
+                val angleC = 180 - angleA - angleB
 
-            val inradius = area / s
-            val circumradius = (a * b * c) / (4 * area)
+                val inradius = area / s
+                val circumradius = (a * b * c) / (4 * area)
 
-            binding.areaTv.text = "Area: %.2f".format(area)
-            binding.perimeterTv.text = "Perimeter: %.2f".format(perimeter)
-            // binding.anglesTv.text = "Angles: A=%.2f°, B=%.2f°, C=%.2f°".format(angleA, angle
+                binding.areaTv.text = "Area: %.2f".format(area)
+                binding.perimeterTv.text = "Perimeter: %.2f".format(perimeter)
+                binding.anglesTv.text =
+                    "Angles: A=%.2f°, B=%.2f°, C=%.2f°".format(angleA, angleB, angleC)
+                binding.inradiusTv.text = "Inradius: %.2f".format(inradius)
+                binding.circumradiusTv.text = "Circumradius: %.2f".format(circumradius)
+            } else {
+                binding.resultTv.text = "Invalid triangle sides. Please input valid values."
+            }
+        } else {
+            binding.resultTv.text = "Please enter valid numbers for all sides."
         }
+    }
+
+    private fun isValidTriangle(a: Double, b: Double, c: Double): Boolean {
+        return (a + b > c) && (a + c > b) && (b + c > a)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

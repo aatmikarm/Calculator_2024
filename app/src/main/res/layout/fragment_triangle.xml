@@ -178,7 +178,9 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="16dp"
-                            android:text="Calculate" />
+                            android:text="Calculate"
+                            android:textColor="@color/black"
+                            />
 
                     </LinearLayout>
 
@@ -225,6 +227,12 @@
 
                         <TextView
                             android:id="@+id/circumradiusTv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/resultTv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="16sp" />
