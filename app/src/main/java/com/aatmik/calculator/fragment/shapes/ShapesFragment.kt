@@ -65,7 +65,7 @@ class ShapesFragment : Fragment() {
             "Rectangle" -> RectangleFragment()
             "Triangle" -> TriangleFragment()
             "Pentagon" -> PentagonFragment()
-            //"Hexagon" -> HexagonFragment()
+            "Hexagon" -> HexagonFragment()
             else -> throw IllegalArgumentException("Unknown shape: ${shape.name}")
         }
 
