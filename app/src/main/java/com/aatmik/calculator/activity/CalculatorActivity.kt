@@ -1,5 +1,6 @@
 package com.aatmik.calculator.activity
 
+import MathEquationSolverFragment
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -13,11 +14,11 @@ import com.aatmik.calculator.fragment.BodyMassIndexFragment
 import com.aatmik.calculator.fragment.ConverterFragment
 import com.aatmik.calculator.fragment.LengthFragment
 import com.aatmik.calculator.fragment.PercentageFragment
-import com.aatmik.calculator.fragment.shapes.ShapesFragment
 import com.aatmik.calculator.fragment.SpeedFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
 import com.aatmik.calculator.fragment.TipFragment
 import com.aatmik.calculator.fragment.WeightFragment
+import com.aatmik.calculator.fragment.shapes.ShapesFragment
 import com.aatmik.calculator.util.NetworkUtil
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
@@ -73,6 +74,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Tip" -> loadFragment(TipFragment())
                 "Body Mass Index" -> loadFragment(BodyMassIndexFragment())
                 "Shapes" -> loadFragment(ShapesFragment())
+                "Equation" -> loadFragment(MathEquationSolverFragment())
                 // Add more fragments as needed
                 else -> loadFragment(BasicCalculatorFragment()) // Default fragment
             }
