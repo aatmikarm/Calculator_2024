@@ -1,6 +1,5 @@
 package com.aatmik.calculator.activity
 
-import MathEquationSolverFragment
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +19,7 @@ import com.aatmik.calculator.fragment.TipFragment
 import com.aatmik.calculator.fragment.WeightFragment
 import com.aatmik.calculator.fragment.shapes.ShapesFragment
 import com.aatmik.calculator.util.NetworkUtil
+import com.example.yourapp.MathEquationSolverFragment
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds

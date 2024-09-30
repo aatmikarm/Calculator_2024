@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.MathEquationSolverFragment">
+    android:background="#F5F5F5"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/headerLayout"
+        android:id="@+id/linearLayout5"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -25,68 +25,144 @@
             android:padding="3dp"
             android:src="@drawable/arrow_left" />
 
-        <TextView
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+
+        <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Math Equation Solver"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="10dp"
+            app:cardCornerRadius="10dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/itemImage"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_margin="15dp"
+                    android:src="@drawable/equation_xy"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/itemName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="20dp"
+            android:gravity="center"
+            android:text="Quadratic Equation Solver"
+            android:textSize="23sp" />
+
 
     </LinearLayout>
 
-    <ScrollView
+    <LinearLayout
+        android:id="@+id/linearLayout8"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="#F5F5F5"
+        android:orientation="vertical"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerLayout">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/equationDisplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:text="ax² + bx + c = 0"
+            android:textColor="#555"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/coefficientA"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edit_text_background"
+            android:hint="Enter coefficient a"
+            android:inputType="numberSigned"
+            android:padding="10dp" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/equationInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter equation (e.g., 2x + 3 = 7)">
+        <EditText
+            android:id="@+id/coefficientB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edit_text_background"
+            android:hint="Enter coefficient b"
+            android:inputType="numberDecimal"
+            android:padding="10dp" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/equationEt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text" />
+        <EditText
+            android:id="@+id/coefficientC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edit_text_background"
+            android:hint="Enter coefficient c"
+            android:inputType="numberDecimal"
+            android:padding="10dp" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+        <Button
+            android:id="@+id/solveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="Solve"
+            android:textColor="#FFFFFF" />
 
-            <Button
-                android:id="@+id/solveBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:text="Solve" />
+        <TextView
+            android:id="@+id/resultTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:text=""
+            android:textColor="#000"
+            android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/resultTv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:textSize="18sp" />
+        <TextView
+            android:id="@+id/stepsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:text=""
+            android:textColor="#555"
+            android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/stepsTv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
-    </ScrollView>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
