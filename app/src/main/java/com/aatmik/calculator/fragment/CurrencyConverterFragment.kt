@@ -5,11 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aatmik.calculator.adapter.CurrencyAdapter
 import com.aatmik.calculator.databinding.FragmentCurrencyConvertorBinding
 import com.aatmik.calculator.model.Currency
+import com.aatmik.calculator.util.NetworkUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -128,6 +130,14 @@ class CurrencyConverterFragment : Fragment() {
        }*/
 
     private fun fetchAllCurrencies() {
+
+        // Check internet availability before proceeding
+        if (!NetworkUtil.isNetworkAvailable(requireActivity())) {
+            // Handle no internet case, maybe show a message to the user
+            Toast.makeText(context, "No internet connection available.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val currencyCodes = listOf(
@@ -155,6 +165,7 @@ class CurrencyConverterFragment : Fragment() {
 
                 // Clear existing currency list if needed
                 allCurrencies.clear()
+                binding.progressBar.visibility = View.VISIBLE
 
                 // Parallel fetching of currency rates
                 val deferredCurrencies = currencyCodes.map { currency ->
@@ -179,6 +190,7 @@ class CurrencyConverterFragment : Fragment() {
                 // Update the UI and log results on the main thread
                 withContext(Dispatchers.Main) {
                     adapter.notifyDataSetChanged()
+                    binding.progressBar.visibility = View.GONE
                     Log.d(TAG, "Currencies loaded: ${allCurrencies.size}")
                 }
 
