@@ -11,6 +11,7 @@ import com.aatmik.calculator.fragment.AgeFragment
 import com.aatmik.calculator.fragment.BasicCalculatorFragment
 import com.aatmik.calculator.fragment.BodyMassIndexFragment
 import com.aatmik.calculator.fragment.ConverterFragment
+import com.aatmik.calculator.fragment.CurrencyConverterFragment
 import com.aatmik.calculator.fragment.LengthFragment
 import com.aatmik.calculator.fragment.PercentageFragment
 import com.aatmik.calculator.fragment.SpeedFragment
@@ -75,6 +76,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Body Mass Index" -> loadFragment(BodyMassIndexFragment())
                 "Shapes" -> loadFragment(ShapesFragment())
                 "Equation" -> loadFragment(MathEquationSolverFragment())
+                "Currency Converter" -> loadFragment(CurrencyConverterFragment())
                 // Add more fragments as needed
                 else -> loadFragment(BasicCalculatorFragment()) // Default fragment
             }

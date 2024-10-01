@@ -308,6 +308,10 @@ class MainActivity : AppCompatActivity() {
                 putExtra("calculatorName", calculatorName)
             }
 
+            "Currency Converter" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+
             else -> null
         }
 

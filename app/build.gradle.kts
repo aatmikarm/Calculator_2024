@@ -94,12 +94,14 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6")
 
     // equations
-    implementation ("org.apache.commons:commons-math3:3.6.1")
+    implementation("org.apache.commons:commons-math3:3.6.1")
 
     //retrofit
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
+    // web scraper
+    implementation("org.jsoup:jsoup:1.15.2")
 
 
 }

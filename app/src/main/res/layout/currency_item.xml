@@ -30,7 +30,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/currencyNameTextView"
+                android:id="@+id/tvCurrencyName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="US Dollar"
@@ -43,10 +43,25 @@
                 android:layout_height="wrap_content"
                 android:text="1 USD"
                 android:textColor="@color/gray_dark" />
+
+
+            <TextView
+                android:id="@+id/tvCurrencyCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="USD"
+                android:textColor="@color/gray_dark" />
+
+            <TextView
+                android:id="@+id/tvCurrencyFlag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Flag"
+                android:textColor="@color/gray_dark" />
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/currencyValueEditText"
+        <TextView
+            android:id="@+id/tvConvertedAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -56,7 +71,6 @@
             android:focusableInTouchMode="true"
             android:gravity="end"
             android:hint="Amount"
-            android:inputType="numberDecimal"
             android:padding="10dp"
             android:textSize="18sp"
             android:textStyle="bold" />
