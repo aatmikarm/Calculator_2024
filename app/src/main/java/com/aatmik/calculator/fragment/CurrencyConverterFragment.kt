@@ -68,31 +68,121 @@ class CurrencyConverterFragment : Fragment() {
     private fun fetchAllCurrencies() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // List of currency codes to scrape
+                // List of currencies with their codes and names
                 val currencyCodes = listOf(
-                    "USD",
-                    "EUR",
-                    "INR",
-                    "GBP",
-                    "JPY",
-                    "AUD",
-                    "CAD"
-                ) // Add more codes as needed
+                    Currency("USD", "United States Dollar"),
+                    Currency("EUR", "Euro"),
+                    Currency("INR", "Indian Rupee"),
+                    Currency("GBP", "British Pound"),
+                    Currency("JPY", "Japanese Yen"),
+                    Currency("AUD", "Australian Dollar"),
+                    Currency("CAD", "Canadian Dollar"),
+                    Currency("CHF", "Swiss Franc"),
+                    Currency("CNY", "Chinese Yuan"),
+                    Currency("SEK", "Swedish Krona"),
+                    Currency("NZD", "New Zealand Dollar"),
+                    Currency("MXN", "Mexican Peso"),
+                    Currency("SGD", "Singapore Dollar"),
+                    Currency("HKD", "Hong Kong Dollar"),
+                    Currency("NOK", "Norwegian Krone"),
+                    Currency("KRW", "South Korean Won"),
+                    Currency("TRY", "Turkish Lira"),
+                    Currency("RUB", "Russian Ruble"),
+                    Currency("BRL", "Brazilian Real"),
+                    Currency("ZAR", "South African Rand"),
+                    Currency("DKK", "Danish Krone"),
+                    Currency("PLN", "Polish Zloty"),
+                    Currency("THB", "Thai Baht"),
+                    Currency("IDR", "Indonesian Rupiah"),
+                    Currency("HUF", "Hungarian Forint"),
+                    Currency("CZK", "Czech Koruna"),
+                    Currency("ILS", "Israeli Shekel"),
+                    Currency("CLP", "Chilean Peso"),
+                    Currency("PHP", "Philippine Peso"),
+                    Currency("AED", "United Arab Emirates Dirham"),
+                    Currency("MYR", "Malaysian Ringgit"),
+                    Currency("COP", "Colombian Peso"),
+                    Currency("SAR", "Saudi Riyal"),
+                    Currency("RON", "Romanian Leu"),
+                    Currency("VND", "Vietnamese Dong"),
+                    Currency("EGP", "Egyptian Pound"),
+                    Currency("QAR", "Qatari Riyal"),
+                    Currency("PKR", "Pakistani Rupee"),
+                    Currency("KWD", "Kuwaiti Dinar"),
+                    Currency("DZD", "Algerian Dinar"),
+                    Currency("MAD", "Moroccan Dirham"),
+                    Currency("JOD", "Jordanian Dinar"),
+                    Currency("OMR", "Omani Rial"),
+                    Currency("BHD", "Bahraini Dinar"),
+                    Currency("IQD", "Iraqi Dinar"),
+                    Currency("TND", "Tunisian Dinar"),
+                    Currency("BDT", "Bangladeshi Taka"),
+                    Currency("LKR", "Sri Lankan Rupee"),
+                    Currency("XOF", "West African CFA Franc"),
+                    Currency("XAF", "Central African CFA Franc"),
+                    Currency("XCD", "East Caribbean Dollar"),
+                    Currency("XPF", "CFP Franc"),
+                    Currency("BND", "Brunei Dollar"),
+                    Currency("MVR", "Maldivian Rufiyaa"),
+                    Currency("SCR", "Seychellois Rupee"),
+                    Currency("KES", "Kenyan Shilling"),
+                    Currency("TZS", "Tanzanian Shilling"),
+                    Currency("UGX", "Ugandan Shilling"),
+                    Currency("GHS", "Ghanaian Cedi"),
+                    Currency("NGN", "Nigerian Naira"),
+                    Currency("ZMW", "Zambian Kwacha"),
+                    Currency("ETB", "Ethiopian Birr"),
+                    Currency("MUR", "Mauritian Rupee"),
+                    Currency("NAD", "Namibian Dollar"),
+                    Currency("LRD", "Liberian Dollar"),
+                    Currency("SLL", "Sierra Leonean Leone"),
+                    Currency("BWP", "Botswanan Pula"),
+                    Currency("AOA", "Angolan Kwanza"),
+                    Currency("MGA", "Malagasy Ariary"),
+                    Currency("MWK", "Malawian Kwacha"),
+                    Currency("CDF", "Congolese Franc"),
+                    Currency("ZWL", "Zimbabwean Dollar"),
+                    Currency("BZD", "Belize Dollar"),
+                    Currency("GTQ", "Guatemalan Quetzal"),
+                    Currency("HNL", "Honduran Lempira"),
+                    Currency("PAB", "Panamanian Balboa"),
+                    Currency("NIO", "Nicaraguan Córdoba"),
+                    Currency("CRC", "Costa Rican Colón"),
+                    Currency("UYU", "Uruguayan Peso"),
+                    Currency("PYG", "Paraguayan Guarani"),
+                    Currency("BOB", "Bolivian Boliviano"),
+                    Currency("BAM", "Bosnia-Herzegovina Convertible Mark"),
+                    Currency("MKD", "Macedonian Denar"),
+                    Currency("ISK", "Icelandic Krona"),
+                    Currency("GEL", "Georgian Lari"),
+                    Currency("AZN", "Azerbaijani Manat"),
+                    Currency("KZT", "Kazakhstani Tenge"),
+                    Currency("AMD", "Armenian Dram"),
+                    Currency("UZS", "Uzbekistani Som"),
+                    Currency("TJS", "Tajikistani Somoni"),
+                    Currency("AFN", "Afghan Afghani"),
+                    Currency("YER", "Yemeni Rial"),
+                    Currency("MMK", "Myanmar Kyat"),
+                    Currency("LAK", "Lao Kip"),
+                    Currency("KHR", "Cambodian Riel"),
+                    Currency("MNT", "Mongolian Tugrik"),
+                    Currency("PGK", "Papua New Guinean Kina"),
+                    Currency("FJD", "Fijian Dollar"),
+                    Currency("SBD", "Solomon Islands Dollar"),
+                    Currency("VUV", "Vanuatu Vatu"),
+                    Currency("TOP", "Tongan Paʻanga"),
+                    Currency("WST", "Samoan Tala")
+                ) // Added 100+ currency codes with names
+
 
                 // Clear existing currency list if needed
                 allCurrencies.clear()
 
                 // Loop through each currency and get exchange rate (to INR for example)
-                currencyCodes.forEach { code ->
-                    val rate = getCurrencyRate(code, "INR") // Fetch rate for each currency
+                currencyCodes.forEach { currency ->
+                    val rate = getCurrencyRate(currency.code, "INR") // Fetch rate for each currency
                     if (rate != null) {
-                        allCurrencies.add(
-                            Currency(
-                                code,
-                                getCurrencyName(code),  // Use a helper function to get the full name of the currency
-                                rate
-                            )
-                        )
+                        allCurrencies.add(currency.copy(rate = rate))
                     }
                 }
 
