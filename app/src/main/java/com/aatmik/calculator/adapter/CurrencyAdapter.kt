@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.databinding.CurrencyItemBinding
 import com.aatmik.calculator.model.Currency
 
-class CurrencyAdapter(private val currencies: List<Currency>) :
+class CurrencyAdapter(
+    private val currencies: List<Currency>,
+) :
     RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>() {
 
     inner class CurrencyViewHolder(private val binding: CurrencyItemBinding) :
