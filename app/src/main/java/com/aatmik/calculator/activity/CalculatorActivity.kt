@@ -19,6 +19,7 @@ import com.aatmik.calculator.fragment.StopwatchFragment
 import com.aatmik.calculator.fragment.TemperatureFragment
 import com.aatmik.calculator.fragment.TipFragment
 import com.aatmik.calculator.fragment.WeightFragment
+import com.aatmik.calculator.fragment.bodies.BodiesFragment
 import com.aatmik.calculator.fragment.shapes.ShapesFragment
 import com.aatmik.calculator.util.NetworkUtil
 import com.example.yourapp.MathEquationSolverFragment
@@ -79,6 +80,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Equation" -> loadFragment(MathEquationSolverFragment())
                 "Currency Converter" -> loadFragment(CurrencyConverterFragment())
                 "Temperature" -> loadFragment(TemperatureFragment())
+                "Bodies" -> loadFragment(BodiesFragment())
                 // Add more fragments as needed
                 else -> loadFragment(BasicCalculatorFragment()) // Default fragment
             }
