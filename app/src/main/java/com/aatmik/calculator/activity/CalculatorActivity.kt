@@ -1,7 +1,9 @@
 package com.aatmik.calculator.activity
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -21,9 +23,12 @@ import com.aatmik.calculator.fragment.TipFragment
 import com.aatmik.calculator.fragment.WeightFragment
 import com.aatmik.calculator.fragment.bodies.BodiesFragment
 import com.aatmik.calculator.fragment.shapes.ShapesFragment
+import com.aatmik.calculator.util.AdConfig
 import com.aatmik.calculator.util.NetworkUtil
 import com.example.yourapp.MathEquationSolverFragment
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -39,7 +44,7 @@ class CalculatorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCalculatorBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //runAds()
+        runAds()
         // Get the calculator type passed from MainActivity
         val calculatorType = intent.getStringExtra("calculatorName")
 
@@ -98,7 +103,7 @@ class CalculatorActivity : AppCompatActivity() {
         if (NetworkUtil.isNetworkAvailable(this)) {
             MobileAds.initialize(this)
             adRequest = AdRequest.Builder().build()
-            bannerAd()
+            loadBanner()
         } else {
             // Handle the case where there's no network available
             Log.d("NetworkCheck", "No internet connection available.")
@@ -111,17 +116,11 @@ class CalculatorActivity : AppCompatActivity() {
         return true
     }
 
-    private fun showInterstitialAd() {
-        interstitialAd1.show(this@CalculatorActivity)
-    }
-
     private fun interstitialAd() {
-        val prod = "ca-app-pub-5678552217308395/9237780167"
-        val test = "ca-app-pub-3940256099942544/1033173712"
 
         if (::adRequest.isInitialized) {
             InterstitialAd.load(this,
-                test,
+                AdConfig.getInterstitialAdId(),
                 adRequest,
                 object : InterstitialAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
@@ -144,10 +143,35 @@ class CalculatorActivity : AppCompatActivity() {
         interstitialAd()
     }
 
-    private fun bannerAd() {
-        if (::adRequest.isInitialized) {
-            binding.bannerAd1.loadAd(adRequest)
+    private var adView: AdView? = null
+
+    // Get the ad size with screen width.
+    private val adSize: AdSize
+        get() {
+            val displayMetrics = resources.displayMetrics
+            val adWidthPixels =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    val windowMetrics: WindowMetrics = this.windowManager.currentWindowMetrics
+                    windowMetrics.bounds.width()
+                } else {
+                    displayMetrics.widthPixels
+                }
+            val density = displayMetrics.density
+            val adWidth = (adWidthPixels / density).toInt()
+            return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, adWidth)
         }
+
+    private fun loadBanner() {
+        val adView = AdView(this)
+        adView.adUnitId = AdConfig.getBannerAdId()
+        adView.setAdSize(adSize)
+        this.adView = adView
+
+        binding.adViewContainer.removeAllViews()
+        binding.adViewContainer.addView(adView)
+
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
     }
 
 

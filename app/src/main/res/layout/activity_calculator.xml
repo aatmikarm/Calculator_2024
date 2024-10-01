@@ -11,18 +11,16 @@
         android:id="@+id/calculatorFragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        ads:layout_constraintBottom_toTopOf="@+id/bannerAd1"
+        ads:layout_constraintBottom_toTopOf="@+id/ad_view_container"
         ads:layout_constraintEnd_toEndOf="parent"
         ads:layout_constraintStart_toStartOf="parent"
         ads:layout_constraintTop_toTopOf="parent" />
 
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/bannerAd1"
+    <FrameLayout
+        android:id="@+id/ad_view_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/testBannerAd"
         ads:layout_constraintBottom_toBottomOf="parent"
         ads:layout_constraintEnd_toEndOf="parent"
         ads:layout_constraintStart_toStartOf="parent" />
