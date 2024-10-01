@@ -21,9 +21,6 @@ class CurrencyConverterFragment : Fragment() {
 
     private var _binding: FragmentCurrencyConvertorBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var currencyAdapter: CurrencyAdapter
-    private val currencies = mutableListOf<Currency>()
     private val allCurrencies = mutableListOf<Currency>()
 
     override fun onCreateView(
@@ -37,43 +34,55 @@ class CurrencyConverterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupRecyclerView()
         fetchAllCurrencies()
+    }
 
-        binding.btnAdd.setOnClickListener {
-            showCurrencySelectionDialog()
-        }
+    private fun setupRecyclerView() {
+        binding.rvCurrencies.layoutManager = LinearLayoutManager(requireContext())
     }
 
     private fun fetchAllCurrencies() {
+        // Initialize the adapter and set it to the RecyclerView
+        val adapter = CurrencyAdapter(allCurrencies)
+        binding.rvCurrencies.adapter = adapter
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // List of currencies with their codes and names
                 val currencyCodes = listOf(
                     Currency("USD", "United States Dollar"),
                     Currency("EUR", "Euro"),
                     Currency("INR", "Indian Rupee"),
                     Currency("GBP", "British Pound"),
                     Currency("JPY", "Japanese Yen"),
-                ) // Added 100+ currency codes with names
+                    Currency("AUD", "Australian Dollar"),
+                    Currency("CAD", "Canadian Dollar"),
+                    Currency("CHF", "Swiss Franc"),
+                    Currency("CNY", "Chinese Yuan"),
+                )
 
 
                 // Clear existing currency list if needed
                 allCurrencies.clear()
 
-                // Loop through each currency and get exchange rate (to INR for example)
+                // Loop through each currency and get exchange rate (to USD for example)
                 currencyCodes.forEach { currency ->
                     val rate = getCurrencyRate(currency.code, "INR") // Fetch rate for each currency
                     if (rate != null) {
-                        allCurrencies.add(currency.copy(rate = rate))
+                        val tempCurrency = currency.copy(rate = rate)
+                        allCurrencies.add(tempCurrency)
+
+                        // Update UI in the main thread as soon as a new currency is added
+                        withContext(Dispatchers.Main) {
+                            adapter.notifyItemInserted(allCurrencies.size - 1) // Notify adapter of the new item
+                            Log.d(TAG, "currency fetched then added: $tempCurrency")
+                            Log.d(TAG, "fetchAllCurrencies: $allCurrencies")
+                        }
                     }
                 }
 
-                // Now update the UI
+                // Log the total currencies loaded
                 withContext(Dispatchers.Main) {
-                    // Update UI with the new currency list (e.g., notify adapter)
-                    Log.d(TAG, "fetchAllCurrencies: $allCurrencies")
                     Log.d(TAG, "Currencies loaded: ${allCurrencies.size}")
                 }
             } catch (e: Exception) {
@@ -82,19 +91,6 @@ class CurrencyConverterFragment : Fragment() {
         }
     }
 
-    // Helper function to map currency codes to full currency names
-    private fun getCurrencyName(code: String): String {
-        return when (code) {
-            "USD" -> "United States Dollar"
-            "EUR" -> "Euro"
-            "INR" -> "Indian Rupee"
-            "GBP" -> "British Pound"
-            "JPY" -> "Japanese Yen"
-            "AUD" -> "Australian Dollar"
-            "CAD" -> "Canadian Dollar"
-            else -> "Unknown Currency"
-        }
-    }
 
     // Function to scrape exchange rate from Google
     private fun getCurrencyRate(fromCurrency: String, toCurrency: String): String? {
@@ -116,41 +112,11 @@ class CurrencyConverterFragment : Fragment() {
         }
     }
 
-    private fun setupRecyclerView() {
-        currencyAdapter = CurrencyAdapter(currencies)
-        binding.rvCurrencies.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = currencyAdapter
-        }
-
-        // Add initial currencies
-        currencies.addAll(
-            listOf(
-                Currency("USD", "United States Dollar", "🇺🇸"),
-                Currency("EUR", "Euro", "🇪🇺"),
-                Currency("GBP", "British Pound", "🇬🇧"),
-                Currency("JPY", "Japanese Yen", "🇯🇵")
-            )
-        )
-        currencyAdapter.notifyDataSetChanged()
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
-    private fun showCurrencySelectionDialog() {
-        val dialog = CurrencySelectionDialog(allCurrencies) { selectedCurrency ->
-            if (!currencies.contains(selectedCurrency)) {
-                currencies.add(selectedCurrency)
-                currencyAdapter.notifyItemInserted(currencies.size - 1)
-            }
-        }
-        dialog.show(childFragmentManager, "CurrencySelectionDialog")
-    }
-
 
     companion object {
         private const val TAG = "CurrencyConverterFragment"

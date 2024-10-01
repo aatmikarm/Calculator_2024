@@ -23,21 +23,10 @@ class CurrencySelectionDialog(
         val dialog = Dialog(requireContext())
         dialog.setContentView(binding.root)
 
-        setupRecyclerView()
-
         binding.btnClose.setOnClickListener {
             dialog.dismiss()
         }
 
         return dialog
-    }
-
-    private fun setupRecyclerView() {
-        currencyAdapter = CurrencyAdapter(availableCurrencies)
-        binding.rvAvailableCurrencies.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = currencyAdapter
-        }
-        currencyAdapter.notifyDataSetChanged()
     }
 }

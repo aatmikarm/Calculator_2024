@@ -36,7 +36,6 @@
                 android:text="1 USD"
                 android:textColor="@color/gray_dark" />
 
-
             <TextView
                 android:id="@+id/tvCurrencyCode"
                 android:layout_width="wrap_content"
@@ -45,9 +44,9 @@
                 android:textColor="@color/gray_dark" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvConvertedAmount"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/etAmount"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginHorizontal="10dp"
@@ -56,6 +55,7 @@
             android:focusableInTouchMode="true"
             android:gravity="end"
             android:hint="Amount"
+            android:inputType="numberDecimal"
             android:padding="10dp"
             android:textSize="18sp"
             android:textStyle="bold" />
