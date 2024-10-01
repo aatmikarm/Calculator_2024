@@ -148,8 +148,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getUpdate() {
-        // Implement your logic to check for and get new updates
-        Toast.makeText(this, "Checking for updates", Toast.LENGTH_SHORT).show()
+        val appPackageName = "com.aatmik.calculator"
+        startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName&showRating=true")
+            )
+        )
     }
 
     private fun loadCalculatorOrder() {
