@@ -1,13 +1,19 @@
 package com.aatmik.calculator.adapter
 
+import android.os.Handler
+import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.databinding.CurrencyItemBinding
 import com.aatmik.calculator.model.Currency
+import java.util.Collections
 
 class CurrencyAdapter(
-    private val currencies: List<Currency>,
+    private val currencies: ArrayList<Currency>,
+    private val onValueChanged: (Int, String) -> Unit,
 ) :
     RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>() {
 
@@ -17,6 +23,33 @@ class CurrencyAdapter(
             binding.tvCurrencyCode.text = currency.code
             binding.tvCurrencyName.text = currency.name
             binding.currencyRateTextView.text = currency.rate
+
+            binding.etAmount.setText(currency.inputAmount.toString())
+
+            binding.etAmount.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    onValueChanged(adapterPosition, binding.etAmount.text.toString())
+                }
+            }
+
+            binding.etAmount.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    if (binding.etAmount.hasFocus()) {
+                        onValueChanged(adapterPosition, s.toString())
+                    }
+                }
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int,
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            })
+
         }
     }
 
@@ -31,4 +64,16 @@ class CurrencyAdapter(
     }
 
     override fun getItemCount(): Int = currencies.size
+
+    fun updateUnit(position: Int, value: String) {
+        currencies[position].inputAmount = value.toDouble()
+        Handler(Looper.getMainLooper()).post {
+            notifyItemChanged(position)
+        }
+    }
+
+    fun swapItems(fromPosition: Int, toPosition: Int) {
+        Collections.swap(currencies, fromPosition, toPosition)
+        notifyItemMoved(fromPosition, toPosition)
+    }
 }
