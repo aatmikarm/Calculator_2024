@@ -2,11 +2,13 @@ package com.aatmik.calculator.activity
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.WindowMetrics
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,22 +19,18 @@ import com.aatmik.calculator.adapter.CalculatorAdapter
 import com.aatmik.calculator.databinding.ActivityMainBinding
 import com.aatmik.calculator.databinding.BottomSheetLayoutBinding
 import com.aatmik.calculator.model.Calculator
+import com.aatmik.calculator.util.AdConfig
 import com.aatmik.calculator.util.CalculatorUtils
 import com.aatmik.calculator.util.NetworkUtil
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var adRequest: AdRequest
-    private lateinit var interstitialAd1: InterstitialAd
-
 
     // recycler view
     lateinit var calculatorRV: RecyclerView
@@ -47,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //runAds()
+        runAds()
         loadCalculatorOrder()
         setupRecyclerView()
         search()
@@ -64,43 +62,42 @@ class MainActivity : AppCompatActivity() {
     private fun runAds() {
 
         if (NetworkUtil.isNetworkAvailable(this)) {
-            MobileAds.initialize(this)
-            adRequest = AdRequest.Builder().build()
-            bannerAd()
+            loadBanner()
         } else {
-            // Handle the case where there's no network available
             Log.d("NetworkCheck", "No internet connection available.")
         }
 
     }
 
-    private fun bannerAd() {
-        if (::adRequest.isInitialized) {
-            binding.bannerAd1.loadAd(adRequest)
-        }
-    }
+    private var adView: AdView? = null
 
-    private fun showInterstitialAd() {
-        interstitialAd1.show(this@MainActivity)
-    }
-
-    private fun interstitialAd() {
-        val prod = "ca-app-pub-5678552217308395/9237780167"
-        val test = "ca-app-pub-3940256099942544/1033173712"
-
-        if (::adRequest.isInitialized) {
-            InterstitialAd.load(this, test, adRequest, object : InterstitialAdLoadCallback() {
-                override fun onAdFailedToLoad(adError: LoadAdError) {
-                    // mInterstitialAd = null
+    // Get the ad size with screen width.
+    private val adSize: AdSize
+        get() {
+            val displayMetrics = resources.displayMetrics
+            val adWidthPixels =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    val windowMetrics: WindowMetrics = this.windowManager.currentWindowMetrics
+                    windowMetrics.bounds.width()
+                } else {
+                    displayMetrics.widthPixels
                 }
-
-                override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                    interstitialAd1 = interstitialAd
-                    interstitialAd.show(this@MainActivity)
-                }
-            })
+            val density = displayMetrics.density
+            val adWidth = (adWidthPixels / density).toInt()
+            return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, adWidth)
         }
 
+    private fun loadBanner() {
+        val adView = AdView(this)
+        adView.adUnitId = AdConfig.getBannerAdId()
+        adView.setAdSize(adSize)
+        this.adView = adView
+
+        binding.adViewContainer.removeAllViews()
+        binding.adViewContainer.addView(adView)
+
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
     }
 
 
