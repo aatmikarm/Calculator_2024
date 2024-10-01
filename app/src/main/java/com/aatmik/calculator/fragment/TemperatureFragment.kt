@@ -12,7 +12,10 @@ import kotlin.math.roundToInt
 class TemperatureFragment : Fragment() {
 
     private lateinit var binding: FragmentTemperatureBinding
-    private val temperatureUnits = arrayOf("Celsius", "Fahrenheit", "Kelvin")
+    private val temperatureUnits = arrayOf(
+        "Celsius", "Fahrenheit", "Kelvin", "Rankine", "Réaumur",
+        "Delisle", "Newton", "Rømer", "Leiden", "Gas mark"
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,26 +61,39 @@ class TemperatureFragment : Fragment() {
         val fromUnit = binding.fromUnitSpinner.selectedItem.toString()
         val toUnit = binding.toUnitSpinner.selectedItem.toString()
 
-        val result = when {
-            fromUnit == toUnit -> inputTemp
-            fromUnit == "Celsius" && toUnit == "Fahrenheit" -> celsiusToFahrenheit(inputTemp)
-            fromUnit == "Celsius" && toUnit == "Kelvin" -> celsiusToKelvin(inputTemp)
-            fromUnit == "Fahrenheit" && toUnit == "Celsius" -> fahrenheitToCelsius(inputTemp)
-            fromUnit == "Fahrenheit" && toUnit == "Kelvin" -> fahrenheitToKelvin(inputTemp)
-            fromUnit == "Kelvin" && toUnit == "Celsius" -> kelvinToCelsius(inputTemp)
-            fromUnit == "Kelvin" && toUnit == "Fahrenheit" -> kelvinToFahrenheit(inputTemp)
-            else -> throw IllegalArgumentException("Invalid conversion")
-        }
+        val celsiusTemp = toCelsius(inputTemp, fromUnit)
+        val result = fromCelsius(celsiusTemp, toUnit)
 
         binding.resultText.text = "Result: ${result.roundToInt()} $toUnit"
     }
 
-    private fun celsiusToFahrenheit(celsius: Double): Double = celsius * 9 / 5 + 32
-    private fun celsiusToKelvin(celsius: Double): Double = celsius + 273.15
-    private fun fahrenheitToCelsius(fahrenheit: Double): Double = (fahrenheit - 32) * 5 / 9
-    private fun fahrenheitToKelvin(fahrenheit: Double): Double = (fahrenheit + 459.67) * 5 / 9
-    private fun kelvinToCelsius(kelvin: Double): Double = kelvin - 273.15
-    private fun kelvinToFahrenheit(kelvin: Double): Double = kelvin * 9 / 5 - 459.67
+    private fun toCelsius(temp: Double, unit: String): Double = when (unit) {
+        "Celsius" -> temp
+        "Fahrenheit" -> (temp - 32) * 5 / 9
+        "Kelvin" -> temp - 273.15
+        "Rankine" -> (temp - 491.67) * 5 / 9
+        "Réaumur" -> temp * 5 / 4
+        "Delisle" -> 100 - temp * 2 / 3
+        "Newton" -> temp * 100 / 33
+        "Rømer" -> (temp - 7.5) * 40 / 21
+        "Leiden" -> temp + 253.15
+        "Gas mark" -> (temp * 125 + 130) * 5 / 9
+        else -> throw IllegalArgumentException("Invalid unit: $unit")
+    }
+
+    private fun fromCelsius(celsius: Double, unit: String): Double = when (unit) {
+        "Celsius" -> celsius
+        "Fahrenheit" -> celsius * 9 / 5 + 32
+        "Kelvin" -> celsius + 273.15
+        "Rankine" -> (celsius + 273.15) * 9 / 5
+        "Réaumur" -> celsius * 4 / 5
+        "Delisle" -> (100 - celsius) * 3 / 2
+        "Newton" -> celsius * 33 / 100
+        "Rømer" -> celsius * 21 / 40 + 7.5
+        "Leiden" -> celsius - 253.15
+        "Gas mark" -> (celsius * 9 / 5 - 130) / 125
+        else -> throw IllegalArgumentException("Invalid unit: $unit")
+    }
 
     companion object {
         private const val TAG = "TemperatureFragment"
