@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         val test = "ca-app-pub-3940256099942544/1033173712"
 
         if (::adRequest.isInitialized) {
-            InterstitialAd.load(this, test, adRequest, object : InterstitialAdLoadCallback() {
+            InterstitialAd.load(this, prod, adRequest, object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     // mInterstitialAd = null
                 }
@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         bottomSheetBinding.btnGetUpdate.setOnClickListener {
-            getUpdate()
+            updateApp()
             bottomSheetDialog.dismiss()
         }
         bottomSheetBinding.btnTheme.setOnClickListener {
@@ -147,15 +147,16 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun getUpdate() {
+    private fun updateApp() {
         val appPackageName = "com.aatmik.calculator"
         startActivity(
             Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName&showRating=true")
+                Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")
             )
         )
     }
+
 
     private fun loadCalculatorOrder() {
         val sharedPreferences = getSharedPreferences("CalculatorPrefs", MODE_PRIVATE)
