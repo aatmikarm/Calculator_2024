@@ -16,32 +16,64 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="10dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tvCurrencyName"
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center"
+                android:background="@drawable/four_lines"
+                android:backgroundTint="#D1D1D1"
+                android:translationX="-10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/colorPrimary"
+                app:cardCornerRadius="10dp">
+
+                <TextView
+                    android:id="@+id/tvCurrencyCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="USD"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="US Dollar"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="5dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/currencyRateTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1 USD"
-                android:textColor="@color/gray_dark" />
+                <TextView
+                    android:id="@+id/tvCurrencyName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="10dp"
+                    android:text="US Dollar"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvCurrencyCode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="USD"
-                android:textColor="@color/gray_dark" />
+                <TextView
+                    android:id="@+id/currencyRateTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1 USD"
+                    android:textColor="@color/gray_dark" />
+
+            </LinearLayout>
         </LinearLayout>
 
         <EditText
