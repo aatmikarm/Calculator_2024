@@ -39,7 +39,7 @@ class CalculatorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCalculatorBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        runAds()
+        //runAds()
         // Get the calculator type passed from MainActivity
         val calculatorType = intent.getStringExtra("calculatorName")
 
@@ -121,7 +121,7 @@ class CalculatorActivity : AppCompatActivity() {
 
         if (::adRequest.isInitialized) {
             InterstitialAd.load(this,
-                prod,
+                test,
                 adRequest,
                 object : InterstitialAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {

@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        runAds()
+        //runAds()
         loadCalculatorOrder()
         setupRecyclerView()
         search()
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         val test = "ca-app-pub-3940256099942544/1033173712"
 
         if (::adRequest.isInitialized) {
-            InterstitialAd.load(this, prod, adRequest, object : InterstitialAdLoadCallback() {
+            InterstitialAd.load(this, test, adRequest, object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     // mInterstitialAd = null
                 }
