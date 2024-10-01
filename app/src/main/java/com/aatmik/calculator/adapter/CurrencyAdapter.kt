@@ -9,10 +9,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.databinding.CurrencyItemBinding
 import com.aatmik.calculator.model.Currency
-import java.util.Collections
 
 class CurrencyAdapter(
-    private val currencies: ArrayList<Currency>,
+    private val currencies: MutableList<Currency>,
     private val onValueChanged: (Int, String) -> Unit,
 ) :
     RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>() {
@@ -70,10 +69,5 @@ class CurrencyAdapter(
         Handler(Looper.getMainLooper()).post {
             notifyItemChanged(position)
         }
-    }
-
-    fun swapItems(fromPosition: Int, toPosition: Int) {
-        Collections.swap(currencies, fromPosition, toPosition)
-        notifyItemMoved(fromPosition, toPosition)
     }
 }
