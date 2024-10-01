@@ -79,56 +79,6 @@ class CurrencyConverterFragment : Fragment() {
         }
     }
 
-    /*   private fun fetchAllCurrencies() {
-
-           CoroutineScope(Dispatchers.IO).launch {
-               try {
-                   val currencyCodes = listOf(
-                       Currency("USD", "United States Dollar"),
-                       Currency("EUR", "Euro"),
-                       Currency("INR", "Indian Rupee"),
-                       Currency("GBP", "British Pound"),
-                       Currency("JPY", "Japanese Yen"),
-                       Currency("AUD", "Australian Dollar"),
-                       Currency("CAD", "Canadian Dollar"),
-                       Currency("CHF", "Swiss Franc"),
-                       Currency("CNY", "Chinese Yuan"),
-                       Currency("SEK", "Swedish Krona")
-                   )
-
-
-                   // Clear existing currency list if needed
-                   allCurrencies.clear()
-
-                   // Loop through each currency and get exchange rate (to USD for example)
-
-                   val job = CoroutineScope(Dispatchers.IO).launch {
-                       currencyCodes.forEach { currency ->
-                           launch {
-                               val rate = getCurrencyRate(
-                                   currency.code, "USD"
-                               ) // Fetch rate for each currency
-                               if (rate != null) {
-                                   val tempCurrency = currency.copy(rate = rate)
-                                   allCurrencies.add(tempCurrency)
-                               }
-                           }
-                       }
-                   }
-
-                   allCurrencies.sortBy { it.name }
-                   job.join()
-                   // Log the total currencies loaded
-                   withContext(Dispatchers.Main) {
-                       adapter.notifyDataSetChanged()
-                       Log.d(TAG, "Currencies loaded: ${allCurrencies.size}")
-                   }
-               } catch (e: Exception) {
-                   e.printStackTrace()
-               }
-           }
-       }*/
-
     private fun fetchAllCurrencies() {
 
         // Check internet availability before proceeding
@@ -150,17 +100,7 @@ class CurrencyConverterFragment : Fragment() {
                     Currency("CAD", "Canadian Dollar"),
                     Currency("CHF", "Swiss Franc"),
                     Currency("CNY", "Chinese Yuan"),
-                    Currency("SEK", "Swedish Krona"),
-                    Currency("NZD", "New Zealand Dollar"),
-                    Currency("MXN", "Mexican Peso"),
-                    Currency("SGD", "Singapore Dollar"),
-                    Currency("HKD", "Hong Kong Dollar"),
-                    Currency("NOK", "Norwegian Krone"),
-                    Currency("KRW", "South Korean Won"),
-                    Currency("TRY", "Turkish Lira"),
-                    Currency("RUB", "Russian Ruble"),
-                    Currency("BRL", "Brazilian Real"),
-                    Currency("ZAR", "South African Rand")
+                    Currency("SEK", "Swedish Krona")
                 )
 
                 // Clear existing currency list if needed
@@ -213,11 +153,11 @@ class CurrencyConverterFragment : Fragment() {
 
             // Extract the exchange rate
             val rateElement = document.selectFirst("div[class=BNeawe iBp4i AP7Wnd]")
-            val exchangeRate = rateElement?.text() ?: "1"
+            val exchangeRate = rateElement?.text() ?: "1.0"
             val value = exchangeRate.split(" ")[0].toDouble() // Extracts the double value
 
 
-            Log.d(TAG, "getCurrencyRate: $value")
+            Log.d(TAG, "getCurrencyRate: $fromCurrency to $toCurrency = $value ")
             value.toString()
 
         } catch (e: IOException) {

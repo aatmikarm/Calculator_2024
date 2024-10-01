@@ -13,8 +13,16 @@ class TemperatureFragment : Fragment() {
 
     private lateinit var binding: FragmentTemperatureBinding
     private val temperatureUnits = arrayOf(
-        "Celsius", "Fahrenheit", "Kelvin", "Rankine", "Réaumur",
-        "Delisle", "Newton", "Rømer", "Leiden", "Gas mark"
+        "Celsius",
+        "Fahrenheit",
+        "Kelvin",
+        "Rankine",
+        "Réaumur",
+        "Delisle",
+        "Newton",
+        "Rømer",
+        "Leiden",
+        "Gas mark"
     )
 
     override fun onCreateView(
