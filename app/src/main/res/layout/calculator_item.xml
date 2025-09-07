@@ -23,7 +23,7 @@
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:background="@drawable/four_lines"
-                android:backgroundTint="#D1D1D1"
+                android:backgroundTint="?attr/colorSurface"
                 android:translationX="-10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

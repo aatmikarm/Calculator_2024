@@ -131,7 +131,7 @@
                     android:hint="Enter your height"
                     android:inputType="numberDecimal"
                     android:padding="16dp"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -160,7 +160,7 @@
                     android:hint="Enter your weight"
                     android:inputType="numberDecimal"
                     android:padding="16dp"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -172,7 +172,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:backgroundTint="@color/colorPrimary"
+                android:backgroundTint="?attr/colorPrimary"
                 android:padding="10dp"
                 android:text="Calculate BMI"
                 android:textColor="@android:color/white"
@@ -184,7 +184,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="8dp"
-                android:backgroundTint="@color/colorPrimary"
+                android:backgroundTint="?attr/colorPrimary"
                 android:text="Switch to Imperial" />
 
         </LinearLayout>
@@ -233,7 +233,7 @@
         android:text="@string/powered_by"
         android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/black"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -29,6 +29,7 @@ import com.aatmik.calculator.adapter.AgeHistoryAdapter
 import com.aatmik.calculator.databinding.DialogSaveUserBinding
 import com.aatmik.calculator.databinding.FragmentAgeBinding
 import com.aatmik.calculator.viewmodel.AgeViewModel
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -42,6 +43,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import androidx.core.graphics.drawable.toDrawable
 
 class AgeFragment : Fragment() {
 
@@ -138,8 +140,11 @@ class AgeFragment : Fragment() {
                         requireContext(),
                         R.drawable.ic_delete
                     ) // Your delete icon
-                    val backgroundColor = ColorDrawable(Color.RED) // Red background
-
+                    val backgroundColor = MaterialColors.getColor(
+                        requireContext(),
+                        androidx.appcompat.R.attr.colorPrimary,
+                        Color.RED
+                    ).toDrawable()
                     // Calculate bounds for the icon and background
                     val iconMargin = (itemView.height - icon!!.intrinsicHeight) / 2
                     val iconTop = itemView.top + iconMargin

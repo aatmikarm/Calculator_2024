@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_light"
+    android:background="?android:attr/colorBackground"
     tools:context=".activity.MainActivity">
 
     <androidx.cardview.widget.CardView
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:backgroundTint="@color/gray_medium"
+        android:backgroundTint="?attr/colorSurface"
         android:gravity="center"
         android:padding="10dp"
         ads:cardCornerRadius="10dp"
@@ -45,7 +45,7 @@
                 android:focusableInTouchMode="true"
                 android:hint="@string/searchEtHint"
                 android:padding="10dp"
-                android:textColor="#A19B9B" />
+                android:textColor="?android:attr/textColorSecondary" />
 
             <ImageView
                 android:id="@+id/clearTextIv"
@@ -90,7 +90,7 @@
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/gray_medium"
+        android:background="?attr/colorSurface"
         android:orientation="vertical"
         ads:layout_constraintBottom_toBottomOf="parent"
         ads:layout_constraintEnd_toEndOf="parent"
@@ -126,7 +126,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="-25dp"
-        android:backgroundTint="@color/gray_dark"
+        android:backgroundTint="?attr/colorPrimary"
         ads:cardCornerRadius="18dp"
         ads:layout_constraintBottom_toBottomOf="@+id/linearLayout"
         ads:layout_constraintEnd_toEndOf="parent"
@@ -151,7 +151,7 @@
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="10dp"
                 android:text="@string/calculator"
-                android:textColor="@color/white"
+                android:textColor="?attr/colorOnPrimary"
                 android:textSize="14sp" />
 
         </LinearLayout>

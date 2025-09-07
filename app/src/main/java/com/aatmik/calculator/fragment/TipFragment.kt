@@ -1,6 +1,7 @@
 package com.aatmik.calculator.fragment
 
 import android.animation.ArgbEvaluator
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.aatmik.calculator.R
 import com.aatmik.calculator.databinding.FragmentTipBinding
+import com.google.android.material.color.MaterialColors
 
 class TipFragment : Fragment() {
 
@@ -72,12 +74,9 @@ class TipFragment : Fragment() {
             }
             tvTipDescription.text = tipDescription
             //Update the color based on the tipPercent
-            val color = ArgbEvaluator().evaluate(
-                tipPercent.toFloat() / seekBarTip.max,
-                ContextCompat.getColor(requireContext(), R.color.colorPrimary),
-                ContextCompat.getColor(requireContext(), R.color.colorPrimary)
-            ) as Int
-            tvTipDescription.setTextColor(color)
+            val primaryColor = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorPrimary, Color.BLACK)
+
+            tvTipDescription.setTextColor(primaryColor)
         }
 
 

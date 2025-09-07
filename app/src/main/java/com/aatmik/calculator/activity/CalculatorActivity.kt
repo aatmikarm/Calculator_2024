@@ -28,6 +28,7 @@ import com.aatmik.calculator.fragment.bodies.BodiesFragment
 import com.aatmik.calculator.fragment.shapes.ShapesFragment
 import com.aatmik.calculator.util.AdConfig
 import com.aatmik.calculator.util.NetworkUtil
+import com.aatmik.calculator.util.ThemeManager
 import com.example.yourapp.MathEquationSolverFragment
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
@@ -45,6 +46,8 @@ class CalculatorActivity : AppCompatActivity() {
     private lateinit var interstitialAd1: InterstitialAd
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.initializeTheme(this)
+        setTheme(ThemeManager.getThemeStyle(this))
         super.onCreate(savedInstanceState)
 
         // Enable edge-to-edge for Android 15 compatibility

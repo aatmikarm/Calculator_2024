@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/gray_light"
+    android:background="?android:attr/colorBackground"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -17,16 +17,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:backgroundTint="@color/gray_dark"
+            android:backgroundTint="?attr/colorPrimary"
             app:cardCornerRadius="10dp">
 
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_margin="10dp"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="?attr/colorOnPrimary"
                 android:src="@drawable/star_color" />
-
 
         </androidx.cardview.widget.CardView>
 
@@ -36,11 +35,10 @@
             android:layout_gravity="center"
             android:layout_marginHorizontal="20dp"
             android:text="Rate App"
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp" />
 
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/btnRemoveAds"
@@ -53,16 +51,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:backgroundTint="@color/gray_dark"
+            android:backgroundTint="?attr/colorPrimary"
             app:cardCornerRadius="10dp">
 
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_margin="10dp"
-                android:backgroundTint="@color/white"
+                android:backgroundTint="?attr/colorOnPrimary"
                 android:src="@drawable/premium_color" />
-
 
         </androidx.cardview.widget.CardView>
 
@@ -72,7 +69,7 @@
             android:layout_gravity="center"
             android:layout_marginHorizontal="20dp"
             android:text="Remove Ads"
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp" />
 
     </LinearLayout>
@@ -87,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:backgroundTint="@color/gray_dark"
+            android:backgroundTint="?attr/colorPrimary"
             app:cardCornerRadius="10dp">
 
             <ImageView
@@ -95,7 +92,6 @@
                 android:layout_height="16dp"
                 android:layout_margin="10dp"
                 android:src="@drawable/download_two" />
-
 
         </androidx.cardview.widget.CardView>
 
@@ -105,7 +101,7 @@
             android:layout_gravity="center"
             android:layout_marginHorizontal="20dp"
             android:text="Update App"
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp" />
 
     </LinearLayout>
@@ -115,13 +111,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:backgroundTint="@color/gray_dark"
+            android:backgroundTint="?attr/colorPrimary"
             app:cardCornerRadius="10dp">
 
             <ImageView
@@ -129,7 +125,6 @@
                 android:layout_height="16dp"
                 android:layout_margin="10dp"
                 android:src="@drawable/theme" />
-
 
         </androidx.cardview.widget.CardView>
 
@@ -139,7 +134,7 @@
             android:layout_gravity="center"
             android:layout_marginHorizontal="20dp"
             android:text="Change Theme"
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp" />
 
     </LinearLayout>

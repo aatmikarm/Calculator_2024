@@ -25,6 +25,7 @@ import com.aatmik.calculator.model.Calculator
 import com.aatmik.calculator.util.AdConfig
 import com.aatmik.calculator.util.CalculatorUtils
 import com.aatmik.calculator.util.NetworkUtil
+import com.aatmik.calculator.util.ThemeManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -45,6 +46,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.initializeTheme(this)
+        setTheme(ThemeManager.getThemeStyle(this))
         super.onCreate(savedInstanceState)
 
         // Enable edge-to-edge for Android 15 compatibility
@@ -152,6 +155,8 @@ class MainActivity : AppCompatActivity() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val bottomSheetBinding = BottomSheetLayoutBinding.inflate(layoutInflater)
 
+        // Make theme button visible
+        bottomSheetBinding.btnTheme.visibility = View.VISIBLE
 
         bottomSheetBinding.rateApp.setOnClickListener {
             rateApp()
@@ -169,10 +174,64 @@ class MainActivity : AppCompatActivity() {
         }
         bottomSheetBinding.btnTheme.setOnClickListener {
             bottomSheetDialog.dismiss()
+            showThemeSelector()  // Add this new method
         }
 
         bottomSheetDialog.setContentView(bottomSheetBinding.root)
         bottomSheetDialog.show()
+    }
+
+    private fun showThemeSelector() {
+        val options = arrayOf(
+            "Light Mode",
+            "Dark Mode",
+            "Follow System",
+            "━━━━━━━━━━━━━━━━━━━",
+            "Default (Orange)",
+            "Red Theme",
+            "Green Theme",
+            "Blue Theme",
+            "Purple Theme",
+            "Pink Theme"
+        )
+
+        val currentTheme = ThemeManager.getSavedTheme(this)
+        val currentSelection = when (currentTheme) {
+            ThemeManager.THEME_LIGHT -> 0
+            ThemeManager.THEME_DARK -> 1
+            ThemeManager.THEME_SYSTEM -> 2
+            ThemeManager.THEME_DEFAULT -> 4
+            ThemeManager.THEME_RED -> 5
+            ThemeManager.THEME_GREEN -> 6
+            ThemeManager.THEME_BLUE -> 7
+            ThemeManager.THEME_PURPLE -> 8
+            ThemeManager.THEME_PINK -> 9
+            else -> 4
+        }
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Choose Theme")
+            .setSingleChoiceItems(options, currentSelection) { dialog, which ->
+                val selectedTheme = when (which) {
+                    0 -> ThemeManager.THEME_LIGHT
+                    1 -> ThemeManager.THEME_DARK
+                    2 -> ThemeManager.THEME_SYSTEM
+                    3 -> return@setSingleChoiceItems // Separator line - do nothing
+                    4 -> ThemeManager.THEME_DEFAULT
+                    5 -> ThemeManager.THEME_RED
+                    6 -> ThemeManager.THEME_GREEN
+                    7 -> ThemeManager.THEME_BLUE
+                    8 -> ThemeManager.THEME_PURPLE
+                    9 -> ThemeManager.THEME_PINK
+                    else -> ThemeManager.THEME_DEFAULT
+                }
+
+                ThemeManager.saveTheme(this, selectedTheme)
+                recreate() // Restart activity to apply new theme
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun rateApp() {
