@@ -12,9 +12,9 @@ android {
     defaultConfig {
         applicationId = "com.aatmik.calculator"
         minSdk = 25
-        targetSdk = 34
-        versionCode = 5
-        versionName = "5.0"
+        targetSdk = 35
+        versionCode = 6
+        versionName = "6.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

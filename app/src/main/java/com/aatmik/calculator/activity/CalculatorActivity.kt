@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.WindowMetrics
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.aatmik.calculator.R
@@ -40,10 +43,21 @@ class CalculatorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCalculatorBinding
     private lateinit var adRequest: AdRequest
     private lateinit var interstitialAd1: InterstitialAd
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Enable edge-to-edge for Android 15 compatibility
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            enableEdgeToEdge()
+        }
+
         binding = ActivityCalculatorBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Handle system bar insets for edge-to-edge
+        setupEdgeToEdgeInsets()
+
         runAds()
         // Get the calculator type passed from MainActivity
         val calculatorType = intent.getStringExtra("calculatorName")
@@ -53,8 +67,40 @@ class CalculatorActivity : AppCompatActivity() {
         } else {
             coroutineLaunch(calculatorType)
         }
+    }
 
+    /**
+     * Enable edge-to-edge display for Android 15+
+     */
+    private fun enableEdgeToEdge() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            window.statusBarColor = android.graphics.Color.TRANSPARENT
+            window.navigationBarColor = android.graphics.Color.TRANSPARENT
 
+            // Set system bar appearance
+            val controller = WindowInsetsControllerCompat(window, window.decorView)
+            controller.isAppearanceLightStatusBars = false
+            controller.isAppearanceLightNavigationBars = false
+        }
+    }
+
+    /**
+     * Handle window insets for proper edge-to-edge layout
+     */
+    private fun setupEdgeToEdgeInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Apply padding for status bar and navigation bar
+            view.setPadding(
+                view.paddingLeft,
+                insets.top,
+                view.paddingRight,
+                insets.bottom
+            )
+
+            windowInsets
+        }
     }
 
     private fun coroutineLaunch(calculatorType: String?) {
@@ -93,9 +139,11 @@ class CalculatorActivity : AppCompatActivity() {
     }
 
     private fun loadFragment(fragment: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.calculatorFragmentContainer, fragment)
-        transaction.commit()
+        runOnUiThread {
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.calculatorFragmentContainer, fragment)
+            transaction.commit()
+        }
     }
 
     private fun runAds() {
@@ -174,5 +222,8 @@ class CalculatorActivity : AppCompatActivity() {
         adView.loadAd(adRequest)
     }
 
-
+    override fun onDestroy() {
+        adView?.destroy()
+        super.onDestroy()
+    }
 }
