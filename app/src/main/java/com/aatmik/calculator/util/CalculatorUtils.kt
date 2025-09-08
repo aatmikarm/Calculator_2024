@@ -30,6 +30,7 @@ object CalculatorUtils {
             Calculator("Convertor", R.drawable.convert),
             Calculator("Stopwatch", R.drawable.stopwatch),
             Calculator("Percentage", R.drawable.percentage),
+            Calculator("Interest Calculator", R.drawable.percentage), // Using percentage icon for now
             Calculator("Equation", R.drawable.equation_xy),
             Calculator("Shapes", R.drawable.shapes_new),
             Calculator("Bodies", R.drawable.bodies),
