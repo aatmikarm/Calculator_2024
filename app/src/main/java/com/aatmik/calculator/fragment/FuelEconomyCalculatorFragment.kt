@@ -17,27 +17,32 @@ class FuelEconomyCalculatorFragment : Fragment() {
     private lateinit var binding: FragmentFuelEconomyCalculatorBinding
     private var selectedFuelType: String = "Petrol" // Default fuel type
     private var selectedCurrency: Currency = Currency.INR // Default currency
+    private var isMetricSystem: Boolean = true // Default to metric (liters)
 
-    // Currency data class
+    // Currency data class with both metric and imperial prices
     data class Currency(
         val code: String,
         val symbol: String,
         val name: String,
-        val petrolPrice: Double,
-        val dieselPrice: Double,
-        val cngPrice: Double
+        val petrolPricePerLiter: Double,
+        val dieselPricePerLiter: Double,
+        val cngPricePerLiter: Double,
+        val petrolPricePerGallon: Double,
+        val dieselPricePerGallon: Double,
+        val cngPricePerGallon: Double,
+        val defaultUnit: String // "metric" or "imperial"
     ) {
         companion object {
-            val INR = Currency("INR", "₹", "Indian Rupee", 102.50, 89.75, 75.00)
-            val USD = Currency("USD", "$", "US Dollar", 0.85, 0.75, 0.60)
-            val EUR = Currency("EUR", "€", "Euro", 1.45, 1.35, 1.10)
-            val GBP = Currency("GBP", "£", "British Pound", 1.55, 1.45, 1.20)
-            val AED = Currency("AED", "د.إ", "UAE Dirham", 3.20, 3.00, 2.50)
-            val SAR = Currency("SAR", "﷼", "Saudi Riyal", 2.35, 2.15, 1.80)
-            val QAR = Currency("QAR", "ر.ق", "Qatari Riyal", 3.65, 3.45, 2.90)
-            val CAD = Currency("CAD", "C$", "Canadian Dollar", 1.45, 1.35, 1.10)
-            val AUD = Currency("AUD", "A$", "Australian Dollar", 1.65, 1.55, 1.25)
-            val SGD = Currency("SGD", "S$", "Singapore Dollar", 2.15, 2.00, 1.65)
+            val INR = Currency("INR", "₹", "Indian Rupee", 102.50, 89.75, 75.00, 388.0, 340.0, 284.0, "metric")
+            val USD = Currency("USD", "$", "US Dollar", 0.85, 0.75, 0.60, 3.22, 2.84, 2.27, "imperial")
+            val EUR = Currency("EUR", "€", "Euro", 1.45, 1.35, 1.10, 5.49, 5.11, 4.16, "metric")
+            val GBP = Currency("GBP", "£", "British Pound", 1.55, 1.45, 1.20, 7.05, 6.59, 5.46, "imperial")
+            val AED = Currency("AED", "د.إ", "UAE Dirham", 3.20, 3.00, 2.50, 12.11, 11.36, 9.46, "metric")
+            val SAR = Currency("SAR", "﷼", "Saudi Riyal", 2.35, 2.15, 1.80, 8.90, 8.14, 6.81, "metric")
+            val QAR = Currency("QAR", "ر.ق", "Qatari Riyal", 3.65, 3.45, 2.90, 13.82, 13.06, 10.98, "metric")
+            val CAD = Currency("CAD", "C$", "Canadian Dollar", 1.45, 1.35, 1.10, 5.49, 5.11, 4.16, "imperial")
+            val AUD = Currency("AUD", "A$", "Australian Dollar", 1.65, 1.55, 1.25, 6.25, 5.87, 4.73, "metric")
+            val SGD = Currency("SGD", "S$", "Singapore Dollar", 2.15, 2.00, 1.65, 8.14, 7.57, 6.25, "metric")
         }
     }
 
@@ -58,12 +63,32 @@ class FuelEconomyCalculatorFragment : Fragment() {
             setupCurrencySpinner()
 
             // Set initial button states
+            updateUnitSystemButtons()
             updateFuelTypeButtons()
 
             // Text Watcher for input fields
             etDistance.addTextChangedListener(fuelTextWatcher)
             etFuelUsed.addTextChangedListener(fuelTextWatcher)
             etFuelPrice.addTextChangedListener(fuelTextWatcher)
+
+            // Unit system toggle buttons
+            btnMetric.setOnClickListener {
+                isMetricSystem = true
+                updateUnitSystemButtons()
+                updateFuelPrice()
+                updateInputHints()
+                updateEfficiencyGuide()
+                calculateAndDisplayFuelEconomy()
+            }
+
+            btnImperial.setOnClickListener {
+                isMetricSystem = false
+                updateUnitSystemButtons()
+                updateFuelPrice()
+                updateInputHints()
+                updateEfficiencyGuide()
+                calculateAndDisplayFuelEconomy()
+            }
 
             // Fuel type selection buttons
             btnPetrol.setOnClickListener {
@@ -92,7 +117,9 @@ class FuelEconomyCalculatorFragment : Fragment() {
                 calculateAndDisplayFuelEconomy()
             }
 
-            // Set default fuel price
+            // Set initial state
+            updateInputHints()
+            updateEfficiencyGuide()
             updateFuelPrice()
         }
     }
@@ -108,8 +135,13 @@ class FuelEconomyCalculatorFragment : Fragment() {
         binding.spinnerCurrency.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedCurrency = currencies[position]
+
+                // Auto-set unit system based on currency's default
+                isMetricSystem = selectedCurrency.defaultUnit == "metric"
+                updateUnitSystemButtons()
+                updateInputHints()
+                updateEfficiencyGuide()
                 updateFuelPrice()
-                updateFuelPriceHint()
                 calculateAndDisplayFuelEconomy()
             }
 
@@ -117,16 +149,38 @@ class FuelEconomyCalculatorFragment : Fragment() {
         }
     }
 
-    private fun updateFuelPriceHint() {
-        binding.fuelPriceInputLayout.hint = "Fuel Price (${selectedCurrency.symbol} per liter)"
+    private fun updateUnitSystemButtons() {
+        binding.apply {
+            btnMetric.isSelected = isMetricSystem
+            btnImperial.isSelected = !isMetricSystem
+        }
+    }
+
+    private fun updateInputHints() {
+        val fuelUnit = if (isMetricSystem) "liters" else "gallons"
+        val priceUnit = if (isMetricSystem) "liter" else "gallon"
+
+        binding.apply {
+            fuelUsedInputLayout.hint = "Fuel Used ($fuelUnit)"
+            fuelPriceInputLayout.hint = "Fuel Price (${selectedCurrency.symbol} per $priceUnit)"
+        }
+    }
+
+    private fun updateEfficiencyGuide() {
+        val guide = if (isMetricSystem) {
+            "Excellent: >20 km/l • Good: 15-20 km/l • Average: 10-15 km/l • Poor: <10 km/l"
+        } else {
+            "Excellent: >47 mpg • Good: 35-47 mpg • Average: 24-35 mpg • Poor: <24 mpg"
+        }
+        binding.tvEfficiencyGuide.text = guide
     }
 
     private fun updateFuelPrice() {
         val price = when (selectedFuelType) {
-            "Petrol" -> selectedCurrency.petrolPrice
-            "Diesel" -> selectedCurrency.dieselPrice
-            "CNG" -> selectedCurrency.cngPrice
-            else -> selectedCurrency.petrolPrice
+            "Petrol" -> if (isMetricSystem) selectedCurrency.petrolPricePerLiter else selectedCurrency.petrolPricePerGallon
+            "Diesel" -> if (isMetricSystem) selectedCurrency.dieselPricePerLiter else selectedCurrency.dieselPricePerGallon
+            "CNG" -> if (isMetricSystem) selectedCurrency.cngPricePerLiter else selectedCurrency.cngPricePerGallon
+            else -> if (isMetricSystem) selectedCurrency.petrolPricePerLiter else selectedCurrency.petrolPricePerGallon
         }
         binding.etFuelPrice.setText(String.format("%.2f", price))
     }
@@ -147,11 +201,14 @@ class FuelEconomyCalculatorFragment : Fragment() {
             val fuelUsedText = etFuelUsed.text.toString()
             val fuelPriceText = etFuelPrice.text.toString()
 
+            val unitSystem = if (isMetricSystem) "Metric" else "Imperial"
+            val fuelUnit = if (isMetricSystem) "liters" else "gallons"
+
             if (distanceText.isEmpty() || fuelUsedText.isEmpty() || fuelPriceText.isEmpty()) {
                 tvFuelEfficiencyResult.text = "Enter trip details to calculate"
                 tvFuelCostResult.text = ""
                 tvCostPerKmResult.text = ""
-                tvFuelSummary.text = "Complete the form above for $selectedFuelType (${selectedCurrency.code})"
+                tvFuelSummary.text = "Complete the form above for $selectedFuelType ($unitSystem - ${selectedCurrency.code})"
                 return
             }
 
@@ -168,8 +225,12 @@ class FuelEconomyCalculatorFragment : Fragment() {
                     return
                 }
 
-                // Calculate fuel efficiency (km per liter)
+                // Calculate fuel efficiency
                 val fuelEfficiency = distance / fuelUsed
+                val efficiencyUnit = if (isMetricSystem) "km/L" else "mpg"
+
+                // Convert to consistent efficiency rating (using metric standards)
+                val metricEfficiency = if (isMetricSystem) fuelEfficiency else fuelEfficiency * 0.425144 // mpg to km/L
 
                 // Calculate total fuel cost
                 val totalFuelCost = fuelUsed * fuelPrice
@@ -177,11 +238,11 @@ class FuelEconomyCalculatorFragment : Fragment() {
                 // Calculate cost per kilometer
                 val costPerKm = totalFuelCost / distance
 
-                // Determine efficiency category
+                // Determine efficiency category (based on metric standards)
                 val efficiencyCategory = when {
-                    fuelEfficiency >= 20 -> "Excellent ⭐⭐⭐"
-                    fuelEfficiency >= 15 -> "Good ⭐⭐"
-                    fuelEfficiency >= 10 -> "Average ⭐"
+                    metricEfficiency >= 20 -> "Excellent ⭐⭐⭐"
+                    metricEfficiency >= 15 -> "Good ⭐⭐"
+                    metricEfficiency >= 10 -> "Average ⭐"
                     else -> "Needs Improvement"
                 }
 
@@ -189,7 +250,7 @@ class FuelEconomyCalculatorFragment : Fragment() {
                 val monthlyCost = costPerKm * 1000
 
                 // Format and display the results with currency symbol
-                tvFuelEfficiencyResult.text = "%.2f km/liter (%s)".format(fuelEfficiency, selectedFuelType)
+                tvFuelEfficiencyResult.text = "%.2f %s (%s)".format(fuelEfficiency, efficiencyUnit, selectedFuelType)
                 tvFuelCostResult.text = "Trip Cost: %s%.2f".format(selectedCurrency.symbol, totalFuelCost)
                 tvCostPerKmResult.text = "Cost per km: %s%.2f".format(selectedCurrency.symbol, costPerKm)
                 tvFuelSummary.text = "%s • Monthly est: %s%.0f (1000km)".format(efficiencyCategory, selectedCurrency.symbol, monthlyCost)

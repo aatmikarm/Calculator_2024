@@ -189,20 +189,42 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/fuelUsedInputLayout"
+                    <!-- Unit System Toggle -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="Unit System:"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:hint="Fuel Used (liters)">
+                        android:orientation="horizontal">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etFuelUsed"
-                            android:layout_width="match_parent"
+                        <Button
+                            android:id="@+id/btnMetric"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:inputType="numberDecimal" />
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:text="Metric (L)"
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="12sp" />
 
-                    </com.google.android.material.textfield.TextInputLayout>
+                        <Button
+                            android:id="@+id/btnImperial"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:text="Imperial (Gal)"
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
 
                     <!-- Currency Selection -->
                     <TextView
@@ -220,6 +242,21 @@
                         android:layout_marginBottom="12dp"
                         android:background="@android:drawable/btn_dropdown"
                         android:padding="12dp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/fuelUsedInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:hint="Fuel Used (liters)">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etFuelUsed"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/fuelPriceInputLayout"
@@ -293,6 +330,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvEfficiencyGuide"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
