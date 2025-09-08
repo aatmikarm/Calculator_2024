@@ -3,7 +3,7 @@
 
     <!-- Your existing button styles - keeping them as they are -->
     <style name="Dark_Button_Style" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:textSize">33sp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:gravity">center</item>
         <item name="fontFamily">sans-serif-light</item>
@@ -14,7 +14,7 @@
     </style>
 
     <style name="Light_Button_Style" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:textSize">33sp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:gravity">center</item>
         <item name="fontFamily">sans-serif-light</item>
@@ -25,7 +25,7 @@
     </style>
 
     <style name="equal_Button_Style" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:textSize">33sp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:gravity">center</item>
         <item name="fontFamily">sans-serif-light</item>
