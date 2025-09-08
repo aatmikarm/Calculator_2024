@@ -19,6 +19,7 @@ import com.aatmik.calculator.fragment.ConverterFragment
 import com.aatmik.calculator.fragment.CurrencyConverterFragment
 import com.aatmik.calculator.fragment.InterestCalculatorFragment
 import com.aatmik.calculator.fragment.LengthFragment
+import com.aatmik.calculator.fragment.LoanCalculatorFragment
 import com.aatmik.calculator.fragment.PercentageFragment
 import com.aatmik.calculator.fragment.SpeedFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
@@ -126,6 +127,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Stopwatch" -> loadFragment(StopwatchFragment())
                 "Percentage" -> loadFragment(PercentageFragment())
                 "Interest Calculator" -> loadFragment(InterestCalculatorFragment())
+                "Loan Calculator" -> loadFragment(LoanCalculatorFragment())
                 "Age" -> loadFragment(AgeFragment())
                 "Length" -> loadFragment(LengthFragment())
                 "Weight" -> loadFragment(WeightFragment())
