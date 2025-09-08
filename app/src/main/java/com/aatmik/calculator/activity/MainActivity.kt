@@ -393,6 +393,10 @@ class MainActivity : AppCompatActivity() {
                 putExtra("calculatorName", calculatorName)
             }
 
+            "Fuel Economy Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+
             "Age" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }

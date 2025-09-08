@@ -32,6 +32,7 @@ object CalculatorUtils {
             Calculator("Percentage", R.drawable.percentage),
             Calculator("Interest Calculator", R.drawable.percentage),
             Calculator("Loan Calculator", R.drawable.dollor),
+            Calculator("Fuel Economy Calculator", R.drawable.speed),
             Calculator("Equation", R.drawable.equation_xy),
             Calculator("Shapes", R.drawable.shapes_new),
             Calculator("Bodies", R.drawable.bodies),

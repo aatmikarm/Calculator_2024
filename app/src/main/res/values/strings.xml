@@ -635,6 +635,7 @@
     <string name="searchEtHint">Search</string>
     <string name="search_icon">search icon</string>
     <string name="powered_by">Powered by Aatmik Calculator 2024</string>
+    <string name="fule_hint_text"><![CDATA[Excellent: >20 km/l • Good: 15-20 km/l • Average: 10-15 km/l • Poor: <10 km/l]]></string>
 
     <string-array name="weight">
         <item>@string/microgram</item>
