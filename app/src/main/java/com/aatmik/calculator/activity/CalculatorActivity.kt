@@ -18,6 +18,7 @@ import com.aatmik.calculator.fragment.BasicCalculatorFragment
 import com.aatmik.calculator.fragment.BodyMassIndexFragment
 import com.aatmik.calculator.fragment.ConverterFragment
 import com.aatmik.calculator.fragment.CurrencyConverterFragment
+import com.aatmik.calculator.fragment.FreeFallFragment
 import com.aatmik.calculator.fragment.FuelEconomyCalculatorFragment
 import com.aatmik.calculator.fragment.GpaCalculatorFragment
 import com.aatmik.calculator.fragment.InterestCalculatorFragment
@@ -132,6 +133,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Interest Calculator" -> loadFragment(InterestCalculatorFragment())
                 "Loan Calculator" -> loadFragment(LoanCalculatorFragment())
                 "Fuel Economy Calculator" -> loadFragment(FuelEconomyCalculatorFragment())
+                "Free Fall" -> loadFragment(FreeFallFragment())
                 "Area Calculator" -> loadFragment(AreaCalculatorFragment())
                 "GPA Calculator" -> loadFragment(GpaCalculatorFragment())
                 "Age" -> loadFragment(AgeFragment())
