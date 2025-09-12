@@ -16,6 +16,8 @@ import com.aatmik.calculator.fragment.AgeFragment
 import com.aatmik.calculator.fragment.AreaCalculatorFragment
 import com.aatmik.calculator.fragment.BasicCalculatorFragment
 import com.aatmik.calculator.fragment.BodyMassIndexFragment
+import com.aatmik.calculator.fragment.CalorieCalculatorFragment
+import com.aatmik.calculator.fragment.CompassFragment
 import com.aatmik.calculator.fragment.ConverterFragment
 import com.aatmik.calculator.fragment.CurrencyConverterFragment
 import com.aatmik.calculator.fragment.FreeFallFragment
@@ -23,6 +25,7 @@ import com.aatmik.calculator.fragment.FuelEconomyCalculatorFragment
 import com.aatmik.calculator.fragment.GpaCalculatorFragment
 import com.aatmik.calculator.fragment.InterestCalculatorFragment
 import com.aatmik.calculator.fragment.LengthFragment
+import com.aatmik.calculator.fragment.LevelCalculatorFragment
 import com.aatmik.calculator.fragment.LoanCalculatorFragment
 import com.aatmik.calculator.fragment.PercentageFragment
 import com.aatmik.calculator.fragment.SpeedFragment
@@ -133,6 +136,8 @@ class CalculatorActivity : AppCompatActivity() {
                 "Interest Calculator" -> loadFragment(InterestCalculatorFragment())
                 "Loan Calculator" -> loadFragment(LoanCalculatorFragment())
                 "Fuel Economy Calculator" -> loadFragment(FuelEconomyCalculatorFragment())
+                "Compass" -> loadFragment(CompassFragment())
+                "Level" -> loadFragment(LevelCalculatorFragment())
                 "Free Fall" -> loadFragment(FreeFallFragment())
                 "Area Calculator" -> loadFragment(AreaCalculatorFragment())
                 "GPA Calculator" -> loadFragment(GpaCalculatorFragment())
@@ -142,6 +147,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Speed" -> loadFragment(SpeedFragment())
                 "Tip" -> loadFragment(TipFragment())
                 "Body Mass Index" -> loadFragment(BodyMassIndexFragment())
+                "Calorie Calculator" -> loadFragment(CalorieCalculatorFragment())
                 "Shapes" -> loadFragment(ShapesFragment())
                 "Equation" -> loadFragment(MathEquationSolverFragment())
                 "Currency Converter" -> loadFragment(CurrencyConverterFragment())

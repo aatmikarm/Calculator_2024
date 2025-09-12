@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+android:width="200dp"
+android:height="200dp"
+android:viewportWidth="200"
+android:viewportHeight="200">
+
+<!-- North pointer (red) -->
+<path
+    android:fillColor="#FF0000"
+    android:pathData="M100,20 L110,100 L90,100 Z" />
+
+<!-- South pointer (white) -->
+<path
+    android:fillColor="@android:color/white"
+    android:pathData="M100,180 L110,100 L90,100 Z" />
+
+<!-- Center circle -->
+<path
+    android:fillColor="#FFEB3B"
+    android:pathData="M100,92 A8,8 0 1,1 100,108 A8,8 0 1,1 100,92 Z" />
+
+<!-- Center dot -->
+<path
+    android:fillColor="#000000"
+    android:pathData="M100,97 A3,3 0 1,1 100,103 A3,3 0 1,1 100,97 Z" />
+</vector>

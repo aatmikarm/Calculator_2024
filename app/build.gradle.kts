@@ -103,5 +103,13 @@ dependencies {
     // web scraper
     implementation("org.jsoup:jsoup:1.15.2")
 
+    // CameraX dependencies (update these)
+    implementation("androidx.camera:camera-core:1.3.4")
+    implementation("androidx.camera:camera-camera2:1.3.4")
+    implementation("androidx.camera:camera-lifecycle:1.3.4")
+    implementation("androidx.camera:camera-view:1.3.4")
+
+    // Add this for ListenableFuture support
+    implementation("com.google.guava:guava:31.1-android")
 
 }

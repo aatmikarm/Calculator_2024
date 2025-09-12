@@ -33,6 +33,8 @@ object CalculatorUtils {
             Calculator("Interest Calculator", R.drawable.percentage),
             Calculator("Loan Calculator", R.drawable.dollor),
             Calculator("Fuel Economy Calculator", R.drawable.speed),
+            Calculator("Compass", R.drawable.compass),
+            Calculator("Level", R.drawable.level),
             Calculator("Free Fall", R.drawable.length),
             Calculator("Area Calculator", R.drawable.shapes_new),
             Calculator("GPA Calculator", R.drawable.percentage),
@@ -46,6 +48,7 @@ object CalculatorUtils {
             Calculator("Currency Converter", R.drawable.dollor),
             Calculator("Tip", R.drawable.tip),
             Calculator("Body Mass Index", R.drawable.bmi),
+            Calculator("Calorie Calculator", R.drawable.calories),
             Calculator("Age", R.drawable.cake)
         )
     }
