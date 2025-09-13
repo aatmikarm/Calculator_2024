@@ -18,6 +18,7 @@ import com.aatmik.calculator.fragment.BasicCalculatorFragment
 import com.aatmik.calculator.fragment.BodyMassIndexFragment
 import com.aatmik.calculator.fragment.CalorieCalculatorFragment
 import com.aatmik.calculator.fragment.CompassFragment
+import com.aatmik.calculator.fragment.ContributionCalculatorFragment
 import com.aatmik.calculator.fragment.ConverterFragment
 import com.aatmik.calculator.fragment.CurrencyConverterFragment
 import com.aatmik.calculator.fragment.FreeFallFragment
@@ -26,12 +27,16 @@ import com.aatmik.calculator.fragment.GpaCalculatorFragment
 import com.aatmik.calculator.fragment.InterestCalculatorFragment
 import com.aatmik.calculator.fragment.LengthFragment
 import com.aatmik.calculator.fragment.LevelCalculatorFragment
+import com.aatmik.calculator.fragment.LightningCalculatorFragment
 import com.aatmik.calculator.fragment.LoanCalculatorFragment
+import com.aatmik.calculator.fragment.LoveCalculatorFragment
+import com.aatmik.calculator.fragment.OhmsLawFragment
 import com.aatmik.calculator.fragment.PercentageFragment
 import com.aatmik.calculator.fragment.SpeedFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
 import com.aatmik.calculator.fragment.TemperatureFragment
 import com.aatmik.calculator.fragment.TipFragment
+import com.aatmik.calculator.fragment.TripEstimateFragment
 import com.aatmik.calculator.fragment.WeightFragment
 import com.aatmik.calculator.fragment.bodies.BodiesFragment
 import com.aatmik.calculator.fragment.shapes.ShapesFragment
@@ -136,8 +141,13 @@ class CalculatorActivity : AppCompatActivity() {
                 "Interest Calculator" -> loadFragment(InterestCalculatorFragment())
                 "Loan Calculator" -> loadFragment(LoanCalculatorFragment())
                 "Fuel Economy Calculator" -> loadFragment(FuelEconomyCalculatorFragment())
+                "Ohm's Law" -> loadFragment(OhmsLawFragment())
+                "Trip Estimate" -> loadFragment(TripEstimateFragment())
+                "Contribution Calculator" -> loadFragment(ContributionCalculatorFragment())
+                "Lightning Calculator" -> loadFragment(LightningCalculatorFragment())
                 "Compass" -> loadFragment(CompassFragment())
                 "Level" -> loadFragment(LevelCalculatorFragment())
+                "Love Calculator" -> loadFragment(LoveCalculatorFragment())
                 "Free Fall" -> loadFragment(FreeFallFragment())
                 "Area Calculator" -> loadFragment(AreaCalculatorFragment())
                 "GPA Calculator" -> loadFragment(GpaCalculatorFragment())

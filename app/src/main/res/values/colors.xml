@@ -61,4 +61,10 @@
     <color name="pink_text_primary">#212121</color>
     <color name="pink_text_secondary">#757575</color>
     <color name="pink_day_night">#C2185B</color>
+
+
+    <color name="love_excellent">#4CAF50</color>  <!-- Green for high scores -->
+    <color name="love_good">#FF9800</color>       <!-- Orange for good scores -->
+    <color name="love_average">#FFC107</color>    <!-- Yellow for average scores -->
+    <color name="love_poor">#F44336</color>       <!-- Red for low scores -->
 </resources>
