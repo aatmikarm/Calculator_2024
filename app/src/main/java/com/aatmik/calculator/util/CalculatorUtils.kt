@@ -35,6 +35,7 @@ object CalculatorUtils {
             Calculator("Fuel Economy Calculator", R.drawable.speed),
             Calculator("Ohm's Law", R.drawable.electric),
             Calculator("Trip Estimate", R.drawable.trip),
+            Calculator("Tax Calculator", R.drawable.tax),
             Calculator("Contribution Calculator", R.drawable.saving),
             Calculator("Lightning Calculator", R.drawable.electric),
             Calculator("Compass", R.drawable.compass),
