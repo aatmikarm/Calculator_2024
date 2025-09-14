@@ -2,7 +2,7 @@ package com.aatmik.calculator.util
 
 object AdConfig {
     // Toggle between true (test ads) and false (production ads)
-    private const val USE_TEST_ADS = true
+    private const val USE_TEST_ADS = false
 
     // Production Ad IDs
     private const val PROD_BANNER_AD_ID = "ca-app-pub-5678552217308395/1592290092"
