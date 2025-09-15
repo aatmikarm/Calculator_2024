@@ -67,4 +67,23 @@
     <color name="love_good">#FF9800</color>       <!-- Orange for good scores -->
     <color name="love_average">#FFC107</color>    <!-- Yellow for average scores -->
     <color name="love_poor">#F44336</color>       <!-- Red for low scores -->
+
+
+    <!-- Time Period Colors -->
+    <color name="morning_gradient">#FFE082</color>
+    <color name="morning_light">#FFF9C4</color>
+
+    <color name="afternoon_gradient">#FF8A65</color>
+    <color name="afternoon_light">#FFCCBC</color>
+
+    <color name="evening_gradient">#F06292</color>
+    <color name="evening_light">#F8BBD9</color>
+
+    <color name="night_gradient">#7986CB</color>
+    <color name="night_light">#C5CAE9</color>
+
+    <!-- Status Colors -->
+    <color name="ahead_color">#4CAF50</color>
+    <color name="behind_color">#FF9800</color>
+    <color name="same_time_color">#2196F3</color>
 </resources>

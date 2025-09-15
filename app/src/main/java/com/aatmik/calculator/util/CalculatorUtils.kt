@@ -29,6 +29,7 @@ object CalculatorUtils {
             Calculator("Basic", R.drawable.calculator_new),
             Calculator("Convertor", R.drawable.convert),
             Calculator("Stopwatch", R.drawable.stopwatch),
+            Calculator("Time Zone Converter", R.drawable.time_zone),
             Calculator("Percentage", R.drawable.percentage),
             Calculator("Interest Calculator", R.drawable.percentage),
             Calculator("Loan Calculator", R.drawable.dollor),

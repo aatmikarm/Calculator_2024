@@ -381,6 +381,10 @@ class MainActivity : AppCompatActivity() {
                 putExtra("calculatorName", calculatorName)
             }
 
+            "Time Zone Converter" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+
             "Percentage" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }

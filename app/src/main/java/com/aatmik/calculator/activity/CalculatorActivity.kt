@@ -36,6 +36,7 @@ import com.aatmik.calculator.fragment.SpeedFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
 import com.aatmik.calculator.fragment.TaxCalculatorFragment
 import com.aatmik.calculator.fragment.TemperatureFragment
+import com.aatmik.calculator.fragment.TimeZoneFragment
 import com.aatmik.calculator.fragment.TipFragment
 import com.aatmik.calculator.fragment.TripEstimateFragment
 import com.aatmik.calculator.fragment.WeightFragment
@@ -138,6 +139,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Basic" -> loadFragment(BasicCalculatorFragment())
                 "Convertor" -> loadFragment(ConverterFragment())
                 "Stopwatch" -> loadFragment(StopwatchFragment())
+                "Time Zone Converter" -> loadFragment(TimeZoneFragment())
                 "Percentage" -> loadFragment(PercentageFragment())
                 "Interest Calculator" -> loadFragment(InterestCalculatorFragment())
                 "Loan Calculator" -> loadFragment(LoanCalculatorFragment())
