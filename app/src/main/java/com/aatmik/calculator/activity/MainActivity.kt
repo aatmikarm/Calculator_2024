@@ -11,6 +11,7 @@ import android.view.View
 import android.view.WindowMetrics
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -51,9 +52,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Enable edge-to-edge for Android 15 compatibility
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            enableEdgeToEdge()
-        }
+        enableEdgeToEdge()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -75,20 +74,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Enable edge-to-edge display for Android 15+
-     */
-    private fun enableEdgeToEdge() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            window.statusBarColor = android.graphics.Color.TRANSPARENT
-            window.navigationBarColor = android.graphics.Color.TRANSPARENT
-
-            // Set system bar appearance
-            val controller = WindowInsetsControllerCompat(window, window.decorView)
-            controller.isAppearanceLightStatusBars = false
-            controller.isAppearanceLightNavigationBars = false
-        }
-    }
+//    /**
+//     * Enable edge-to-edge display for Android 15+
+//     */
+//    private fun enableEdgeToEdge() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+//            window.statusBarColor = android.graphics.Color.TRANSPARENT
+//            window.navigationBarColor = android.graphics.Color.TRANSPARENT
+//
+//            // Set system bar appearance
+//            val controller = WindowInsetsControllerCompat(window, window.decorView)
+//            controller.isAppearanceLightStatusBars = false
+//            controller.isAppearanceLightNavigationBars = false
+//        }
+//    }
 
     /**
      * Handle window insets for proper edge-to-edge layout

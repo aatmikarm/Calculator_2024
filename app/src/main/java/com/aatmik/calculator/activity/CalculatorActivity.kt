@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowMetrics
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -67,9 +68,7 @@ class CalculatorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Enable edge-to-edge for Android 15 compatibility
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            enableEdgeToEdge()
-        }
+        enableEdgeToEdge()
 
         binding = ActivityCalculatorBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -91,17 +90,17 @@ class CalculatorActivity : AppCompatActivity() {
     /**
      * Enable edge-to-edge display for Android 15+
      */
-    private fun enableEdgeToEdge() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            window.statusBarColor = android.graphics.Color.TRANSPARENT
-            window.navigationBarColor = android.graphics.Color.TRANSPARENT
-
-            // Set system bar appearance
-            val controller = WindowInsetsControllerCompat(window, window.decorView)
-            controller.isAppearanceLightStatusBars = false
-            controller.isAppearanceLightNavigationBars = false
-        }
-    }
+//    private fun enableEdgeToEdge() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+//            window.statusBarColor = android.graphics.Color.TRANSPARENT
+//            window.navigationBarColor = android.graphics.Color.TRANSPARENT
+//
+//            // Set system bar appearance
+//            val controller = WindowInsetsControllerCompat(window, window.decorView)
+//            controller.isAppearanceLightStatusBars = false
+//            controller.isAppearanceLightNavigationBars = false
+//        }
+//    }
 
     /**
      * Handle window insets for proper edge-to-edge layout
