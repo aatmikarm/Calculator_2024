@@ -74,7 +74,7 @@ class TipFragment : Fragment() {
             }
             tvTipDescription.text = tipDescription
             //Update the color based on the tipPercent
-            val primaryColor = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorPrimary, Color.BLACK)
+            val primaryColor = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, Color.BLACK)
 
             tvTipDescription.setTextColor(primaryColor)
         }
