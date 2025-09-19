@@ -8,12 +8,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.R
 import com.aatmik.calculator.model.Calculator
-import java.util.Collections
 
 class CalculatorAdapter(
     private var calculatorList: ArrayList<Calculator>,
     private val onItemClick: (Calculator) -> Unit,
 ) : RecyclerView.Adapter<CalculatorAdapter.CalculatorViewHolder>() {
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
@@ -25,30 +25,53 @@ class CalculatorAdapter(
         return CalculatorViewHolder(itemView)
     }
 
+    /**
+     * Filter list based on search query
+     */
     fun filterList(filterList: ArrayList<Calculator>) {
         calculatorList = filterList
         notifyDataSetChanged()
     }
 
-    // Method to update the list of calculators (e.g., from SharedPreferences)
+    /**
+     * Update the list of calculators with a new list
+     * This is used for category filtering and search
+     */
     fun updateCalculatorList(updatedList: ArrayList<Calculator>) {
+        val previousSize = calculatorList.size
         calculatorList.clear()
         calculatorList.addAll(updatedList)
-        notifyDataSetChanged()
+
+        // Use more efficient notify methods
+        if (previousSize == updatedList.size) {
+            notifyItemRangeChanged(0, updatedList.size)
+        } else {
+            notifyDataSetChanged()
+        }
     }
 
     override fun onBindViewHolder(holder: CalculatorAdapter.CalculatorViewHolder, position: Int) {
-        holder.itemName.text = calculatorList.get(position).name
-        holder.itemImage.setImageResource(calculatorList.get(position).image)
+        val calculator = calculatorList[position]
+        holder.itemName.text = calculator.name
+        holder.itemImage.setImageResource(calculator.image)
     }
 
     override fun getItemCount(): Int {
         return calculatorList.size
     }
 
-    fun swapItems(fromPosition: Int, toPosition: Int) {
-        Collections.swap(calculatorList, fromPosition, toPosition)
-        notifyItemMoved(fromPosition, toPosition)
+    /**
+     * Get the current calculator list
+     */
+    fun getCalculatorList(): ArrayList<Calculator> {
+        return calculatorList
+    }
+
+    /**
+     * Check if the adapter is empty
+     */
+    fun isEmpty(): Boolean {
+        return calculatorList.isEmpty()
     }
 
     inner class CalculatorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -57,13 +80,11 @@ class CalculatorAdapter(
 
         init {
             itemView.setOnClickListener {
-                onItemClick(calculatorList[adapterPosition])
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION && position < calculatorList.size) {
+                    onItemClick(calculatorList[position])
+                }
             }
         }
     }
-
-    fun getCalculatorList(): ArrayList<Calculator> {
-        return calculatorList
-    }
-
 }

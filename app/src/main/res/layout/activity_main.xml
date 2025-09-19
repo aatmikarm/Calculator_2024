@@ -59,6 +59,17 @@
 
     </androidx.cardview.widget.CardView>
 
+    <!-- Categories RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/categoriesRV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        ads:layout_constraintEnd_toEndOf="parent"
+        ads:layout_constraintStart_toStartOf="parent"
+        ads:layout_constraintTop_toBottomOf="@+id/search_cv" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -70,13 +81,12 @@
         ads:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         ads:layout_constraintEnd_toEndOf="parent"
         ads:layout_constraintStart_toStartOf="parent"
-        ads:layout_constraintTop_toBottomOf="@+id/search_cv">
+        ads:layout_constraintTop_toBottomOf="@+id/categoriesRV">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/favorites" />
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/calculatorRV"
@@ -118,7 +128,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-
     </LinearLayout>
 
     <androidx.cardview.widget.CardView
@@ -156,8 +165,6 @@
 
         </LinearLayout>
 
-
     </androidx.cardview.widget.CardView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

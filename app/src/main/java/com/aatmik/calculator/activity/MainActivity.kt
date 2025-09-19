@@ -15,15 +15,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.adapter.CalculatorAdapter
+import com.aatmik.calculator.adapter.CategoryAdapter
 import com.aatmik.calculator.databinding.ActivityMainBinding
 import com.aatmik.calculator.databinding.BottomSheetLayoutBinding
 import com.aatmik.calculator.model.Calculator
+import com.aatmik.calculator.model.Category
 import com.aatmik.calculator.util.AdConfig
+import com.aatmik.calculator.util.CalculatorCategoriesUtil
 import com.aatmik.calculator.util.CalculatorUtils
 import com.aatmik.calculator.util.NetworkUtil
 import com.aatmik.calculator.util.ThemeManager
@@ -37,10 +39,16 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    // recycler view
+    // recycler view for calculators
     lateinit var calculatorRV: RecyclerView
     lateinit var calculatorAdapter: CalculatorAdapter
     lateinit var calculatorList: ArrayList<Calculator>
+    private lateinit var originalCalculatorList: ArrayList<Calculator>
+
+    // recycler view for categories
+    lateinit var categoriesRV: RecyclerView
+    lateinit var categoryAdapter: CategoryAdapter
+    private var currentSelectedCategory = "All"
 
     companion object {
         private const val GRID_COLUMN_COUNT = 4
@@ -62,10 +70,10 @@ class MainActivity : AppCompatActivity() {
 
         runAds()
         loadCalculatorOrder()
+        setupCategoriesRecyclerView()
         setupRecyclerView()
         search()
         binding.menuIv.setOnClickListener {
-            //showToast("menu clicked")
             showBottomSheet()
         }
         binding.calculatorCv.setOnClickListener {
@@ -73,21 +81,6 @@ class MainActivity : AppCompatActivity() {
             intent?.let { startActivity(it) }
         }
     }
-
-//    /**
-//     * Enable edge-to-edge display for Android 15+
-//     */
-//    private fun enableEdgeToEdge() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-//            window.statusBarColor = android.graphics.Color.TRANSPARENT
-//            window.navigationBarColor = android.graphics.Color.TRANSPARENT
-//
-//            // Set system bar appearance
-//            val controller = WindowInsetsControllerCompat(window, window.decorView)
-//            controller.isAppearanceLightStatusBars = false
-//            controller.isAppearanceLightNavigationBars = false
-//        }
-//    }
 
     /**
      * Handle window insets for proper edge-to-edge layout
@@ -108,14 +101,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun runAds() {
+    private fun setupCategoriesRecyclerView() {
+        categoriesRV = binding.categoriesRV
+        categoriesRV.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
+        categoryAdapter = CategoryAdapter(CalculatorCategoriesUtil.categories) { position ->
+            val selectedCategory = CalculatorCategoriesUtil.categories[position].name
+            currentSelectedCategory = selectedCategory
+            filterByCategory(selectedCategory)
+        }
+
+        categoriesRV.adapter = categoryAdapter
+    }
+
+    private fun filterByCategory(categoryName: String) {
+        val searchQuery = binding.searchEt.text.toString()
+
+        val filteredList = if (searchQuery.isEmpty()) {
+            CalculatorCategoriesUtil.getCalculatorsForCategory(categoryName, originalCalculatorList)
+        } else {
+            CalculatorCategoriesUtil.filterCalculatorsBySearch(searchQuery, categoryName, originalCalculatorList)
+        }
+
+        calculatorAdapter.updateCalculatorList(filteredList)
+    }
+
+    private fun runAds() {
         if (NetworkUtil.isNetworkAvailable(this)) {
             loadBanner()
         } else {
             Log.d("NetworkCheck", "No internet connection available.")
         }
-
     }
 
     private var adView: AdView? = null
@@ -149,7 +165,6 @@ class MainActivity : AppCompatActivity() {
         adView.loadAd(adRequest)
     }
 
-
     private fun showBottomSheet() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val bottomSheetBinding = BottomSheetLayoutBinding.inflate(layoutInflater)
@@ -173,7 +188,7 @@ class MainActivity : AppCompatActivity() {
         }
         bottomSheetBinding.btnTheme.setOnClickListener {
             bottomSheetDialog.dismiss()
-            showThemeSelector()  // Add this new method
+            showThemeSelector()
         }
 
         bottomSheetDialog.setContentView(bottomSheetBinding.root)
@@ -242,7 +257,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun removeAds() {
-        // Implement your logic to remove ads or start premium subscription process
         Toast.makeText(this, "Removing ads / Starting premium subscription", Toast.LENGTH_SHORT)
             .show()
     }
@@ -257,41 +271,20 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-
     private fun loadCalculatorOrder() {
-        val sharedPreferences = getSharedPreferences("CalculatorPrefs", MODE_PRIVATE)
-        val savedOrder = sharedPreferences.getString("CalculatorOrder", null)
-
-        if (savedOrder != null) {
-            val orderedNames = savedOrder.split(",")
-            val orderedList = arrayListOf<Calculator>()
-
-            // Rebuild the calculator list based on saved order
-            for (name in orderedNames) {
-                val calculator = CalculatorUtils.calculatorList.find { it.name == name }
-                calculator?.let {
-                    orderedList.add(it)
-                }
-            }
-            // Update the adapter with the ordered list
-            //calculatorAdapter.updateCalculatorList(orderedList)
-            calculatorList = orderedList
-        } else {
-            // Load default list if no saved order exists
-            calculatorList = CalculatorUtils.calculatorList
-            //calculatorAdapter.updateCalculatorList(calculatorList)
-        }
+        // Just load the default calculator list
+        calculatorList = CalculatorUtils.calculatorList
+        originalCalculatorList = ArrayList(CalculatorUtils.calculatorList)
     }
-
 
     private fun search() {
         binding.searchEt.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                filter(s.toString())
+                val searchQuery = s.toString()
+                filterBySearch(searchQuery)
+
                 // Show the clear (cross) button if there's text
                 if (!s.isNullOrEmpty()) {
                     binding.clearTextIv.visibility = View.VISIBLE
@@ -305,7 +298,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                filter(p0.toString())
+                val searchQuery = p0.toString()
+                filterBySearch(searchQuery)
             }
         })
 
@@ -321,48 +315,29 @@ class MainActivity : AppCompatActivity() {
             // Hide the cursor when text is cleared
             binding.searchEt.isCursorVisible = false
         }
-
     }
 
+    private fun filterBySearch(searchQuery: String) {
+        val filteredList = CalculatorCategoriesUtil.filterCalculatorsBySearch(
+            searchQuery,
+            currentSelectedCategory,
+            originalCalculatorList
+        )
+        calculatorAdapter.updateCalculatorList(filteredList)
+    }
 
     private fun setupRecyclerView() {
         calculatorRV = binding.calculatorRV
         calculatorRV.layoutManager = GridLayoutManager(this, GRID_COLUMN_COUNT)
 
         calculatorAdapter = CalculatorAdapter(calculatorList) { calculator ->
-            //showToast("Clicked: ${calculator.name}")
             handleCalculatorSelection(calculator.name)
         }
 
         calculatorRV.adapter = calculatorAdapter
 
-        // Set up drag-and-drop functionality
-        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
-            0 // No swipe
-        ) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder,
-            ): Boolean {
-                val fromPosition = viewHolder.adapterPosition
-                val toPosition = target.adapterPosition
 
-                // Swap items in the adapter
-                calculatorAdapter.swapItems(fromPosition, toPosition)
-                saveCalculatorOrder()
-                return true
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                // Not handling swipe actions, so do nothing here
-            }
-        })
-
-        itemTouchHelper.attachToRecyclerView(calculatorRV)
     }
-
 
     private fun handleCalculatorSelection(calculatorName: String) {
         val intent = when (calculatorName) {
@@ -496,34 +471,7 @@ class MainActivity : AppCompatActivity() {
         intent?.let { startActivity(it) }
     }
 
-    private fun filter(text: String) {
-        val filteredList: ArrayList<Calculator> = ArrayList()
-        for (item in calculatorList) {
-            if (item.name.lowercase(Locale.getDefault())
-                    .contains(text.lowercase(Locale.getDefault()))
-            ) {
-                filteredList.add(item)
-            }
-        }
-        if (filteredList.isEmpty()) {
-            //Toast.makeText(this, "Calculator Not Found...", Toast.LENGTH_SHORT).show()
-        } else {
-            calculatorAdapter.filterList(filteredList)
-        }
-    }
 
-    private fun saveCalculatorOrder() {
-        val sharedPreferences = getSharedPreferences("CalculatorPrefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-
-        // Get the current list of calculators from the adapter
-        val updatedCalculatorList = calculatorAdapter.getCalculatorList()
-
-        // Convert the list to a string and save it
-        val order = updatedCalculatorList.joinToString(",") { it.name }
-        editor.putString("CalculatorOrder", order)
-        editor.apply() // Save changes
-    }
 
     override fun onDestroy() {
         adView?.destroy()
