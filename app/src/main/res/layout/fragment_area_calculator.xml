@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface">
@@ -196,6 +195,7 @@
                             android:layout_marginEnd="4dp"
                             android:layout_weight="1"
                             android:text="Rectangle"
+                            android:textAllCaps="false"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="11sp" />
 
@@ -206,6 +206,7 @@
                             android:layout_marginHorizontal="2dp"
                             android:layout_weight="1"
                             android:text="Square"
+                            android:textAllCaps="false"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="11sp" />
 
@@ -216,6 +217,7 @@
                             android:layout_marginStart="4dp"
                             android:layout_weight="1"
                             android:text="Circle"
+                            android:textAllCaps="false"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="11sp" />
 
@@ -234,6 +236,7 @@
                             android:layout_marginEnd="4dp"
                             android:layout_weight="1"
                             android:text="Triangle"
+                            android:textAllCaps="false"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="11sp" />
 
@@ -244,6 +247,7 @@
                             android:layout_marginHorizontal="2dp"
                             android:layout_weight="1"
                             android:text="L-Shape"
+                            android:textAllCaps="false"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="11sp" />
 
@@ -254,6 +258,7 @@
                             android:layout_marginStart="4dp"
                             android:layout_weight="1"
                             android:text="Custom"
+                            android:textAllCaps="false"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="11sp" />
 
@@ -329,8 +334,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:orientation="horizontal"
-                        android:baselineAligned="false">
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
                         <Button
                             android:id="@+id/btnMeters"
@@ -339,6 +344,7 @@
                             android:layout_marginEnd="4dp"
                             android:layout_weight="1"
                             android:text="Meters"
+                            android:textAllCaps="false"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="10sp" />
 
@@ -349,6 +355,7 @@
                             android:layout_marginHorizontal="2dp"
                             android:layout_weight="1"
                             android:text="Feet"
+                            android:textAllCaps="false"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="10sp" />
 
@@ -359,6 +366,7 @@
                             android:layout_marginStart="4dp"
                             android:layout_weight="1"
                             android:text="Inches"
+                            android:textAllCaps="false"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="10sp" />
 
@@ -394,8 +402,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:orientation="horizontal"
-                        android:baselineAligned="false">
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
                         <Button
                             android:id="@+id/btnFlooring"
@@ -404,6 +412,7 @@
                             android:layout_marginEnd="3dp"
                             android:layout_weight="1"
                             android:text="Flooring"
+                            android:textAllCaps="false"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="9sp" />
 
@@ -414,6 +423,7 @@
                             android:layout_marginHorizontal="1.5dp"
                             android:layout_weight="1"
                             android:text="Tiling"
+                            android:textAllCaps="false"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="9sp" />
 
@@ -424,6 +434,7 @@
                             android:layout_marginHorizontal="1.5dp"
                             android:layout_weight="1"
                             android:text="Painting"
+                            android:textAllCaps="false"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="9sp" />
 
@@ -434,6 +445,7 @@
                             android:layout_marginStart="3dp"
                             android:layout_weight="1"
                             android:text="Carpet"
+                            android:textAllCaps="false"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="9sp" />
 
@@ -446,6 +458,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="8dp"
                         android:text="Calculate"
+                        android:textAllCaps="false"
                         android:textColor="?android:attr/textColorPrimary" />
 
                 </LinearLayout>
