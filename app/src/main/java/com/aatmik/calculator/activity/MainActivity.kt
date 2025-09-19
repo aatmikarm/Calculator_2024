@@ -69,6 +69,8 @@ class MainActivity : AppCompatActivity() {
         setTheme(ThemeManager.getThemeStyle(this))
         super.onCreate(savedInstanceState)
 
+        Log.d("MainActivity", "onCreate started")
+
         // Enable edge-to-edge for Android 15 compatibility
         enableEdgeToEdge()
 
@@ -79,10 +81,23 @@ class MainActivity : AppCompatActivity() {
         setupEdgeToEdgeInsets()
 
         runAds()
+
+        Log.d("MainActivity", "About to load calculator order")
         loadCalculatorOrder()
+        Log.d("MainActivity", "Calculator list size: ${calculatorList.size}")
+
         setupGestureDetector()
         setupCategoriesRecyclerView()
+
+        Log.d("MainActivity", "About to setup RecyclerView")
         setupRecyclerView()
+        filterByCategory("All")
+        Log.d("MainActivity", "RecyclerView setup completed")
+
+        // Only call this if you have the filterByCategory method
+        // Comment this out for now to test
+        // filterByCategory("All")
+
         search()
         binding.menuIv.setOnClickListener {
             showBottomSheet()
@@ -91,6 +106,8 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, CalculatorActivity::class.java)
             intent?.let { startActivity(it) }
         }
+
+        Log.d("MainActivity", "onCreate completed")
     }
 
     /**
@@ -212,6 +229,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         categoriesRV.adapter = categoryAdapter
+
+        // Ensure proper initial state
+        currentSelectedCategory = "All"
+        currentCategoryIndex = 0
+
+        // ADD THIS LINE to scroll to the "All" category at the beginning
+        categoriesRV.scrollToPosition(0)
     }
 
     private fun filterByCategory(categoryName: String) {
@@ -372,8 +396,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadCalculatorOrder() {
-        // Just load the default calculator list
-        calculatorList = CalculatorUtils.calculatorList
+        val sharedPreferences = getSharedPreferences("CalculatorPrefs", MODE_PRIVATE)
+        val savedOrder = sharedPreferences.getString("CalculatorOrder", null)
+
+        if (!savedOrder.isNullOrEmpty()) {
+            val orderedNames = savedOrder.split(",")
+            val orderedList = arrayListOf<Calculator>()
+
+            // Rebuild the calculator list based on saved order
+            for (name in orderedNames) {
+                val calculator = CalculatorUtils.calculatorList.find { it.name == name }
+                calculator?.let {
+                    orderedList.add(it)
+                }
+            }
+            calculatorList = orderedList
+        } else {
+            // Load default list if no saved order exists
+            calculatorList = ArrayList(CalculatorUtils.calculatorList)
+        }
+
+        // ADD THIS LINE to initialize originalCalculatorList
         originalCalculatorList = ArrayList(CalculatorUtils.calculatorList)
     }
 
