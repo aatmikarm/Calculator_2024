@@ -45,6 +45,7 @@ object CalculatorCategoriesUtil {
         "Body Mass Index" to "Health & Fitness",
         "Calorie Calculator" to "Health & Fitness",
         "Age" to "Health & Fitness",
+        "Pregnancy Calculator" to "Health & Fitness",
 
         // Tools
         "Stopwatch" to "Tools",

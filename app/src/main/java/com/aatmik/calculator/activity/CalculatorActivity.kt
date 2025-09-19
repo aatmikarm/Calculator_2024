@@ -37,6 +37,7 @@ import com.aatmik.calculator.fragment.MolarityFragment
 import com.aatmik.calculator.fragment.OhmsLawFragment
 import com.aatmik.calculator.fragment.PercentageFragment
 import com.aatmik.calculator.fragment.PhCalculatorFragment
+import com.aatmik.calculator.fragment.PregnancyCalculatorFragment
 import com.aatmik.calculator.fragment.SpeedFragment
 import com.aatmik.calculator.fragment.StoichiometryFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
@@ -153,6 +154,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "pH Calculator" -> loadFragment(PhCalculatorFragment())
                 "Stoichiometry Calculator" -> loadFragment(StoichiometryFragment())
                 "Ideal Gas Law" -> loadFragment(IdealGasLawFragment())
+                "Pregnancy Calculator" -> loadFragment(PregnancyCalculatorFragment())
                 "Budget Calculator" -> loadFragment(BudgetCalculatorFragment())
                 "Trip Estimate" -> loadFragment(TripEstimateFragment())
                 "Tax Calculator" -> loadFragment(TaxCalculatorFragment())
