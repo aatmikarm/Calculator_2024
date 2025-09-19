@@ -757,7 +757,7 @@ class BasicCalculatorFragment : Fragment() {
 
     private fun clearError() {
         binding.tvErrorBC.visibility = View.GONE
-        binding.tvPrimaryBC.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+       // binding.tvPrimaryBC.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
     }
 
     // Real-time validation
