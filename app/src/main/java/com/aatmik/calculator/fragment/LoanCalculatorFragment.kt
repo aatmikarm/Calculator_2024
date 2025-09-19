@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import com.aatmik.calculator.databinding.FragmentLoanCalculatorBinding
 import kotlin.math.pow
@@ -17,6 +18,8 @@ class LoanCalculatorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+
         binding.apply {
             // Handle back button press
             backIv.setOnClickListener {
