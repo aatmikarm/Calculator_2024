@@ -283,8 +283,9 @@
 
                 </androidx.cardview.widget.CardView>
 
-                <!-- Love Tips Card -->
+                <!-- Detailed Relationship Analysis Card -->
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/loveTipsCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cardBackgroundColor="#1E1E1E"
@@ -301,18 +302,43 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="12dp"
-                            android:text="💡 Love Tips"
+                            android:text="🔍 Detailed Relationship Analysis"
                             android:textColor="@android:color/white"
                             android:textSize="16sp"
                             android:textStyle="bold" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <ScrollView
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:lineSpacingExtra="4dp"
-                            android:text="• Communication is key to any relationship\n• Spend quality time together\n• Show appreciation and gratitude\n• Be supportive of each other's goals\n• Remember: this is just for fun! 😊"
-                            android:textColor="#CCCCCC"
-                            android:textSize="14sp" />
+                            android:maxHeight="400dp"
+                            android:scrollbars="vertical"
+                            android:fadeScrollbars="true">
+
+                            <TextView
+                                android:id="@+id/loveTipsContent"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:lineSpacingExtra="4dp"
+                                android:text="• Communication is key to any relationship\n• Spend quality time together\n• Show appreciation and gratitude\n• Be supportive of each other's goals\n• Remember: this is just for fun! 😊"
+                                android:textColor="#CCCCCC"
+                                android:textSize="14sp"
+                                android:textIsSelectable="true" />
+
+                        </ScrollView>
+
+                        <!-- Toggle Button for Insights -->
+                        <Button
+                            android:id="@+id/btnToggleInsights"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="12dp"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:text="Show Less"
+                            android:textColor="#FF6B9D"
+                            android:textSize="12sp"
+                            android:textAllCaps="false"
+                            android:visibility="gone" />
 
                     </LinearLayout>
 

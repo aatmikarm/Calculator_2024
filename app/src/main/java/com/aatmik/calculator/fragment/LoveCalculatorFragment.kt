@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.Button
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.aatmik.calculator.R
@@ -51,6 +53,26 @@ class LoveCalculatorFragment : Fragment() {
 
         binding.btnSwapNames.setOnClickListener {
             swapNames()
+        }
+
+        // Toggle insights visibility
+        binding.root.findViewById<Button>(R.id.btnToggleInsights)?.setOnClickListener {
+            toggleInsightsVisibility()
+        }
+    }
+
+    private fun toggleInsightsVisibility() {
+        val loveTipsContent = binding.root.findViewById<TextView>(R.id.loveTipsContent)
+        val toggleButton = binding.root.findViewById<Button>(R.id.btnToggleInsights)
+
+        if (loveTipsContent?.maxLines == 10) {
+            // Expand
+            loveTipsContent.maxLines = Int.MAX_VALUE
+            toggleButton?.text = "Show Less"
+        } else {
+            // Collapse
+            loveTipsContent?.maxLines = 10
+            toggleButton?.text = "Show More"
         }
     }
 
@@ -497,7 +519,349 @@ class LoveCalculatorFragment : Fragment() {
         val color = ContextCompat.getColor(requireContext(), colorRes)
         binding.tvLoveScore.setTextColor(color)
         binding.tvCompatibilityMessage.setTextColor(color)
+
+        // Generate and display detailed insights
+        generateDetailedInsights(score, firstName, secondName)
     }
+
+    /**
+     * Generate comprehensive relationship insights based on all algorithm factors
+     */
+    private fun generateDetailedInsights(score: Int, firstName: String, secondName: String) {
+        val cleanName1 = firstName.trim().lowercase()
+        val cleanName2 = secondName.trim().lowercase()
+
+        // Recalculate individual scores for detailed analysis
+        val numerologyScore = calculateNumerologyCompatibility(cleanName1, cleanName2)
+        val phoneticScore = calculatePhoneticHarmony(cleanName1, cleanName2)
+        val letterScore = calculateLetterCompatibility(cleanName1, cleanName2)
+        val flamesScore = calculateFlamesCompatibility(cleanName1, cleanName2)
+        val linguisticScore = calculateLinguisticCompatibility(cleanName1, cleanName2)
+        val mathScore = calculateMathematicalHarmony(cleanName1, cleanName2)
+        val culturalScore = calculateCulturalCompatibility(cleanName1, cleanName2)
+        val bonusScore = calculateSpecialBonuses(cleanName1, cleanName2)
+        val psychScore = calculatePsychologicalCompatibility(cleanName1, cleanName2)
+
+        // Generate personality insights
+        val personality1 = getPersonalityInsights(cleanName1)
+        val personality2 = getPersonalityInsights(cleanName2)
+
+        // Create comprehensive analysis
+        val insights = buildDetailedAnalysis(
+            score, firstName, secondName,
+            numerologyScore, phoneticScore, letterScore, flamesScore,
+            linguisticScore, mathScore, culturalScore, bonusScore, psychScore,
+            personality1, personality2
+        )
+
+        // Update the love tips section with detailed insights
+        updateLoveTipsWithInsights(insights)
+    }
+
+    /**
+     * Get personality insights based on name analysis
+     */
+    private fun getPersonalityInsights(name: String): PersonalityProfile {
+        val firstLetter = name.firstOrNull() ?: 'a'
+        val nameLength = name.length
+        val vowelCount = name.count { it in "aeiou" }
+        val consonantCount = nameLength - vowelCount
+
+        // Personality traits based on first letter
+        val primaryTrait = when (firstLetter) {
+            'a' -> "Ambitious Leader"
+            'b' -> "Balanced Mediator"
+            'c' -> "Creative Visionary"
+            'd' -> "Determined Achiever"
+            'e' -> "Empathetic Healer"
+            'f' -> "Friendly Connector"
+            'g' -> "Generous Giver"
+            'h' -> "Honest Communicator"
+            'i' -> "Intuitive Thinker"
+            'j' -> "Joyful Entertainer"
+            'k' -> "Kind Supporter"
+            'l' -> "Loyal Protector"
+            'm' -> "Motivated Driver"
+            'n' -> "Nurturing Caregiver"
+            'o' -> "Optimistic Dreamer"
+            'p' -> "Passionate Creator"
+            'q' -> "Quirky Individual"
+            'r' -> "Reliable Foundation"
+            's' -> "Sensitive Empath"
+            't' -> "Trustworthy Guide"
+            'u' -> "Understanding Counselor"
+            'v' -> "Vibrant Energizer"
+            'w' -> "Wise Teacher"
+            'x' -> "Exciting Adventurer"
+            'y' -> "Youthful Spirit"
+            'z' -> "Zealous Pioneer"
+            else -> "Unique Individual"
+        }
+
+        // Secondary traits based on name characteristics
+        val secondaryTraits = mutableListOf<String>()
+
+        if (vowelCount > consonantCount) {
+            secondaryTraits.add("Expressive and outgoing")
+        } else {
+            secondaryTraits.add("Thoughtful and introspective")
+        }
+
+        when (nameLength) {
+            in 3..4 -> secondaryTraits.add("Direct and straightforward")
+            in 5..6 -> secondaryTraits.add("Balanced and harmonious")
+            in 7..8 -> secondaryTraits.add("Complex and sophisticated")
+            else -> secondaryTraits.add("Unique and distinctive")
+        }
+
+        // Love style prediction
+        val loveStyle = when {
+            firstLetter in "aeiou" -> "Emotional and passionate lover"
+            firstLetter in "bcdfg" -> "Practical and steady partner"
+            firstLetter in "hjklm" -> "Loyal and committed companion"
+            firstLetter in "npqrs" -> "Nurturing and supportive mate"
+            else -> "Adventurous and dynamic partner"
+        }
+
+        return PersonalityProfile(primaryTrait, secondaryTraits, loveStyle)
+    }
+
+    /**
+     * Build comprehensive relationship analysis
+     */
+    private fun buildDetailedAnalysis(
+        score: Int, firstName: String, secondName: String,
+        numerology: Double, phonetic: Double, letter: Double, flames: Double,
+        linguistic: Double, math: Double, cultural: Double, bonus: Double, psych: Double,
+        personality1: PersonalityProfile, personality2: PersonalityProfile
+    ): RelationshipInsights {
+
+        // Analyze strongest compatibility factors
+        val scores = mapOf(
+            "Numerology" to numerology,
+            "Communication" to phonetic,
+            "Connection" to letter,
+            "Destiny" to flames,
+            "Harmony" to linguistic,
+            "Balance" to math,
+            "Background" to cultural,
+            "Chemistry" to bonus,
+            "Psychology" to psych
+        )
+
+        val strengths = scores.filter { it.value >= 75 }.keys.toList()
+        val challenges = scores.filter { it.value < 50 }.keys.toList()
+
+        // Generate relationship dynamics
+        val dynamics = generateRelationshipDynamics(score, strengths, challenges)
+
+        // Predict future together
+        val future = generateFuturePredictions(score, firstName, secondName, strengths)
+
+        // Generate advice
+        val advice = generateRelationshipAdvice(score, strengths, challenges)
+
+        return RelationshipInsights(
+            personalityAnalysis = "🌟 ${firstName}: ${personality1.primaryTrait} - ${personality1.loveStyle}\n" +
+                    "✨ ${secondName}: ${personality2.primaryTrait} - ${personality2.loveStyle}",
+
+            strengthAreas = if (strengths.isNotEmpty()) {
+                "💪 Your strongest areas:\n• ${strengths.joinToString("\n• ")}"
+            } else {
+                "💪 Building compatibility through understanding"
+            },
+
+            challengeAreas = if (challenges.isNotEmpty()) {
+                "⚡ Areas to work on:\n• ${challenges.joinToString("\n• ")}"
+            } else {
+                "⚡ Great foundation with minor adjustments needed"
+            },
+
+            relationshipDynamics = dynamics,
+            futureTogether = future,
+            practicalAdvice = advice
+        )
+    }
+
+    /**
+     * Generate relationship dynamics description
+     */
+    private fun generateRelationshipDynamics(score: Int, strengths: List<String>, challenges: List<String>): String {
+        return when {
+            score >= 90 -> {
+                "🔥 Intense magnetic attraction with deep understanding. You complement each other perfectly, " +
+                        "creating a relationship that feels both exciting and secure. Natural flow in communication " +
+                        "and shared vision for the future."
+            }
+            score >= 80 -> {
+                "💕 Strong emotional connection with great potential for growth. You bring out the best " +
+                        "in each other and share core values. Minor differences add spice rather than conflict."
+            }
+            score >= 70 -> {
+                "🌈 Solid foundation with genuine compatibility. You understand each other well and have " +
+                        "good communication. Some areas need attention but nothing that can't be worked through."
+            }
+            score >= 60 -> {
+                "🌱 Growing compatibility with room for development. You have potential but need to invest " +
+                        "in understanding each other better. Patience and effort will strengthen your bond."
+            }
+            score >= 50 -> {
+                "⚖️ Balanced relationship requiring mutual effort. You have both similarities and differences " +
+                        "that can either complement or clash. Success depends on your commitment to growth."
+            }
+            else -> {
+                "🔄 Challenging but potentially transformative connection. Major differences require significant " +
+                        "understanding and compromise. Consider whether you're both willing to put in the work."
+            }
+        }
+    }
+
+    /**
+     * Generate future predictions
+     */
+    private fun generateFuturePredictions(score: Int, firstName: String, secondName: String, strengths: List<String>): String {
+        val timeframes = when {
+            score >= 85 -> "Your future looks incredibly bright together"
+            score >= 70 -> "A promising future with careful nurturing"
+            score >= 55 -> "Potential for growth with mutual effort"
+            else -> "Friendship may serve you better than romance"
+        }
+
+        val specificPredictions = mutableListOf<String>()
+
+        if ("Communication" in strengths) {
+            specificPredictions.add("Excellent communication will resolve conflicts quickly")
+        }
+        if ("Numerology" in strengths) {
+            specificPredictions.add("Destiny seems aligned for long-term success")
+        }
+        if ("Chemistry" in strengths) {
+            specificPredictions.add("Strong physical and emotional attraction will endure")
+        }
+        if ("Psychology" in strengths) {
+            specificPredictions.add("Deep psychological understanding creates lasting intimacy")
+        }
+
+        val predictions = if (specificPredictions.isNotEmpty()) {
+            specificPredictions.joinToString(". ") + "."
+        } else {
+            "Focus on building understanding and patience."
+        }
+
+        return "🔮 $timeframes. $predictions\n\n" +
+                "📅 6 months: ${getSixMonthPrediction(score)}\n" +
+                "📅 1 year: ${getOneYearPrediction(score)}\n" +
+                "📅 5 years: ${getFiveYearPrediction(score)}"
+    }
+
+    private fun getSixMonthPrediction(score: Int): String = when {
+        score >= 80 -> "Deep bonding phase, likely discussing future plans"
+        score >= 60 -> "Settling into comfortable rhythm, working through differences"
+        score >= 40 -> "Testing period - discovering true compatibility"
+        else -> "Major decision point about relationship direction"
+    }
+
+    private fun getOneYearPrediction(score: Int): String = when {
+        score >= 80 -> "Considering major commitments, possibly moving in together"
+        score >= 60 -> "Solid partnership with clear relationship direction"
+        score >= 40 -> "Either significantly stronger or naturally drifting apart"
+        else -> "Likely transitioned to friendship or ended"
+    }
+
+    private fun getFiveYearPrediction(score: Int): String = when {
+        score >= 80 -> "Marriage or long-term commitment, possibly starting a family"
+        score >= 60 -> "Stable long-term relationship with shared life goals"
+        score >= 40 -> "Either deeply committed or have moved on to better matches"
+        else -> "Probably happy in other relationships, good memories of this time"
+    }
+
+    /**
+     * Generate practical relationship advice
+     */
+    private fun generateRelationshipAdvice(score: Int, strengths: List<String>, challenges: List<String>): String {
+        val advice = mutableListOf<String>()
+
+        // Score-based general advice
+        when {
+            score >= 80 -> {
+                advice.add("Celebrate your natural compatibility while staying open to growth")
+                advice.add("Don't take your connection for granted - nurture it actively")
+            }
+            score >= 60 -> {
+                advice.add("Focus on your strengths while addressing challenges together")
+                advice.add("Regular honest communication will deepen your bond")
+            }
+            else -> {
+                advice.add("Approach this relationship with realistic expectations")
+                advice.add("Consider whether you're compatible as friends first")
+            }
+        }
+
+        // Challenge-specific advice
+        if ("Communication" in challenges) {
+            advice.add("Practice active listening and express feelings clearly")
+        }
+        if ("Psychology" in challenges) {
+            advice.add("Spend time understanding each other's personalities and needs")
+        }
+        if ("Background" in challenges) {
+            advice.add("Embrace your different backgrounds as learning opportunities")
+        }
+
+        // Strength-based advice
+        if ("Numerology" in strengths) {
+            advice.add("Trust your instincts - this connection has deep significance")
+        }
+        if ("Chemistry" in strengths) {
+            advice.add("Your natural attraction is strong - balance passion with emotional intimacy")
+        }
+
+        return "💡 Relationship Guidance:\n• ${advice.joinToString("\n• ")}"
+    }
+
+    /**
+     * Update the love tips section with detailed insights
+     */
+    private fun updateLoveTipsWithInsights(insights: RelationshipInsights) {
+        val fullInsights = "${insights.personalityAnalysis}\n\n" +
+                "${insights.strengthAreas}\n\n" +
+                "${insights.challengeAreas}\n\n" +
+                "💫 Relationship Dynamics:\n${insights.relationshipDynamics}\n\n" +
+                "${insights.futureTogether}\n\n" +
+                "${insights.practicalAdvice}\n\n" +
+                "Remember: This analysis is for entertainment and self-reflection. Real relationships depend on communication, respect, shared values, and mutual effort! 💕"
+
+        // Find the love tips TextView and update it
+        val loveTipsContent = binding.root.findViewById<TextView>(R.id.loveTipsContent)
+        if (loveTipsContent != null) {
+            loveTipsContent.text = fullInsights
+        } else {
+            // Fallback - try to find any TextView in the love tips card
+            val loveTipsCard = binding.root.findViewById<androidx.cardview.widget.CardView>(R.id.loveTipsCard)
+            val textView = loveTipsCard?.findViewById<TextView>(android.R.id.text1)
+            textView?.text = fullInsights
+        }
+
+        // Show the toggle button after insights are loaded
+        binding.root.findViewById<Button>(R.id.btnToggleInsights)?.visibility = View.VISIBLE
+
+    }
+
+    // Data classes for structured insights
+    data class PersonalityProfile(
+        val primaryTrait: String,
+        val secondaryTraits: List<String>,
+        val loveStyle: String
+    )
+
+    data class RelationshipInsights(
+        val personalityAnalysis: String,
+        val strengthAreas: String,
+        val challengeAreas: String,
+        val relationshipDynamics: String,
+        val futureTogether: String,
+        val practicalAdvice: String
+    )
 
     private fun clearFields() {
         binding.etFirstName.text?.clear()
