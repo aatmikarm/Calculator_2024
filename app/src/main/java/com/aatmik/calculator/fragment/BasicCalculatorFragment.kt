@@ -3,15 +3,19 @@ package com.aatmik.calculator.fragment
 import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.aatmik.calculator.R
 import com.aatmik.calculator.adapter.HistoryAdapter
 import com.aatmik.calculator.databinding.FragmentBasicCalculatorBinding
 import com.aatmik.calculator.model.CalculationHistory
@@ -21,35 +25,68 @@ import com.aatmik.calculator.util.ButtonUtil.invalidInputToast
 import com.aatmik.calculator.util.ButtonUtil.vibratePhone
 import com.aatmik.calculator.util.CalculationUtil
 import com.aatmik.calculator.util.PrefUtil
-import kotlin.math.PI
-import kotlin.math.acos
-import kotlin.math.asin
-import kotlin.math.atan
-import kotlin.math.cos
-import kotlin.math.ln
-import kotlin.math.log10
-import kotlin.math.sin
-import kotlin.math.sqrt
-import kotlin.math.tan
-
+import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
+import kotlin.math.*
 
 class BasicCalculatorFragment : Fragment() {
 
     private lateinit var binding: FragmentBasicCalculatorBinding
-    private var isPanelVisible = false // Track visibility state of the panel
+    private var isPanelVisible = false
     private val calculationHistory = mutableListOf<CalculationHistory>()
     private lateinit var historyAdapter: HistoryAdapter
     private lateinit var recyclerView: RecyclerView
 
+    // Advanced calculator states
+    private var isPowerMode = false
+    private var baseValue: Double? = null
+    private var isSecondMode = false
+    private var isInDegreesMode = true
+
+    // Memory functionality
+    private var memoryValue: Double = 0.0
+
+    // Undo/Redo functionality
+    private val expressionHistory = mutableListOf<String>()
+    private var historyIndex = -1
+
+    // Input validation
+    private val inputHandler = Handler(Looper.getMainLooper())
+    private var inputRunnable: Runnable? = null
+
+    // Precision handling
+    private val mathContext = MathContext(34, RoundingMode.HALF_UP)
+
     companion object {
         var addedBC = false
+    }
+
+    // Validation result enum
+    enum class ValidationResult(val message: String) {
+        VALID("Valid"),
+        EMPTY("Empty expression"),
+        CONSECUTIVE_OPERATORS("Consecutive operators"),
+        UNBALANCED_PARENTHESES("Unbalanced parentheses"),
+        INCOMPLETE("Incomplete expression"),
+        INVALID_CHARS("Invalid characters")
+    }
+
+    // Calculation result sealed class
+    sealed class CalculationResult {
+        data class Success(val value: Double) : CalculationResult()
+        data class Error(val message: String) : CalculationResult()
+    }
+
+    // Error types
+    enum class ErrorType {
+        CALCULATION, SYNTAX, OVERFLOW, DOMAIN
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentBasicCalculatorBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -57,41 +94,53 @@ class BasicCalculatorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+
+        setupUI()
+        setupButtons()
+        historyView()
+        restoreMemoryState()
+    }
+
+    private fun setupUI() {
         toggleBarLogic()
+        // Clear any error states on start
+        clearError()
+    }
+
+    private fun setupButtons() {
         setupBasicButtons()
         setupScientificButtons()
-        historyView()
-
+        setupAdvancedButtons()
+        setupMemoryButtons()
+        setupControlButtons()
     }
 
     private fun historyView() {
-        // Set up the RecyclerView for history
         recyclerView = binding.rvHistory
         historyAdapter = HistoryAdapter(calculationHistory) { historyItem ->
-            // Handle clicking a history item
+            addToExpressionHistory(binding.tvPrimaryBC.text.toString())
             binding.tvPrimaryBC.text = historyItem.result
+            validateAndUpdateUI()
         }
 
         recyclerView.adapter = historyAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        // Show history button
         binding.btHistory.setOnClickListener {
             binding.rvHistory.visibility =
                 if (binding.rvHistory.visibility == View.GONE) View.VISIBLE else View.GONE
         }
     }
 
-    // Function to add a new calculation history item
-    fun addNewCalculationHistory(expression: String, result: String) {
+    private fun addNewCalculationHistory(expression: String, result: String) {
         val newHistoryItem = CalculationHistory(expression, result)
         historyAdapter.addHistoryItem(newHistoryItem)
-        // Scroll to the bottom
         recyclerView.scrollToPosition(historyAdapter.itemCount - 1)
     }
 
     private fun setupBasicButtons() {
         binding.apply {
+            // Number buttons
             addNumberValueToText(requireContext(), bt0BC, tvPrimaryBC, 0)
             addNumberValueToText(requireContext(), bt1BC, tvPrimaryBC, 0)
             addNumberValueToText(requireContext(), bt2BC, tvPrimaryBC, 0)
@@ -102,287 +151,675 @@ class BasicCalculatorFragment : Fragment() {
             addNumberValueToText(requireContext(), bt7BC, tvPrimaryBC, 0)
             addNumberValueToText(requireContext(), bt8BC, tvPrimaryBC, 0)
             addNumberValueToText(requireContext(), bt9BC, tvPrimaryBC, 0)
+
+            // Bracket buttons
             addNumberValueToText(requireContext(), btBracketOpenBC, tvPrimaryBC, 0)
             addNumberValueToText(requireContext(), btBracketCloseBC, tvPrimaryBC, 0)
+
+            // Operator buttons
             addOperatorValueToText(requireContext(), btAdditionBC, tvPrimaryBC, "+", 0)
             addOperatorValueToText(requireContext(), btSubtractionBC, tvPrimaryBC, "-", 0)
             addOperatorValueToText(requireContext(), btMultiplicationBC, tvPrimaryBC, "*", 0)
             addOperatorValueToText(requireContext(), btDivisionBC, tvPrimaryBC, "/", 0)
+
+            // Enhanced decimal point logic
             btDotBC.setOnClickListener {
                 vibratePhone(requireContext())
-                if (!tvPrimaryBC.text.contains(".")) tvPrimaryBC.text =
-                    tvPrimaryBC.text.toString() + "."
+                val currentText = tvPrimaryBC.text.toString()
+                val lastNumber = getLastNumber(currentText)
+                if (!lastNumber.contains(".")) {
+                    addToExpressionHistory(currentText)
+                    tvPrimaryBC.text = currentText + "."
+                    validateAndUpdateUI()
+                }
             }
+
+            // Clear button
             btACBC.setOnClickListener {
                 vibratePhone(requireContext())
-
+                addToExpressionHistory(tvPrimaryBC.text.toString())
                 tvPrimaryBC.text = ""
                 tvSecondaryBC.text = ""
                 addedBC = false
+                clearError()
+                resetCalculatorState()
             }
+
+            // Delete button
             btDeleteBC.setOnClickListener {
                 vibratePhone(requireContext())
+                val currentText = tvPrimaryBC.text.toString()
+                if (currentText.isNotEmpty()) {
+                    addToExpressionHistory(currentText)
+                    val newText = currentText.subSequence(0, currentText.length - 1).toString()
+                    tvPrimaryBC.text = newText
+                    validateAndUpdateUI()
 
-                if (tvPrimaryBC.text.contains("+") || tvPrimaryBC.text.contains("-") || tvPrimaryBC.text.contains(
-                        "*"
-                    ) || tvPrimaryBC.text.contains("/")
-                ) addedBC = false
-
-                if (tvPrimaryBC.text.isNotEmpty()) tvPrimaryBC.text =
-                    tvPrimaryBC.text.subSequence(0, tvPrimaryBC.length() - 1)
-            }
-            btEqualBC.setOnClickListener {
-
-                vibratePhone(requireContext())
-
-                if (isPowerMode && baseValue != null) {
-                    // The user is in power mode and has entered the exponent
-                    val exponentInput = binding.tvPrimaryBC.text.toString().split("^").lastOrNull()
-                        ?.toDoubleOrNull()
-
-                    if (exponentInput != null) {
-                        // Perform x^y calculation
-                        val result = Math.pow(baseValue!!, exponentInput)
-                        binding.tvPrimaryBC.text = result.toString()
-                        binding.tvSecondaryBC.text = "${baseValue}^$exponentInput = $result"
-                        isPowerMode = false // Reset power mode
-                        baseValue = null // Clear the base value
-
-                        // Save to history
-                        addNewCalculationHistory("${baseValue}^$exponentInput", result.toString())
-
-
-                    } else {
-                        invalidInputToast(requireContext())
-                    }
-                } else {
-                    // Regular evaluation
-                    try {
-                        if (tvPrimaryBC.text.isNotEmpty()) {
-                            val input = tvPrimaryBC.text.toString()
-                            val result = CalculationUtil.evaluate(input).toString()
-                            tvPrimaryBC.text = CalculationUtil.trimResult(result)
-                            tvSecondaryBC.text = input
-                            addedBC = false
-
-                            // Save to history
-                            addNewCalculationHistory(input, result)
-
-                        }
-                    } catch (e: Exception) {
-                        invalidInputToast(requireContext())
+                    if (containsOperator(newText)) {
+                        addedBC = false
                     }
                 }
             }
+
+            // Enhanced equals button
+            btEqualBC.setOnClickListener {
+                vibratePhone(requireContext())
+                handleEqualsPress()
+            }
         }
-
     }
-
-    private var isPowerMode = false
-    private var baseValue: Double? = null
-    var isSecondMode = false
-    var isInDegreesMode = true
 
     private fun setupScientificButtons() {
         binding.apply {
-            // Adding vibration to each button click
-
             btSecond.setOnClickListener {
                 vibratePhone(requireContext())
-                isSecondMode = !isSecondMode
+                toggleSecondMode()
+            }
 
-                if (isSecondMode) {
-                    // Change to inverse functions
-                    btSin.text = "sin⁻¹"
-                    btCos.text = "cos⁻¹"
-                    btTan.text = "tan⁻¹"
-
-                    // Disable and fade out the DEG/RAD button
-                    btDeg.isEnabled = false
-                    btDeg.alpha = 0.5f // Set alpha to fade it out (make it look dull)
-                } else {
-                    // Change back to normal functions
-                    btSin.text = "sin"
-                    btCos.text = "cos"
-                    btTan.text = "tan"
-
-                    // Enable and bring back the full opacity of the DEG/RAD button
-                    btDeg.isEnabled = true
-                    btDeg.alpha = 1.0f // Restore full opacity
-                }
+            btDeg.setOnClickListener {
+                vibratePhone(requireContext())
+                toggleAngleMode()
             }
 
             btSin.setOnClickListener {
                 vibratePhone(requireContext())
-                if (isSecondMode) {
-                    onScientificFunctionClicked("asin") // Inverse sine
-                } else {
-                    onScientificFunctionClicked("sin")  // Regular sine
-                }
+                val function = if (isSecondMode) "asin" else "sin"
+                onScientificFunctionClicked(function)
             }
+
             btCos.setOnClickListener {
                 vibratePhone(requireContext())
-                if (isSecondMode) {
-                    onScientificFunctionClicked("acos") // Inverse cosine
-                } else {
-                    onScientificFunctionClicked("cos")  // Regular cosine
-                }
+                val function = if (isSecondMode) "acos" else "cos"
+                onScientificFunctionClicked(function)
             }
+
             btTan.setOnClickListener {
                 vibratePhone(requireContext())
-                if (isSecondMode) {
-                    onScientificFunctionClicked("atan") // Inverse tangent
-                } else {
-                    onScientificFunctionClicked("tan")  // Regular tangent
-                }
+                val function = if (isSecondMode) "atan" else "atan"
+                onScientificFunctionClicked(function)
             }
-            btDeg.setOnClickListener {
-                vibratePhone(requireContext())
 
-                // Toggle between degrees and radians mode
-                isInDegreesMode = !isInDegreesMode
-
-                if (!isInDegreesMode) { // Radian mode selected
-                    btDeg.text = "rad" // Update the button text
-                    disableSecondButton() // Disable and fade out the 2nd button
-                } else { // Degree mode selected
-                    btDeg.text = "deg" // Update the button text
-                    enableSecondButton() // Enable and restore the 2nd button
-                }
-            }
             btRootX.setOnClickListener {
+                vibratePhone(requireContext())
                 onScientificFunctionClicked("sqrt")
-                vibratePhone(requireContext())  // Call vibrate function
             }
-
 
             btPowerXY.setOnClickListener {
                 vibratePhone(requireContext())
-
-                // Get the current input as the base value for x^y
-                val currentInput = binding.tvPrimaryBC.text.toString().toDoubleOrNull()
-
-                if (currentInput != null) {
-                    baseValue = currentInput
-                    binding.tvPrimaryBC.text =
-                        "$currentInput^" // Show "2^" when user clicks the button
-                    isPowerMode = true  // Set power mode to true
-                } else {
-                    Toast.makeText(context, "Invalid input", Toast.LENGTH_SHORT).show()
-                }
+                handlePowerOperation()
             }
 
             btLg.setOnClickListener {
+                vibratePhone(requireContext())
                 onScientificFunctionClicked("lg")
-                vibratePhone(requireContext())  // Call vibrate function
             }
+
             btLn.setOnClickListener {
+                vibratePhone(requireContext())
                 onScientificFunctionClicked("ln")
-                vibratePhone(requireContext())  // Call vibrate function
             }
+
             btFactorial.setOnClickListener {
+                vibratePhone(requireContext())
                 onScientificFunctionClicked("factorial")
-                vibratePhone(requireContext())  // Call vibrate function
             }
+
             btInverse.setOnClickListener {
+                vibratePhone(requireContext())
                 onScientificFunctionClicked("inverse")
-                vibratePhone(requireContext())  // Call vibrate function
             }
+
             btPi.setOnClickListener {
+                vibratePhone(requireContext())
                 onScientificFunctionClicked("pi")
-                vibratePhone(requireContext())  // Call vibrate function
             }
         }
     }
 
-    // Function to disable and fade out the 2nd button
-    fun disableSecondButton() {
-        binding.btSecond.isEnabled = false // Disable the button
-        binding.btSecond.alpha = 0.5f // Set opacity to make it look faded
+    private fun setupAdvancedButtons() {
+        binding.apply {
+            btSinh.setOnClickListener {
+                vibratePhone(requireContext())
+                onScientificFunctionClicked("sinh")
+            }
+
+            btCosh.setOnClickListener {
+                vibratePhone(requireContext())
+                onScientificFunctionClicked("cosh")
+            }
+
+            btTanh.setOnClickListener {
+                vibratePhone(requireContext())
+                onScientificFunctionClicked("tanh")
+            }
+
+            btLog2.setOnClickListener {
+                vibratePhone(requireContext())
+                onScientificFunctionClicked("log2")
+            }
+
+            btE.setOnClickListener {
+                vibratePhone(requireContext())
+                onScientificFunctionClicked("e")
+            }
+
+            btScientificNotation.setOnClickListener {
+                vibratePhone(requireContext())
+                enableScientificNotation()
+            }
+        }
     }
 
-    // Function to enable and restore the 2nd button
-    fun enableSecondButton() {
-        binding.btSecond.isEnabled = true // Enable the button
-        binding.btSecond.alpha = 1.0f // Restore full opacity
+    private fun setupMemoryButtons() {
+        binding.apply {
+            btMemoryAdd.setOnClickListener {
+                vibratePhone(requireContext())
+                val current = parseNumber(tvPrimaryBC.text.toString())
+                if (current != null) {
+                    memoryValue += current
+                    showMemoryIndicator(memoryValue != 0.0)
+                    saveMemoryState()
+                }
+            }
+
+            btMemorySubtract.setOnClickListener {
+                vibratePhone(requireContext())
+                val current = parseNumber(tvPrimaryBC.text.toString())
+                if (current != null) {
+                    memoryValue -= current
+                    showMemoryIndicator(memoryValue != 0.0)
+                    saveMemoryState()
+                }
+            }
+
+            btMemoryRecall.setOnClickListener {
+                vibratePhone(requireContext())
+                addToExpressionHistory(tvPrimaryBC.text.toString())
+                tvPrimaryBC.text = smartFormatResult(memoryValue)
+                validateAndUpdateUI()
+            }
+
+            btMemoryClear.setOnClickListener {
+                vibratePhone(requireContext())
+                memoryValue = 0.0
+                showMemoryIndicator(false)
+                saveMemoryState()
+            }
+        }
+    }
+
+    private fun setupControlButtons() {
+        binding.apply {
+            btUndo.setOnClickListener {
+                vibratePhone(requireContext())
+                val undoText = undo()
+                if (undoText != null) {
+                    tvPrimaryBC.text = undoText
+                    validateAndUpdateUI()
+                }
+            }
+
+            btRedo.setOnClickListener {
+                vibratePhone(requireContext())
+                val redoText = redo()
+                if (redoText != null) {
+                    tvPrimaryBC.text = redoText
+                    validateAndUpdateUI()
+                }
+            }
+        }
+    }
+
+    private fun handleEqualsPress() {
+        if (isPowerMode && baseValue != null) {
+            handlePowerCalculation()
+        } else {
+            handleRegularCalculation()
+        }
+    }
+
+    private fun handlePowerCalculation() {
+        val exponentInput = binding.tvPrimaryBC.text.toString().split("^").lastOrNull()?.toDoubleOrNull()
+
+        if (exponentInput != null && baseValue != null) {
+            val base = baseValue!!
+            val result = base.pow(exponentInput)
+            val historyExpression = "${base}^$exponentInput"
+
+            binding.tvPrimaryBC.text = smartFormatResult(result)
+            binding.tvSecondaryBC.text = "$historyExpression = ${smartFormatResult(result)}"
+
+            // Reset power mode
+            isPowerMode = false
+            baseValue = null
+
+            addNewCalculationHistory(historyExpression, smartFormatResult(result))
+        } else {
+            showError("Invalid power operation", ErrorType.SYNTAX)
+        }
+    }
+
+    private fun handleRegularCalculation() {
+        try {
+            val input = binding.tvPrimaryBC.text.toString()
+            if (input.isNotEmpty()) {
+                val result = safeEvaluate(input)
+
+                when (result) {
+                    is CalculationResult.Success -> {
+                        val formattedResult = smartFormatResult(result.value)
+                        binding.tvPrimaryBC.text = formattedResult
+                        binding.tvSecondaryBC.text = "$input = $formattedResult"
+                        addedBC = false
+                        clearError()
+
+                        addNewCalculationHistory(input, formattedResult)
+                    }
+                    is CalculationResult.Error -> {
+                        showError(result.message, ErrorType.CALCULATION)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            showError("Calculation error", ErrorType.CALCULATION)
+        }
     }
 
     private fun onScientificFunctionClicked(function: String) {
-        val currentInput = binding.tvPrimaryBC.text.toString().toDoubleOrNull()
+        val currentInput = parseNumber(binding.tvPrimaryBC.text.toString())
 
-        if (currentInput == null) {
-            Toast.makeText(context, "Invalid input", Toast.LENGTH_SHORT).show()
+        if (currentInput == null && function !in listOf("pi", "e")) {
+            showError("Invalid input for function", ErrorType.SYNTAX)
             return
         }
 
-        val result: Double = when (function) {
-            "sin" -> if (isInDegreesMode) sin(Math.toRadians(currentInput)) else sin(currentInput)
-            "cos" -> if (isInDegreesMode) cos(Math.toRadians(currentInput)) else cos(currentInput)
-            "tan" -> if (isInDegreesMode) tan(Math.toRadians(currentInput)) else tan(currentInput)
-            "asin" -> Math.toDegrees(asin(currentInput)) // Always return in degrees
-            "acos" -> Math.toDegrees(acos(currentInput)) // Always return in degrees
-            "atan" -> Math.toDegrees(atan(currentInput)) // Always return in degrees
-            "sqrt" -> sqrt(currentInput)
-            "lg" -> log10(currentInput)
-            "ln" -> ln(currentInput)
-            "factorial" -> factorial(currentInput.toInt())
-            "inverse" -> 1 / currentInput
-            "pi" -> currentInput * PI
-            else -> currentInput
+        val result: Double = try {
+            calculateScientificFunction(function, currentInput)
+        } catch (e: Exception) {
+            showError("Math error: ${e.message}", ErrorType.DOMAIN)
+            return
         }
 
-        // Format the result to 6 decimal places
-        val formattedResult = String.format("%.12f", result)
+        if (result.isInfinite() || result.isNaN()) {
+            showError("Invalid result", ErrorType.OVERFLOW)
+            return
+        }
 
-        // Check if we are in inverse mode and append degree symbol accordingly
-        val displayResult =
-            if (isSecondMode && (function == "asin" || function == "acos" || function == "atan")) {
-                "$formattedResult°" // Append degree symbol in inverse mode
-            } else {
-                formattedResult // Display the result as it is for other functions
-            }
+        addToExpressionHistory(binding.tvPrimaryBC.text.toString())
+        binding.tvPrimaryBC.text = smartFormatResult(result)
 
-        // Update the input text view with the result
-        binding.tvPrimaryBC.text = displayResult
+        val inputStr = currentInput?.toString() ?: ""
+        val functionStr = getFunctionDisplayString(function, inputStr)
+        binding.tvSecondaryBC.text = "$functionStr = ${smartFormatResult(result)}"
     }
 
-    // Factorial function for integers
-    private fun factorial(n: Int): Double {
-        return try {
-            if (n < 0) {
-                Toast.makeText(
-                    context, "Factorial is not defined for negative numbers", Toast.LENGTH_SHORT
-                ).show()
-                1.0
-            } else if (n > 170) {
-                Toast.makeText(
-                    context, "Number too large for factorial calculation", Toast.LENGTH_SHORT
-                ).show()
-                Double.POSITIVE_INFINITY
+    private fun calculateScientificFunction(function: String, input: Double?): Double {
+        return when (function) {
+            "sin" -> if (isInDegreesMode) sin(Math.toRadians(input!!)) else sin(input!!)
+            "cos" -> if (isInDegreesMode) cos(Math.toRadians(input!!)) else cos(input!!)
+            "tan" -> if (isInDegreesMode) tan(Math.toRadians(input!!)) else tan(input!!)
+            "asin" -> {
+                validateInverseTrigInput(input!!)
+                Math.toDegrees(asin(input))
+            }
+            "acos" -> {
+                validateInverseTrigInput(input!!)
+                Math.toDegrees(acos(input))
+            }
+            "atan" -> Math.toDegrees(atan(input!!))
+            "sinh" -> sinh(input!!)
+            "cosh" -> cosh(input!!)
+            "tanh" -> tanh(input!!)
+            "sqrt" -> {
+                if (input!! < 0) throw ArithmeticException("Square root of negative number")
+                sqrt(input)
+            }
+            "lg" -> {
+                if (input!! <= 0) throw ArithmeticException("Logarithm of non-positive number")
+                log10(input)
+            }
+            "ln" -> {
+                if (input!! <= 0) throw ArithmeticException("Natural log of non-positive number")
+                ln(input)
+            }
+            "log2" -> {
+                if (input!! <= 0) throw ArithmeticException("Log base 2 of non-positive number")
+                log2(input)
+            }
+            "factorial" -> calculateFactorial(input!!.toInt())
+            "inverse" -> {
+                if (input!! == 0.0) throw ArithmeticException("Division by zero")
+                1 / input
+            }
+            "pi" -> if (input != null) input * PI else PI
+            "e" -> if (input != null) input * E else E
+            else -> input ?: 0.0
+        }
+    }
+
+    private fun validateInverseTrigInput(input: Double) {
+        if (input < -1 || input > 1) {
+            throw ArithmeticException("Input out of domain for inverse trigonometric function")
+        }
+    }
+
+    private fun calculateFactorial(n: Int): Double {
+        if (n < 0) throw ArithmeticException("Factorial not defined for negative numbers")
+        if (n > 170) throw ArithmeticException("Number too large for factorial")
+
+        var result = 1.0
+        for (i in 2..n) {
+            result *= i
+        }
+        return result
+    }
+
+    private fun getFunctionDisplayString(function: String, input: String): String {
+        return when (function) {
+            "sin", "cos", "tan", "sinh", "cosh", "tanh", "asin", "acos", "atan" -> "$function($input)"
+            "sqrt" -> "√($input)"
+            "lg" -> "log($input)"
+            "ln" -> "ln($input)"
+            "log2" -> "log₂($input)"
+            "factorial" -> "$input!"
+            "inverse" -> "1/$input"
+            "pi" -> if (input.isEmpty()) "π" else "$input×π"
+            "e" -> if (input.isEmpty()) "e" else "$input×e"
+            else -> function
+        }
+    }
+
+    private fun handlePowerOperation() {
+        val currentInput = parseNumber(binding.tvPrimaryBC.text.toString())
+
+        if (currentInput != null) {
+            baseValue = currentInput
+            binding.tvPrimaryBC.text = "$currentInput^"
+            isPowerMode = true
+        } else {
+            showError("Invalid input for power operation", ErrorType.SYNTAX)
+        }
+    }
+
+    private fun toggleSecondMode() {
+        isSecondMode = !isSecondMode
+
+        binding.apply {
+            if (isSecondMode) {
+                btSin.text = "sin⁻¹"
+                btCos.text = "cos⁻¹"
+                btTan.text = "tan⁻¹"
+                btDeg.isEnabled = false
+                btDeg.alpha = 0.5f
             } else {
-                if (n == 0 || n == 1) 1.0 else n * factorial(n - 1)
+                btSin.text = "sin"
+                btCos.text = "cos"
+                btTan.text = "tan"
+                btDeg.isEnabled = true
+                btDeg.alpha = 1.0f
+            }
+        }
+    }
+
+    private fun toggleAngleMode() {
+        isInDegreesMode = !isInDegreesMode
+
+        binding.btDeg.text = if (isInDegreesMode) "deg" else "rad"
+
+        // In radian mode, disable second mode
+        if (!isInDegreesMode) {
+            disableSecondButton()
+        } else {
+            enableSecondButton()
+        }
+    }
+
+    private fun enableScientificNotation() {
+        val current = binding.tvPrimaryBC.text.toString()
+        if (!current.contains("E") && current.isNotEmpty() && parseNumber(current) != null) {
+            addToExpressionHistory(current)
+            binding.tvPrimaryBC.text = "${current}E"
+        }
+    }
+
+    // Validation methods
+    private fun validateExpressionRealTime(expression: String): ValidationResult {
+        return when {
+            expression.isEmpty() -> ValidationResult.EMPTY
+            hasConsecutiveOperators(expression) -> ValidationResult.CONSECUTIVE_OPERATORS
+            hasUnbalancedParentheses(expression) -> ValidationResult.UNBALANCED_PARENTHESES
+            endsWithOperator(expression) -> ValidationResult.INCOMPLETE
+            hasInvalidCharacters(expression) -> ValidationResult.INVALID_CHARS
+            else -> ValidationResult.VALID
+        }
+    }
+
+    private fun hasConsecutiveOperators(expr: String): Boolean {
+        return Regex("[+\\-*/]{2,}").containsMatchIn(expr)
+    }
+
+    private fun hasUnbalancedParentheses(expr: String): Boolean {
+        var count = 0
+        for (char in expr) {
+            when (char) {
+                '(' -> count++
+                ')' -> if (--count < 0) return true
+            }
+        }
+        return count != 0
+    }
+
+    private fun endsWithOperator(expr: String): Boolean {
+        return expr.isNotEmpty() && expr.last() in listOf('+', '-', '*', '/', '^')
+    }
+
+    private fun hasInvalidCharacters(expr: String): Boolean {
+        val validChars = "0123456789+-*/().^E°π"
+        return expr.any { it !in validChars }
+    }
+
+    private fun containsOperator(text: String): Boolean {
+        return text.contains("+") || text.contains("-") || text.contains("*") || text.contains("/")
+    }
+
+    private fun getLastNumber(expression: String): String {
+        return expression.split(Regex("[+\\-*/()]")).lastOrNull() ?: ""
+    }
+
+    private fun parseNumber(text: String): Double? {
+        return try {
+            when {
+                text.isEmpty() -> null
+                text.contains("π") -> text.replace("π", PI.toString()).toDoubleOrNull()
+                text.contains("e") && !text.contains("E") -> text.replace("e", E.toString()).toDoubleOrNull()
+                text.endsWith("°") -> text.dropLast(1).toDoubleOrNull()
+                else -> text.toDoubleOrNull()
+            }
+        } catch (e: NumberFormatException) {
+            null
+        }
+    }
+
+    private fun safeEvaluate(expression: String): CalculationResult {
+        return try {
+            val sanitized = sanitizeExpression(expression)
+            val validation = validateExpressionRealTime(sanitized)
+
+            if (validation != ValidationResult.VALID) {
+                return CalculationResult.Error(validation.message)
+            }
+
+            val result = CalculationUtil.evaluate(sanitized)
+
+            when {
+                result.isInfinite() -> CalculationResult.Error("Result too large")
+                result.isNaN() -> CalculationResult.Error("Invalid operation")
+                else -> CalculationResult.Success(result.toDouble())
             }
         } catch (e: ArithmeticException) {
-            Toast.makeText(context, "Overflow error occurred", Toast.LENGTH_SHORT).show()
-            Double.POSITIVE_INFINITY
+            CalculationResult.Error("Math error: ${e.message}")
+        } catch (e: Exception) {
+            CalculationResult.Error("Calculation error")
         }
     }
 
+    private fun sanitizeExpression(expression: String): String {
+        return expression
+            .replace("×", "*")
+            .replace("÷", "/")
+            .replace("−", "-")
+            .replace("π", PI.toString())
+            .replace(" ", "")
+            .replace("°", "")
+    }
+
+    private fun smartFormatResult(result: Double): String {
+        return when {
+            result.isInfinite() -> if (result > 0) "∞" else "-∞"
+            result.isNaN() -> "Error"
+            result == 0.0 -> "0"
+            abs(result) < 1e-10 -> "0"
+            abs(result) >= 1e15 -> String.format("%.6E", result)
+            result == result.toInt().toDouble() -> result.toInt().toString()
+            else -> {
+                val formatted = String.format("%.12f", result).trimEnd('0').trimEnd('.')
+                if (formatted.length > 15) String.format("%.6E", result) else formatted
+            }
+        }
+    }
+
+    // Memory management
+    private fun showMemoryIndicator(hasMemory: Boolean) {
+        binding.memoryIndicator.visibility = if (hasMemory) View.VISIBLE else View.GONE
+    }
+
+    private fun saveMemoryState() {
+        PrefUtil.setMemoryValue(requireContext(), memoryValue)
+    }
+
+    private fun restoreMemoryState() {
+        memoryValue = PrefUtil.getMemoryValue(requireContext())
+        showMemoryIndicator(memoryValue != 0.0)
+    }
+
+    // History management
+    private fun addToExpressionHistory(expression: String) {
+        if (expression.isNotEmpty() && (expressionHistory.isEmpty() || expressionHistory.last() != expression)) {
+            if (historyIndex < expressionHistory.size - 1) {
+                expressionHistory.subList(historyIndex + 1, expressionHistory.size).clear()
+            }
+
+            expressionHistory.add(expression)
+            historyIndex = expressionHistory.size - 1
+
+            if (expressionHistory.size > 50) {
+                expressionHistory.removeAt(0)
+                historyIndex--
+            }
+        }
+    }
+
+    private fun undo(): String? {
+        return if (historyIndex > 0) {
+            historyIndex--
+            expressionHistory[historyIndex]
+        } else null
+    }
+
+    private fun redo(): String? {
+        return if (historyIndex < expressionHistory.size - 1) {
+            historyIndex++
+            expressionHistory[historyIndex]
+        } else null
+    }
+
+    // Error handling
+    private fun showError(message: String, type: ErrorType = ErrorType.CALCULATION) {
+        binding.tvPrimaryBC.apply {
+            text = when (type) {
+                ErrorType.CALCULATION -> "Error"
+                ErrorType.SYNTAX -> "Syntax Error"
+                ErrorType.OVERFLOW -> "Overflow"
+                ErrorType.DOMAIN -> "Math Error"
+            }
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.error_color))
+        }
+
+        binding.tvErrorBC.apply {
+            text = message
+            visibility = View.VISIBLE
+        }
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            clearError()
+        }, 3000)
+    }
+
+    private fun clearError() {
+        binding.tvErrorBC.visibility = View.GONE
+        binding.tvPrimaryBC.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+    }
+
+    // Real-time validation
+    private fun validateAndUpdateUI() {
+        inputRunnable?.let { inputHandler.removeCallbacks(it) }
+
+        inputRunnable = Runnable {
+            val expression = binding.tvPrimaryBC.text.toString()
+            val validation = validateExpressionRealTime(expression)
+            updateUIBasedOnValidation(validation)
+        }
+
+        inputHandler.postDelayed(inputRunnable!!, 300)
+    }
+
+    private fun updateUIBasedOnValidation(validation: ValidationResult) {
+        if (validation != ValidationResult.VALID && validation != ValidationResult.EMPTY) {
+            binding.tvErrorBC.apply {
+                text = validation.message
+                visibility = View.VISIBLE
+            }
+        } else {
+            binding.tvErrorBC.visibility = View.GONE
+        }
+    }
+
+    // Utility functions
+    private fun disableSecondButton() {
+        binding.btSecond.isEnabled = false
+        binding.btSecond.alpha = 0.5f
+    }
+
+    private fun enableSecondButton() {
+        binding.btSecond.isEnabled = true
+        binding.btSecond.alpha = 1.0f
+    }
+
+    private fun resetCalculatorState() {
+        isPowerMode = false
+        baseValue = null
+        isSecondMode = false
+        // Keep memory and angle mode states
+    }
+
+    // Animation logic
     private fun toggleBarLogic() {
-        // Toggle the scientific buttons panel when the toggle bar is clicked
         binding.toggleBar.setOnClickListener {
             if (isPanelVisible) {
                 slideDown(binding.scientificButtonsPanel)
-                binding.toggleArrow.rotation = 0f // Rotate arrow to point down
+                slideDown(binding.advancedScientificPanel)
+                slideDown(binding.memoryControlPanel)
+                binding.toggleArrow.rotation = 0f
             } else {
                 slideUp(binding.scientificButtonsPanel)
-                binding.toggleArrow.rotation = 180f // Rotate arrow to point up
+                slideUp(binding.advancedScientificPanel)
+                slideUp(binding.memoryControlPanel)
+                binding.toggleArrow.rotation = 180f
             }
             isPanelVisible = !isPanelVisible
         }
     }
 
-    // Slide up function to show the scientific buttons
     private fun slideUp(view: View) {
         view.visibility = View.VISIBLE
         val animator = ObjectAnimator.ofFloat(view, "translationY", view.height.toFloat(), 0f)
@@ -391,39 +828,39 @@ class BasicCalculatorFragment : Fragment() {
         animator.start()
     }
 
-    // Slide down function to hide the scientific buttons
     private fun slideDown(view: View) {
         val animator = ObjectAnimator.ofFloat(view, "translationY", 0f, view.height.toFloat())
         animator.duration = 300
         animator.interpolator = AccelerateDecelerateInterpolator()
         animator.start()
         animator.addListener(object : Animator.AnimatorListener {
-
-            override fun onAnimationStart(p0: Animator) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onAnimationEnd(p0: Animator) {
+            override fun onAnimationStart(animation: Animator) {}
+            override fun onAnimationEnd(animation: Animator) {
                 view.visibility = View.GONE
             }
-
-            override fun onAnimationCancel(p0: Animator) {
-                TODO("Not yet implemented")
+            override fun onAnimationCancel(animation: Animator) {
+                view.visibility = View.GONE
             }
-
-            override fun onAnimationRepeat(p0: Animator) {
-                TODO("Not yet implemented")
-            }
+            override fun onAnimationRepeat(animation: Animator) {}
         })
     }
 
+    // Lifecycle methods
     override fun onStart() {
         super.onStart()
         binding.apply {
-            tvPrimaryBC.text = PrefUtil.getPrimaryTextBC(requireContext())
-            tvSecondaryBC.text = PrefUtil.getSecondaryTextBC(requireContext())
-        }
+            val primaryText = PrefUtil.getPrimaryTextBC(requireContext()) ?: ""
+            val secondaryText = PrefUtil.getSecondaryTextBC(requireContext()) ?: ""
 
+            // Validate before restoring
+            tvPrimaryBC.text = if (primaryText.isNotEmpty() && validateExpressionRealTime(primaryText) == ValidationResult.VALID) {
+                primaryText
+            } else {
+                ""
+            }
+            tvSecondaryBC.text = secondaryText
+        }
+        restoreMemoryState()
     }
 
     override fun onStop() {
@@ -432,6 +869,11 @@ class BasicCalculatorFragment : Fragment() {
             PrefUtil.setPrimaryTextBC(requireContext(), tvPrimaryBC.text.toString())
             PrefUtil.setSecondaryTextBC(requireContext(), tvSecondaryBC.text.toString())
         }
+        saveMemoryState()
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        inputRunnable?.let { inputHandler.removeCallbacks(it) }
     }
 }

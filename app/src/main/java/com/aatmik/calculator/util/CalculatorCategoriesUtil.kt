@@ -8,7 +8,7 @@ object CalculatorCategoriesUtil {
     // Define categories
     val categories = arrayListOf(
         Category("All"),
-        Category("Basic"),
+       // Category("Basic"),
         Category("Converters"),
         Category("Financial"),
         Category("Health & Fitness"),
@@ -20,7 +20,7 @@ object CalculatorCategoriesUtil {
 
     // Map calculators to their categories
     private val calculatorCategoryMap = mapOf(
-        "Basic" to "Basic",
+        //"Basic" to "Basic",
         "Equation" to "Math",
 
         // Converters

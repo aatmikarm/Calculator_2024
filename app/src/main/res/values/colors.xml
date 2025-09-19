@@ -86,4 +86,8 @@
     <color name="ahead_color">#4CAF50</color>
     <color name="behind_color">#FF9800</color>
     <color name="same_time_color">#2196F3</color>
+
+    <color name="error_color">#F44336</color>
+    <color name="memory_indicator_color">#FF9800</color>
+    <color name="primary_text_color">?attr/colorPrimary</color>
 </resources>

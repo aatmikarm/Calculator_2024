@@ -5,6 +5,7 @@ import com.aatmik.calculator.fragment.CountdownTimerFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import androidx.core.content.edit
 
 
 object PrefUtil {
@@ -330,5 +331,24 @@ object PrefUtil {
         return context
             .getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
             .getInt(INTERVAL, 1)
+    }
+
+    /*** Memory calculator consts ***/
+    private const val MEMORY_VALUE = "memory_value"
+
+    /*** Memory calculator prefs ***/
+    fun setMemoryValue(context: Context, value: Double) {
+        context
+            .getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+            .edit {
+                putFloat(MEMORY_VALUE, value.toFloat())
+            }
+    }
+
+    fun getMemoryValue(context: Context): Double {
+        return context
+            .getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+            .getFloat(MEMORY_VALUE, 0f)
+            .toDouble()
     }
 }
