@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import com.aatmik.calculator.R
 import com.aatmik.calculator.databinding.FragmentLoveCalculatorBinding
 import kotlin.math.abs
-import kotlin.random.Random
 
 class LoveCalculatorFragment : Fragment() {
 
@@ -101,32 +100,343 @@ class LoveCalculatorFragment : Fragment() {
         updateResultDisplay(score, firstName, secondName)
     }
 
+    /**
+     * The Ultimate Love Compatibility Calculator
+     * Incorporates multiple scientific and traditional approaches for maximum authenticity
+     */
     private fun calculateLoveScore(name1: String, name2: String): Int {
-        // Create a deterministic but seemingly random algorithm
-        val combinedNames = (name1 + name2).lowercase()
+        val cleanName1 = name1.trim().lowercase()
+        val cleanName2 = name2.trim().lowercase()
 
-        // Count letter frequencies for "LOVE"
+        var totalScore = 0.0
+        var totalWeight = 0.0
+
+        // 1. NUMEROLOGY ANALYSIS (Weight: 25%)
+        val numerologyScore = calculateNumerologyCompatibility(cleanName1, cleanName2)
+        totalScore += numerologyScore * 0.25
+        totalWeight += 0.25
+
+        // 2. PHONETIC HARMONY (Weight: 15%)
+        val phoneticScore = calculatePhoneticHarmony(cleanName1, cleanName2)
+        totalScore += phoneticScore * 0.15
+        totalWeight += 0.15
+
+        // 3. LETTER FREQUENCY & PATTERNS (Weight: 15%)
+        val letterScore = calculateLetterCompatibility(cleanName1, cleanName2)
+        totalScore += letterScore * 0.15
+        totalWeight += 0.15
+
+        // 4. TRADITIONAL FLAMES METHOD (Weight: 10%)
+        val flamesScore = calculateFlamesCompatibility(cleanName1, cleanName2)
+        totalScore += flamesScore * 0.10
+        totalWeight += 0.10
+
+        // 5. LINGUISTIC PATTERNS (Weight: 10%)
+        val linguisticScore = calculateLinguisticCompatibility(cleanName1, cleanName2)
+        totalScore += linguisticScore * 0.10
+        totalWeight += 0.10
+
+        // 6. MATHEMATICAL HARMONY (Weight: 8%)
+        val mathScore = calculateMathematicalHarmony(cleanName1, cleanName2)
+        totalScore += mathScore * 0.08
+        totalWeight += 0.08
+
+        // 7. CULTURAL & ORIGIN COMPATIBILITY (Weight: 7%)
+        val culturalScore = calculateCulturalCompatibility(cleanName1, cleanName2)
+        totalScore += culturalScore * 0.07
+        totalWeight += 0.07
+
+        // 8. SPECIAL BONUSES & PENALTIES (Weight: 5%)
+        val bonusScore = calculateSpecialBonuses(cleanName1, cleanName2)
+        totalScore += bonusScore * 0.05
+        totalWeight += 0.05
+
+        // 9. PSYCHOLOGICAL FACTORS (Weight: 5%)
+        val psychScore = calculatePsychologicalCompatibility(cleanName1, cleanName2)
+        totalScore += psychScore * 0.05
+        totalWeight += 0.05
+
+        // Calculate final weighted score
+        val finalScore = (totalScore / totalWeight).toInt()
+
+        // Ensure score is between 1-100
+        return when {
+            finalScore < 1 -> 1
+            finalScore > 100 -> 100
+            else -> finalScore
+        }
+    }
+
+    /**
+     * NUMEROLOGY COMPATIBILITY
+     * Uses Pythagorean numerology system
+     */
+    private fun calculateNumerologyCompatibility(name1: String, name2: String): Double {
+        fun getNameNumber(name: String): Int {
+            val values = mapOf(
+                'a' to 1, 'b' to 2, 'c' to 3, 'd' to 4, 'e' to 5, 'f' to 6, 'g' to 7, 'h' to 8, 'i' to 9,
+                'j' to 1, 'k' to 2, 'l' to 3, 'm' to 4, 'n' to 5, 'o' to 6, 'p' to 7, 'q' to 8, 'r' to 9,
+                's' to 1, 't' to 2, 'u' to 3, 'v' to 4, 'w' to 5, 'x' to 6, 'y' to 7, 'z' to 8
+            )
+
+            var sum = name.filter { it.isLetter() }.sumOf { values[it] ?: 0 }
+
+            // Reduce to single digit (except 11, 22, 33 - master numbers)
+            while (sum > 9 && sum != 11 && sum != 22 && sum != 33) {
+                sum = sum.toString().sumOf { it.digitToInt() }
+            }
+            return sum
+        }
+
+        val num1 = getNameNumber(name1)
+        val num2 = getNameNumber(name2)
+
+        // Numerology compatibility matrix
+        val compatibilityMatrix = mapOf(
+            1 to mapOf(1 to 75, 2 to 85, 3 to 90, 4 to 60, 5 to 95, 6 to 70, 7 to 65, 8 to 80, 9 to 85),
+            2 to mapOf(1 to 85, 2 to 80, 3 to 70, 4 to 95, 5 to 60, 6 to 90, 7 to 75, 8 to 85, 9 to 65),
+            3 to mapOf(1 to 90, 2 to 70, 3 to 85, 4 to 65, 5 to 80, 6 to 75, 7 to 95, 8 to 60, 9 to 90),
+            4 to mapOf(1 to 60, 2 to 95, 3 to 65, 4 to 85, 5 to 70, 6 to 80, 7 to 75, 8 to 90, 9 to 75),
+            5 to mapOf(1 to 95, 2 to 60, 3 to 80, 4 to 70, 5 to 85, 6 to 65, 7 to 90, 8 to 75, 9 to 80),
+            6 to mapOf(1 to 70, 2 to 90, 3 to 75, 4 to 80, 5 to 65, 6 to 85, 7 to 60, 8 to 95, 9 to 70),
+            7 to mapOf(1 to 65, 2 to 75, 3 to 95, 4 to 75, 5 to 90, 6 to 60, 7 to 80, 8 to 70, 9 to 85),
+            8 to mapOf(1 to 80, 2 to 85, 3 to 60, 4 to 90, 5 to 75, 6 to 95, 7 to 70, 8 to 85, 9 to 65),
+            9 to mapOf(1 to 85, 2 to 65, 3 to 90, 4 to 75, 5 to 80, 6 to 70, 7 to 85, 8 to 65, 9 to 95)
+        )
+
+        return compatibilityMatrix[num1]?.get(num2)?.toDouble() ?: 50.0
+    }
+
+    /**
+     * PHONETIC HARMONY
+     * Analyzes sound patterns and rhythm
+     */
+    private fun calculatePhoneticHarmony(name1: String, name2: String): Double {
+        val vowels = "aeiou"
+
+        // Vowel-consonant ratio harmony
+        val vowelRatio1 = name1.count { it in vowels }.toDouble() / name1.length
+        val vowelRatio2 = name2.count { it in vowels }.toDouble() / name2.length
+        val ratioHarmony = 100 - (abs(vowelRatio1 - vowelRatio2) * 200)
+
+        // Syllable count harmony
+        val syllables1 = maxOf(1, name1.count { it in vowels })
+        val syllables2 = maxOf(1, name2.count { it in vowels })
+        val syllableHarmony = when (abs(syllables1 - syllables2)) {
+            0 -> 100.0
+            1 -> 80.0
+            2 -> 60.0
+            else -> 40.0
+        }
+
+        // Starting sound compatibility
+        val firstLetterBonus = if (name1.firstOrNull() == name2.firstOrNull()) 20.0 else 0.0
+
+        return (ratioHarmony * 0.4 + syllableHarmony * 0.4 + firstLetterBonus * 0.2).coerceIn(0.0, 100.0)
+    }
+
+    /**
+     * LETTER FREQUENCY & PATTERN ANALYSIS
+     */
+    private fun calculateLetterCompatibility(name1: String, name2: String): Double {
+        // Love letters bonus
         val loveLetters = "love"
-        var loveCount = 0
+        val loveCount = (name1 + name2).count { it in loveLetters }
+        val loveBonus = minOf(loveCount * 8, 40).toDouble()
 
-        for (char in combinedNames) {
-            if (char in loveLetters) {
-                loveCount++
+        // Common letters analysis
+        val letters1 = name1.toSet()
+        val letters2 = name2.toSet()
+        val commonLetters = (letters1 intersect letters2).size
+        val totalUniqueLetters = (letters1 union letters2).size
+        val commonLetterScore = if (totalUniqueLetters > 0) {
+            (commonLetters.toDouble() / totalUniqueLetters) * 60
+        } else 0.0
+
+        // Rare letter bonus (less common letters get higher scores)
+        val rareLetters = "qxzjkv"
+        val rareBonus = (name1 + name2).count { it in rareLetters } * 5.0
+
+        return (loveBonus + commonLetterScore + rareBonus).coerceIn(0.0, 100.0)
+    }
+
+    /**
+     * TRADITIONAL FLAMES METHOD
+     * Friends, Lovers, Affectionate, Marriage, Enemies, Siblings
+     */
+    private fun calculateFlamesCompatibility(name1: String, name2: String): Double {
+        var str1 = name1.replace(" ", "")
+        var str2 = name2.replace(" ", "")
+
+        // Remove common characters
+        val commonChars = str1.toSet() intersect str2.toSet()
+        commonChars.forEach { char ->
+            val count1 = str1.count { it == char }
+            val count2 = str2.count { it == char }
+            val commonCount = minOf(count1, count2)
+            repeat(commonCount) {
+                str1 = str1.replaceFirst(char.toString(), "")
+                str2 = str2.replaceFirst(char.toString(), "")
             }
         }
 
-        // Use a combination of name lengths, letter frequencies, and hash codes
-        val lengthFactor = (name1.length + name2.length) % 10
-        val hashFactor = abs((name1 + name2).hashCode()) % 100
-        val loveFactor = loveCount * 7
+        val remainingCount = str1.length + str2.length
+        val flames = "FLAMES"
+        val result = flames[remainingCount % 6]
 
-        // Create a score between 1-100
-        var score = ((hashFactor + lengthFactor + loveFactor) % 100)
+        return when (result) {
+            'F' -> 45.0  // Friends
+            'L' -> 95.0  // Lovers
+            'A' -> 85.0  // Affectionate
+            'M' -> 98.0  // Marriage
+            'E' -> 15.0  // Enemies
+            'S' -> 60.0  // Siblings
+            else -> 50.0
+        }
+    }
 
-        // Ensure minimum score of 1
-        if (score == 0) score = 1
+    /**
+     * LINGUISTIC PATTERN COMPATIBILITY
+     */
+    private fun calculateLinguisticCompatibility(name1: String, name2: String): Double {
+        // Length harmony
+        val lengthDiff = abs(name1.length - name2.length)
+        val lengthScore = when (lengthDiff) {
+            0 -> 100.0
+            1 -> 90.0
+            2 -> 75.0
+            3 -> 60.0
+            else -> 40.0
+        }
 
-        return score
+        // Alphabetical position analysis
+        fun getAlphabeticalValue(name: String): Double {
+            return name.sumOf { (it - 'a' + 1).toDouble() } / name.length
+        }
+
+        val alpha1 = getAlphabeticalValue(name1)
+        val alpha2 = getAlphabeticalValue(name2)
+        val alphaHarmony = 100 - abs(alpha1 - alpha2) * 3
+
+        return (lengthScore * 0.6 + alphaHarmony * 0.4).coerceIn(0.0, 100.0)
+    }
+
+    /**
+     * MATHEMATICAL HARMONY
+     * Golden ratio, Fibonacci, and geometric patterns
+     */
+    private fun calculateMathematicalHarmony(name1: String, name2: String): Double {
+        val goldenRatio = 1.618
+
+        // Golden ratio in name lengths
+        val ratio = maxOf(name1.length, name2.length).toDouble() / minOf(name1.length, name2.length)
+        val goldenScore = 100 - abs(ratio - goldenRatio) * 30
+
+        // ASCII value harmony
+        val ascii1 = name1.sumOf { it.code }
+        val ascii2 = name2.sumOf { it.code }
+        val asciiHarmony = 100 - (abs(ascii1 - ascii2) % 100)
+
+        // Fibonacci check
+        val fibNumbers = listOf(1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89)
+        val fibBonus = if (fibNumbers.contains(name1.length) || fibNumbers.contains(name2.length)) 15.0 else 0.0
+
+        return (goldenScore * 0.5 + asciiHarmony * 0.4 + fibBonus * 0.1).coerceIn(0.0, 100.0)
+    }
+
+    /**
+     * CULTURAL & ORIGIN COMPATIBILITY
+     */
+    private fun calculateCulturalCompatibility(name1: String, name2: String): Double {
+        // Common name patterns and origins
+        val patterns = mapOf(
+            "an" to "Germanic", "er" to "Germanic", "son" to "Nordic",
+            "ez" to "Spanish", "ini" to "Italian", "ski" to "Polish",
+            "sen" to "Nordic", "ova" to "Slavic", "ian" to "Armenian"
+        )
+
+        fun getNameOrigin(name: String): String {
+            return patterns.entries.find { name.endsWith(it.key) }?.value ?: "Universal"
+        }
+
+        val origin1 = getNameOrigin(name1)
+        val origin2 = getNameOrigin(name2)
+
+        return when {
+            origin1 == origin2 && origin1 != "Universal" -> 85.0
+            origin1 == "Universal" || origin2 == "Universal" -> 70.0
+            else -> 60.0
+        }
+    }
+
+    /**
+     * SPECIAL BONUSES & EASTER EGGS
+     */
+    private fun calculateSpecialBonuses(name1: String, name2: String): Double {
+        var bonusScore = 50.0
+
+        // Same first letter bonus
+        if (name1.firstOrNull() == name2.firstOrNull()) bonusScore += 15
+
+        // Palindrome bonus
+        if (name1 == name1.reversed() || name2 == name2.reversed()) bonusScore += 20
+
+        // Rhyming bonus (same ending)
+        if (name1.length > 2 && name2.length > 2) {
+            val ending1 = name1.takeLast(2)
+            val ending2 = name2.takeLast(2)
+            if (ending1 == ending2) bonusScore += 10
+        }
+
+        // Celebrity couple patterns
+        val famousCouples = listOf(
+            "romeo" to "juliet", "bonnie" to "clyde", "adam" to "eve",
+            "john" to "jane", "jack" to "jill", "beauty" to "beast"
+        )
+
+        val lowerName1 = name1.lowercase()
+        val lowerName2 = name2.lowercase()
+
+        famousCouples.forEach { (first, second) ->
+            if ((lowerName1.contains(first) && lowerName2.contains(second)) ||
+                (lowerName1.contains(second) && lowerName2.contains(first))) {
+                bonusScore += 25
+            }
+        }
+
+        return bonusScore.coerceIn(0.0, 100.0)
+    }
+
+    /**
+     * PSYCHOLOGICAL COMPATIBILITY
+     * Based on name psychology research
+     */
+    private fun calculatePsychologicalCompatibility(name1: String, name2: String): Double {
+        // Personality traits based on first letter
+        val traits = mapOf(
+            'a' to "ambitious", 'b' to "balanced", 'c' to "creative", 'd' to "determined",
+            'e' to "empathetic", 'f' to "friendly", 'g' to "generous", 'h' to "honest",
+            'i' to "intuitive", 'j' to "joyful", 'k' to "kind", 'l' to "loyal",
+            'm' to "motivated", 'n' to "nurturing", 'o' to "optimistic", 'p' to "passionate",
+            'q' to "quirky", 'r' to "reliable", 's' to "sensitive", 't' to "trustworthy",
+            'u' to "understanding", 'v' to "vibrant", 'w' to "wise", 'x' to "exciting",
+            'y' to "youthful", 'z' to "zealous"
+        )
+
+        val trait1 = traits[name1.firstOrNull()]
+        val trait2 = traits[name2.firstOrNull()]
+
+        // Complementary traits get higher scores
+        val complementaryPairs = mapOf(
+            "ambitious" to "supportive", "creative" to "practical", "sensitive" to "protective",
+            "energetic" to "calm", "outgoing" to "thoughtful", "adventurous" to "stable"
+        )
+
+        val isComplementary = complementaryPairs.any { (key, value) ->
+            (trait1 == key && trait2 == value) || (trait1 == value && trait2 == key)
+        }
+
+        return if (isComplementary) 85.0 else 65.0
     }
 
     private fun animateScore(targetScore: Int) {
@@ -162,16 +472,23 @@ class LoveCalculatorFragment : Fragment() {
         // Set names
         binding.tvNameResult.text = "$firstName ❤️ $secondName"
 
-        // Set compatibility message and icon
+        // Set compatibility message and icon with more detailed ranges
         val (message, emoji, colorRes) = when {
-            score >= 90 -> Triple("Perfect Match! You're soulmates!", "💕", R.color.love_excellent)
-            score >= 80 -> Triple("Excellent compatibility! True love!", "❤️", R.color.love_excellent)
-            score >= 70 -> Triple("Very good match! Strong connection!", "💖", R.color.love_good)
-            score >= 60 -> Triple("Good compatibility! Great potential!", "💗", R.color.love_good)
-            score >= 50 -> Triple("Average match. Work on it!", "💛", R.color.love_average)
-            score >= 40 -> Triple("Below average. Need more effort!", "💙", R.color.love_average)
-            score >= 30 -> Triple("Low compatibility. Challenge ahead!", "💜", R.color.love_poor)
-            else -> Triple("Very low match. Better as friends?", "💔", R.color.love_poor)
+            score >= 95 -> Triple("Cosmic Soulmates! Written in the stars!", "💫", R.color.love_excellent)
+            score >= 90 -> Triple("Perfect Match! You're destined!", "💕", R.color.love_excellent)
+            score >= 85 -> Triple("Exceptional compatibility! True love!", "❤️", R.color.love_excellent)
+            score >= 80 -> Triple("Excellent match! Strong bond!", "💖", R.color.love_excellent)
+            score >= 75 -> Triple("Very high compatibility! Great potential!", "💗", R.color.love_good)
+            score >= 70 -> Triple("Very good match! Strong connection!", "💝", R.color.love_good)
+            score >= 65 -> Triple("Good compatibility! Promising future!", "💘", R.color.love_good)
+            score >= 60 -> Triple("Decent match! Work together well!", "💚", R.color.love_good)
+            score >= 55 -> Triple("Average plus! Room to grow!", "💛", R.color.love_average)
+            score >= 50 -> Triple("Average match. Effort needed!", "🧡", R.color.love_average)
+            score >= 45 -> Triple("Below average. Challenges ahead!", "💙", R.color.love_average)
+            score >= 40 -> Triple("Low compatibility. Need work!", "💜", R.color.love_average)
+            score >= 30 -> Triple("Difficult match. Major effort required!", "🤍", R.color.love_poor)
+            score >= 20 -> Triple("Very challenging. Consider friendship!", "🖤", R.color.love_poor)
+            else -> Triple("Better as friends. Different paths!", "💔", R.color.love_poor)
         }
 
         binding.tvCompatibilityMessage.text = message
