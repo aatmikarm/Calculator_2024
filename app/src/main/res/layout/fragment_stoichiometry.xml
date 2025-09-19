@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
+    tools:context=".fragment.StoichiometryFragment">
+
+    <!-- Header Layout -->
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/backIv"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="15dp"
+            android:padding="3dp"
+            android:src="@drawable/arrow_left" />
+
+    </LinearLayout>
+
+    <!-- Title Section -->
+    <LinearLayout
+        android:id="@+id/linearLayout6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="10dp"
+            app:cardCornerRadius="10dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/itemImage"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_margin="15dp"
+                    android:src="@drawable/electric"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/itemName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="20dp"
+            android:gravity="center"
+            android:text="Stoichiometry Calculator"
+            android:textSize="23sp" />
+
+    </LinearLayout>
+
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout6"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <!-- Input Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp">
+
+                <LinearLayout
+                    android:id="@+id/stoichiometryLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center"
+                        android:text="Stoichiometry Calculator"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <!-- Chemical Equation Input -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:text="Chemical Equation"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <EditText
+                                    android:id="@+id/etChemicalEquation"
+                                    android:layout_width="0dp"
+                                    android:layout_height="48dp"
+                                    android:layout_weight="1"
+                                    android:layout_marginEnd="8dp"
+                                    android:background="@drawable/transparent"
+                                    android:focusableInTouchMode="true"
+                                    android:gravity="center_vertical"
+                                    android:hint="e.g., 2H2 + O2 → 2H2O"
+                                    android:inputType="text"
+                                    android:maxLength="100"
+                                    android:padding="12dp"
+                                    android:textColor="?android:attr/textColorSecondary"
+                                    android:textSize="16sp" />
+
+                                <Button
+                                    android:id="@+id/btnBalance"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="40dp"
+                                    android:layout_gravity="center"
+                                    android:backgroundTint="#FF9800"
+                                    android:text="Balance"
+                                    android:textAllCaps="false"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="12sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Given Compound Section -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="12dp"
+                                android:text="Given (Known) Compound"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="?attr/colorPrimary" />
+
+                            <!-- Compound and Coefficient Row -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="12dp"
+                                android:orientation="horizontal">
+
+                                <EditText
+                                    android:id="@+id/etGivenCompound"
+                                    android:layout_width="0dp"
+                                    android:layout_height="48dp"
+                                    android:layout_weight="2"
+                                    android:layout_marginEnd="8dp"
+                                    android:background="@drawable/transparent"
+                                    android:focusableInTouchMode="true"
+                                    android:gravity="center_vertical"
+                                    android:hint="Formula (e.g., H2O)"
+                                    android:inputType="text"
+                                    android:maxLength="20"
+                                    android:padding="12dp"
+                                    android:textColor="?android:attr/textColorSecondary"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="48dp"
+                                    android:layout_marginEnd="4dp"
+                                    android:gravity="center"
+                                    android:text="Coeff:"
+                                    android:textSize="14sp" />
+
+                                <EditText
+                                    android:id="@+id/etGivenCoefficient"
+                                    android:layout_width="60dp"
+                                    android:layout_height="48dp"
+                                    android:background="@drawable/transparent"
+                                    android:focusableInTouchMode="true"
+                                    android:gravity="center"
+                                    android:inputType="numberDecimal"
+                                    android:maxLength="5"
+                                    android:padding="12dp"
+                                    android:text="1"
+                                    android:textColor="?android:attr/textColorSecondary"
+                                    android:textSize="16sp" />
+
+                            </LinearLayout>
+
+                            <!-- Quantity, Unit, and MW Row -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <EditText
+                                    android:id="@+id/etGivenQuantity"
+                                    android:layout_width="0dp"
+                                    android:layout_height="48dp"
+                                    android:layout_weight="1"
+                                    android:layout_marginEnd="8dp"
+                                    android:background="@drawable/transparent"
+                                    android:focusableInTouchMode="true"
+                                    android:gravity="center_vertical"
+                                    android:hint="Quantity"
+                                    android:inputType="numberDecimal"
+                                    android:maxLength="10"
+                                    android:padding="12dp"
+                                    android:textColor="?android:attr/textColorSecondary"
+                                    android:textSize="16sp" />
+
+                                <Spinner
+                                    android:id="@+id/spinnerGivenUnit"
+                                    android:layout_width="80dp"
+                                    android:layout_height="48dp"
+                                    android:layout_marginEnd="8dp" />
+
+                                <EditText
+                                    android:id="@+id/etGivenMW"
+                                    android:layout_width="0dp"
+                                    android:layout_height="48dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/transparent"
+                                    android:focusableInTouchMode="true"
+                                    android:gravity="center_vertical"
+                                    android:hint="MW (g/mol)"
+                                    android:inputType="numberDecimal"
+                                    android:maxLength="10"
+                                    android:padding="12dp"
+                                    android:textColor="?android:attr/textColorSecondary"
+                                    android:textSize="16sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Wanted Compound Section -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="12dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Wanted (Unknown) Compound"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:textColor="?attr/colorPrimary" />
+
+                                <Button
+                                    android:id="@+id/btnLookupMW"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="32dp"
+                                    android:backgroundTint="#9C27B0"
+                                    android:text="Lookup MW"
+                                    android:textAllCaps="false"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="11sp"
+                                    android:minWidth="0dp"
+                                    android:paddingHorizontal="12dp" />
+
+                            </LinearLayout>
+
+                            <!-- Compound and Coefficient Row -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="12dp"
+                                android:orientation="horizontal">
+
+                                <EditText
+                                    android:id="@+id/etWantedCompound"
+                                    android:layout_width="0dp"
+                                    android:layout_height="48dp"
+                                    android:layout_weight="2"
+                                    android:layout_marginEnd="8dp"
+                                    android:background="@drawable/transparent"
+                                    android:focusableInTouchMode="true"
+                                    android:gravity="center_vertical"
+                                    android:hint="Formula (e.g., CO2)"
+                                    android:inputType="text"
+                                    android:maxLength="20"
+                                    android:padding="12dp"
+                                    android:textColor="?android:attr/textColorSecondary"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="48dp"
+                                    android:layout_marginEnd="4dp"
+                                    android:gravity="center"
+                                    android:text="Coeff:"
+                                    android:textSize="14sp" />
+
+                                <EditText
+                                    android:id="@+id/etWantedCoefficient"
+                                    android:layout_width="60dp"
+                                    android:layout_height="48dp"
+                                    android:background="@drawable/transparent"
+                                    android:focusableInTouchMode="true"
+                                    android:gravity="center"
+                                    android:inputType="numberDecimal"
+                                    android:maxLength="5"
+                                    android:padding="12dp"
+                                    android:text="1"
+                                    android:textColor="?android:attr/textColorSecondary"
+                                    android:textSize="16sp" />
+
+                            </LinearLayout>
+
+                            <!-- MW and Unit Row -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <EditText
+                                    android:id="@+id/etWantedMW"
+                                    android:layout_width="0dp"
+                                    android:layout_height="48dp"
+                                    android:layout_weight="1"
+                                    android:layout_marginEnd="8dp"
+                                    android:background="@drawable/transparent"
+                                    android:focusableInTouchMode="true"
+                                    android:gravity="center_vertical"
+                                    android:hint="MW (g/mol)"
+                                    android:inputType="numberDecimal"
+                                    android:maxLength="10"
+                                    android:padding="12dp"
+                                    android:textColor="?android:attr/textColorSecondary"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="48dp"
+                                    android:layout_marginEnd="4dp"
+                                    android:gravity="center"
+                                    android:text="Unit:"
+                                    android:textSize="14sp" />
+
+                                <Spinner
+                                    android:id="@+id/spinnerWantedUnit"
+                                    android:layout_width="80dp"
+                                    android:layout_height="48dp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Quick Info Section -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:text="Calculation Type:"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <Spinner
+                            android:id="@+id/spinnerCalculationType"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                    </LinearLayout>
+
+                    <!-- Buttons Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btnClear"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:backgroundTint="#F44336"
+                            android:text="Clear"
+                            android:textAllCaps="false"
+                            android:textColor="@android:color/white"
+                            android:textSize="14sp" />
+
+                        <Button
+                            android:id="@+id/btnCalculate"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:backgroundTint="#4CAF50"
+                            android:text="Calculate"
+                            android:textAllCaps="false"
+                            android:textColor="@android:color/white"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Results Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center"
+                        android:text="Results"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxHeight="400dp">
+
+                        <TextView
+                            android:id="@+id/tvResult"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:lineSpacingExtra="4dp"
+                            android:text="Enter chemical equation and known quantities to perform stoichiometry calculations"
+                            android:textSize="14sp"
+                            android:padding="8dp" />
+
+                    </ScrollView>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Information Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_marginBottom="100dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center"
+                        android:text="Stoichiometry Guide"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Stoichiometry is the calculation of quantities in chemical reactions based on balanced equations:\n\n📝 Steps:\n1. Write a balanced chemical equation\n2. Identify given and wanted substances\n3. Convert given quantity to moles\n4. Use mole ratio from equation coefficients\n5. Convert to desired units\n\n⚖️ Formula:\nMoles of A / Coefficient of A = Moles of B / Coefficient of B\n\n🧮 Common Molecular Weights:\n• H2O: 18.015 g/mol\n• CO2: 44.01 g/mol\n• O2: 32.00 g/mol\n• H2: 2.016 g/mol\n• CH4: 16.04 g/mol\n• NH3: 17.03 g/mol\n• NaCl: 58.44 g/mol\n• CaCO3: 100.09 g/mol\n\n💡 Tips:\n• Always balance equations first\n• Check significant figures\n• Include proper units\n• Verify reasonableness of answers"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

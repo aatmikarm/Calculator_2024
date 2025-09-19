@@ -17,6 +17,7 @@ import com.aatmik.calculator.fragment.AgeFragment
 import com.aatmik.calculator.fragment.AreaCalculatorFragment
 import com.aatmik.calculator.fragment.BasicCalculatorFragment
 import com.aatmik.calculator.fragment.BodyMassIndexFragment
+import com.aatmik.calculator.fragment.BudgetCalculatorFragment
 import com.aatmik.calculator.fragment.CalorieCalculatorFragment
 import com.aatmik.calculator.fragment.CompassFragment
 import com.aatmik.calculator.fragment.ContributionCalculatorFragment
@@ -25,15 +26,19 @@ import com.aatmik.calculator.fragment.CurrencyConverterFragment
 import com.aatmik.calculator.fragment.FreeFallFragment
 import com.aatmik.calculator.fragment.FuelEconomyCalculatorFragment
 import com.aatmik.calculator.fragment.GpaCalculatorFragment
+import com.aatmik.calculator.fragment.IdealGasLawFragment
 import com.aatmik.calculator.fragment.InterestCalculatorFragment
 import com.aatmik.calculator.fragment.LengthFragment
 import com.aatmik.calculator.fragment.LevelCalculatorFragment
 import com.aatmik.calculator.fragment.LightningCalculatorFragment
 import com.aatmik.calculator.fragment.LoanCalculatorFragment
 import com.aatmik.calculator.fragment.LoveCalculatorFragment
+import com.aatmik.calculator.fragment.MolarityFragment
 import com.aatmik.calculator.fragment.OhmsLawFragment
 import com.aatmik.calculator.fragment.PercentageFragment
+import com.aatmik.calculator.fragment.PhCalculatorFragment
 import com.aatmik.calculator.fragment.SpeedFragment
+import com.aatmik.calculator.fragment.StoichiometryFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
 import com.aatmik.calculator.fragment.TaxCalculatorFragment
 import com.aatmik.calculator.fragment.TemperatureFragment
@@ -144,6 +149,11 @@ class CalculatorActivity : AppCompatActivity() {
                 "Loan Calculator" -> loadFragment(LoanCalculatorFragment())
                 "Fuel Economy Calculator" -> loadFragment(FuelEconomyCalculatorFragment())
                 "Ohm's Law" -> loadFragment(OhmsLawFragment())
+                "Molarity Calculator" -> loadFragment(MolarityFragment())
+                "pH Calculator" -> loadFragment(PhCalculatorFragment())
+                "Stoichiometry Calculator" -> loadFragment(StoichiometryFragment())
+                "Ideal Gas Law" -> loadFragment(IdealGasLawFragment())
+                "Budget Calculator" -> loadFragment(BudgetCalculatorFragment())
                 "Trip Estimate" -> loadFragment(TripEstimateFragment())
                 "Tax Calculator" -> loadFragment(TaxCalculatorFragment())
                 "Contribution Calculator" -> loadFragment(ContributionCalculatorFragment())

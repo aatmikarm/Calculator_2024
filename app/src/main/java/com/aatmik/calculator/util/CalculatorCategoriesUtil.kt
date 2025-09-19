@@ -8,13 +8,14 @@ object CalculatorCategoriesUtil {
     // Define categories
     val categories = arrayListOf(
         Category("All"),
-       // Category("Basic"),
+        // Category("Basic"),
         Category("Converters"),
         Category("Financial"),
         Category("Health & Fitness"),
         Category("Tools"),
         Category("Physics"),
         Category("Math"),
+        Category("Chemistry"),
         Category("Fun")
     )
 
@@ -35,6 +36,7 @@ object CalculatorCategoriesUtil {
         "Percentage" to "Financial",
         "Interest Calculator" to "Financial",
         "Loan Calculator" to "Financial",
+        "Budget Calculator" to "Financial",
         "Tax Calculator" to "Financial",
         "Contribution Calculator" to "Financial",
         "Tip" to "Financial",
@@ -61,6 +63,13 @@ object CalculatorCategoriesUtil {
         "GPA Calculator" to "Math",
         "Shapes" to "Math",
         "Bodies" to "Math",
+
+        // Chemistry
+        // Add your chemistry calculators here when ready
+         "Molarity Calculator" to "Chemistry",
+         "pH Calculator" to "Chemistry",
+         "Stoichiometry Calculator" to "Chemistry",
+         "Ideal Gas Law" to "Chemistry",
 
         // Fun
         "Love Calculator" to "Fun"
