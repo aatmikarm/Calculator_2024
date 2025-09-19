@@ -75,7 +75,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
         ads:layout_constraintBottom_toTopOf="@+id/linearLayout3"
@@ -86,13 +86,13 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="@string/favorites" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/calculatorRV"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp" />
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
