@@ -1,6 +1,8 @@
 package com.aatmik.calculator.fragment
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -10,6 +12,11 @@ import android.os.Vibrator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.aatmik.calculator.databinding.FragmentLevelCalculatorBinding
@@ -26,6 +33,7 @@ class LevelCalculatorFragment : Fragment(), SensorEventListener {
     private var isCalibrated = false
     private var isHolding = false
     private var sensitivity = 1.0f
+    private var isCameraEnabled = false
 
     // Calibration offsets
     private var xOffset = 0f
@@ -34,6 +42,10 @@ class LevelCalculatorFragment : Fragment(), SensorEventListener {
     // Current readings
     private var currentXAngle = 0f
     private var currentYAngle = 0f
+
+    companion object {
+        private const val CAMERA_PERMISSION_REQUEST_CODE = 1001
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,6 +86,19 @@ class LevelCalculatorFragment : Fragment(), SensorEventListener {
                 toggleHold()
             }
 
+            switchCamera.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    if (checkCameraPermission()) {
+                        enableCamera()
+                    } else {
+                        requestCameraPermission()
+                        switchCamera.isChecked = false
+                    }
+                } else {
+                    disableCamera()
+                }
+            }
+
             seekBarSensitivity.setOnSeekBarChangeListener(
                 object : android.widget.SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
@@ -97,6 +122,84 @@ class LevelCalculatorFragment : Fragment(), SensorEventListener {
     private fun toggleHold() {
         isHolding = !isHolding
         binding.btnHold.text = if (isHolding) "Unfreeze" else "Hold"
+    }
+
+    private fun enableCamera() {
+        isCameraEnabled = true
+        startCamera()
+        // Show camera behind the level UI
+        binding.cameraPreview.visibility = View.VISIBLE
+        // Make level elements semi-transparent so camera shows through
+        binding.mainContent.alpha = 0.8f
+    }
+
+    private fun disableCamera() {
+        isCameraEnabled = false
+        stopCamera()
+        // Hide camera
+        binding.cameraPreview.visibility = View.GONE
+        // Make level elements fully opaque
+        binding.mainContent.alpha = 1.0f
+    }
+
+    private fun checkCameraPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestCameraPermission() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(Manifest.permission.CAMERA),
+            CAMERA_PERMISSION_REQUEST_CODE
+        )
+    }
+
+    private fun startCamera() {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+
+        cameraProviderFuture.addListener({
+            try {
+                val cameraProvider = cameraProviderFuture.get()
+                val preview = Preview.Builder().build()
+                preview.setSurfaceProvider(binding.cameraPreview.surfaceProvider)
+
+                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(this, cameraSelector, preview)
+
+            } catch (exc: Exception) {
+                Toast.makeText(requireContext(), "Camera failed to start", Toast.LENGTH_SHORT).show()
+                binding.switchCamera.isChecked = false
+            }
+        }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    private fun stopCamera() {
+        try {
+            ProcessCameraProvider.getInstance(requireContext()).get().unbindAll()
+        } catch (e: Exception) {
+            // Camera already stopped
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                binding.switchCamera.isChecked = true
+                enableCamera()
+            } else {
+                Toast.makeText(requireContext(), "Camera permission required", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onResume() {
