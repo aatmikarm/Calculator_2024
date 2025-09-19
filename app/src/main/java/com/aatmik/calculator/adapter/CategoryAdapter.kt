@@ -52,6 +52,10 @@ class CategoryAdapter(
         notifyItemChanged(selectedPosition)
     }
 
+    fun getCurrentSelection(): Int {
+        return selectedPosition
+    }
+
     inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val categoryName: TextView = itemView.findViewById(R.id.categoryName)
 

@@ -7,12 +7,15 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowMetrics
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
@@ -34,6 +37,7 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.util.Locale
+import kotlin.math.abs
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,9 +53,15 @@ class MainActivity : AppCompatActivity() {
     lateinit var categoriesRV: RecyclerView
     lateinit var categoryAdapter: CategoryAdapter
     private var currentSelectedCategory = "All"
+    private var currentCategoryIndex = 0
+
+    // Gesture detector for swipe functionality
+    private lateinit var gestureDetector: GestureDetectorCompat
 
     companion object {
         private const val GRID_COLUMN_COUNT = 4
+        private const val SWIPE_THRESHOLD = 100
+        private const val SWIPE_VELOCITY_THRESHOLD = 100
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +80,7 @@ class MainActivity : AppCompatActivity() {
 
         runAds()
         loadCalculatorOrder()
+        setupGestureDetector()
         setupCategoriesRecyclerView()
         setupRecyclerView()
         search()
@@ -80,6 +91,94 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, CalculatorActivity::class.java)
             intent?.let { startActivity(it) }
         }
+    }
+
+    /**
+     * Setup gesture detector for swipe functionality
+     */
+    private fun setupGestureDetector() {
+        val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
+            override fun onFling(
+                e1: MotionEvent?,
+                e2: MotionEvent,
+                velocityX: Float,
+                velocityY: Float
+            ): Boolean {
+                if (e1 == null) return false
+
+                val diffY = e2.y - e1.y
+                val diffX = e2.x - e1.x
+
+                // Check if it's a horizontal swipe
+                if (abs(diffX) > abs(diffY)) {
+                    if (abs(diffX) > SWIPE_THRESHOLD && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                        if (diffX > 0) {
+                            // Swipe right - go to previous category
+                            onSwipeRight()
+                        } else {
+                            // Swipe left - go to next category
+                            onSwipeLeft()
+                        }
+                        return true
+                    }
+                }
+                return false
+            }
+        }
+
+        gestureDetector = GestureDetectorCompat(this, gestureListener)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        // Only detect swipes in the calculator grid area
+        val calculatorGridTop = binding.linearLayout.top
+        val calculatorGridBottom = binding.linearLayout.bottom
+
+        // Check if touch is within the calculator grid bounds
+        if (ev.y >= calculatorGridTop && ev.y <= calculatorGridBottom) {
+            gestureDetector.onTouchEvent(ev)
+        }
+
+        return super.dispatchTouchEvent(ev)
+    }
+
+    /**
+     * Handle swipe left gesture - move to next category
+     */
+    private fun onSwipeLeft() {
+        val totalCategories = CalculatorCategoriesUtil.categories.size
+        if (currentCategoryIndex < totalCategories - 1) {
+            currentCategoryIndex++
+            selectCategoryByIndex(currentCategoryIndex)
+        }
+    }
+
+    /**
+     * Handle swipe right gesture - move to previous category
+     */
+    private fun onSwipeRight() {
+        if (currentCategoryIndex > 0) {
+            currentCategoryIndex--
+            selectCategoryByIndex(currentCategoryIndex)
+        }
+    }
+
+    /**
+     * Select category by index and update UI
+     */
+    private fun selectCategoryByIndex(index: Int) {
+        val selectedCategory = CalculatorCategoriesUtil.categories[index].name
+        currentSelectedCategory = selectedCategory
+        currentCategoryIndex = index
+
+        // Update category adapter selection
+        categoryAdapter.updateSelection(index)
+
+        // Scroll to make selected category visible
+        categoriesRV.scrollToPosition(index)
+
+        // Filter calculators by category
+        filterByCategory(selectedCategory)
     }
 
     /**
@@ -108,6 +207,7 @@ class MainActivity : AppCompatActivity() {
         categoryAdapter = CategoryAdapter(CalculatorCategoriesUtil.categories) { position ->
             val selectedCategory = CalculatorCategoriesUtil.categories[position].name
             currentSelectedCategory = selectedCategory
+            currentCategoryIndex = position
             filterByCategory(selectedCategory)
         }
 
