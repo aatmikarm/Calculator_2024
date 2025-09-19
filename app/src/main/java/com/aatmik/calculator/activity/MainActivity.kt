@@ -185,7 +185,6 @@ class MainActivity : AppCompatActivity() {
             "Light Mode",
             "Dark Mode",
             "Follow System",
-            "━━━━━━━━━━━━━━━━━━━",
             "Default (Orange)",
             "Red Theme",
             "Green Theme",
@@ -199,13 +198,13 @@ class MainActivity : AppCompatActivity() {
             ThemeManager.THEME_LIGHT -> 0
             ThemeManager.THEME_DARK -> 1
             ThemeManager.THEME_SYSTEM -> 2
-            ThemeManager.THEME_DEFAULT -> 4
-            ThemeManager.THEME_RED -> 5
-            ThemeManager.THEME_GREEN -> 6
-            ThemeManager.THEME_BLUE -> 7
-            ThemeManager.THEME_PURPLE -> 8
-            ThemeManager.THEME_PINK -> 9
-            else -> 4
+            ThemeManager.THEME_DEFAULT -> 3
+            ThemeManager.THEME_RED -> 4
+            ThemeManager.THEME_GREEN -> 5
+            ThemeManager.THEME_BLUE -> 6
+            ThemeManager.THEME_PURPLE -> 7
+            ThemeManager.THEME_PINK -> 8
+            else -> 3
         }
 
         androidx.appcompat.app.AlertDialog.Builder(this)
@@ -215,13 +214,12 @@ class MainActivity : AppCompatActivity() {
                     0 -> ThemeManager.THEME_LIGHT
                     1 -> ThemeManager.THEME_DARK
                     2 -> ThemeManager.THEME_SYSTEM
-                    3 -> return@setSingleChoiceItems // Separator line - do nothing
-                    4 -> ThemeManager.THEME_DEFAULT
-                    5 -> ThemeManager.THEME_RED
-                    6 -> ThemeManager.THEME_GREEN
-                    7 -> ThemeManager.THEME_BLUE
-                    8 -> ThemeManager.THEME_PURPLE
-                    9 -> ThemeManager.THEME_PINK
+                    3 -> ThemeManager.THEME_DEFAULT
+                    4 -> ThemeManager.THEME_RED
+                    5 -> ThemeManager.THEME_GREEN
+                    6 -> ThemeManager.THEME_BLUE
+                    7 -> ThemeManager.THEME_PURPLE
+                    8 -> ThemeManager.THEME_PINK
                     else -> ThemeManager.THEME_DEFAULT
                 }
 
