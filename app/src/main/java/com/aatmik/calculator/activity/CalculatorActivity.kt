@@ -23,6 +23,7 @@ import com.aatmik.calculator.fragment.CompassFragment
 import com.aatmik.calculator.fragment.ContributionCalculatorFragment
 import com.aatmik.calculator.fragment.ConverterFragment
 import com.aatmik.calculator.fragment.CurrencyConverterFragment
+import com.aatmik.calculator.fragment.FractionCalculatorFragment
 import com.aatmik.calculator.fragment.FreeFallFragment
 import com.aatmik.calculator.fragment.FriendshipCalculatorFragment
 import com.aatmik.calculator.fragment.FuelEconomyCalculatorFragment
@@ -152,6 +153,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Time Zone Converter" -> loadFragment(TimeZoneFragment())
                 "Percentage" -> loadFragment(PercentageFragment())
                 "Ratio Calculator" -> loadFragment(RatioCalculatorFragment())
+                "Fraction Calculator" -> loadFragment(FractionCalculatorFragment())
                 "Number Tables" -> loadFragment(NumberTablesFragment())
                 "Interest Calculator" -> loadFragment(InterestCalculatorFragment())
                 "Loan Calculator" -> loadFragment(LoanCalculatorFragment())

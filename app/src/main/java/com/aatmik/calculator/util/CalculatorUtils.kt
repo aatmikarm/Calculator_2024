@@ -31,6 +31,7 @@ object CalculatorUtils {
             Calculator("Stopwatch", R.drawable.stopwatch),
             Calculator("Time Zone Converter", R.drawable.time_zone),
             Calculator("Percentage", R.drawable.percentage),
+            Calculator("Fraction Calculator", R.drawable.fraction),
             Calculator("Ratio Calculator", R.drawable.ratio),
             Calculator("Number Tables", R.drawable.multiplication),
             Calculator("Interest Calculator", R.drawable.percentage),
