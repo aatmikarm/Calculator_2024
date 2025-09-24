@@ -42,6 +42,7 @@ class LoveCalculatorFragment : Fragment() {
         setupClickListeners()
         setupTextWatchers()
         updateCalculateButtonState()
+        updateShareButtonVisibility() // Hide share button initially
     }
 
     private fun setupClickListeners() {
@@ -68,6 +69,15 @@ class LoveCalculatorFragment : Fragment() {
 
         binding.shareBt.setOnClickListener {
             captureAndShareScreenshot()
+        }
+    }
+
+    private fun updateShareButtonVisibility() {
+        // Hide share button when no results are displayed
+        binding.shareBt.visibility = if (binding.resultLayout.visibility == View.VISIBLE) {
+            View.VISIBLE
+        } else {
+            View.GONE
         }
     }
 
@@ -107,6 +117,48 @@ class LoveCalculatorFragment : Fragment() {
         binding.btnCalculate.alpha = if (binding.btnCalculate.isEnabled) 1.0f else 0.5f
     }
 
+    private fun captureAndShareScreenshot() {
+        // Check if results are visible and have valid dimensions
+        if (binding.resultLayout.visibility != View.VISIBLE ||
+            binding.loveResultCard.width <= 0 ||
+            binding.loveResultCard.height <= 0) {
+            // Show a message or return early if no results to share
+            return
+        }
+
+        val screenshotView = binding.loveResultCard
+        val bitmap = Bitmap.createBitmap(
+            screenshotView.width,
+            screenshotView.height,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        screenshotView.draw(canvas)
+
+        // Save the bitmap to a file
+        val file = File(requireContext().cacheDir, "love_result_screenshot.png")
+        FileOutputStream(file).use { out ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+        }
+
+        // Get a content URI for the file using FileProvider
+        val contentUri = FileProvider.getUriForFile(
+            requireContext(),
+            "${requireContext().packageName}.fileprovider",
+            file
+        )
+
+        // Create a share intent
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "image/png"
+            putExtra(Intent.EXTRA_STREAM, contentUri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        // Start the share activity
+        startActivity(Intent.createChooser(shareIntent, "Share Love Result"))
+    }
+
     private fun calculateLove() {
         val firstName = binding.etFirstName.text.toString().trim()
         val secondName = binding.etSecondName.text.toString().trim()
@@ -121,6 +173,9 @@ class LoveCalculatorFragment : Fragment() {
         // Show result layout and start calculation
         binding.resultLayout.visibility = View.VISIBLE
         binding.loveResultCard.visibility = View.VISIBLE
+
+        // Show share button now that results are visible
+        updateShareButtonVisibility()
 
         // Calculate love score
         val score = calculateLoveScore(firstName, secondName)
@@ -854,7 +909,6 @@ class LoveCalculatorFragment : Fragment() {
 
         // Show the toggle button after insights are loaded
         binding.root.findViewById<Button>(R.id.btnToggleInsights)?.visibility = View.VISIBLE
-
     }
 
     // Data classes for structured insights
@@ -880,6 +934,9 @@ class LoveCalculatorFragment : Fragment() {
         binding.loveResultCard.visibility = View.GONE
         currentScore = 0
 
+        // Hide share button when results are cleared
+        updateShareButtonVisibility()
+
         // Reset focus to first name field
         binding.etFirstName.requestFocus()
     }
@@ -901,40 +958,6 @@ class LoveCalculatorFragment : Fragment() {
         val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
                 as android.view.inputmethod.InputMethodManager
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
-    }
-
-    private fun captureAndShareScreenshot() {
-        val screenshotView = binding.loveResultCard
-        val bitmap = Bitmap.createBitmap(
-            screenshotView.width,
-            screenshotView.height,
-            Bitmap.Config.ARGB_8888
-        )
-        val canvas = Canvas(bitmap)
-        screenshotView.draw(canvas)
-
-        // Save the bitmap to a file
-        val file = File(requireContext().cacheDir, "love_result_screenshot.png")
-        FileOutputStream(file).use { out ->
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
-        }
-
-        // Get a content URI for the file using FileProvider
-        val contentUri = FileProvider.getUriForFile(
-            requireContext(),
-            "${requireContext().packageName}.fileprovider",
-            file
-        )
-
-        // Create a share intent
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "image/png"
-            putExtra(Intent.EXTRA_STREAM, contentUri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-
-        // Start the share activity
-        startActivity(Intent.createChooser(shareIntent, "Share Love Result"))
     }
 
     companion object {
