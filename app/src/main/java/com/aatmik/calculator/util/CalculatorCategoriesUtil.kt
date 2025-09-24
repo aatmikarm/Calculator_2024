@@ -44,6 +44,7 @@ object CalculatorCategoriesUtil {
         "Interest Calculator" to "Financial",
         "Loan Calculator" to "Financial",
         "ROI Calculator" to "Financial",
+        "Investment Calculator" to "Financial",
         "Budget Calculator" to "Financial",
         "Tax Calculator" to "Financial",
         "Contribution Calculator" to "Financial",
