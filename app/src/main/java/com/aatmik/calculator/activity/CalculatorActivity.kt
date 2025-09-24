@@ -46,6 +46,7 @@ import com.aatmik.calculator.fragment.PhCalculatorFragment
 import com.aatmik.calculator.fragment.PregnancyCalculatorFragment
 import com.aatmik.calculator.fragment.ProportionCalculatorFragment
 import com.aatmik.calculator.fragment.RatioCalculatorFragment
+import com.aatmik.calculator.fragment.RoiCalculatorFragment
 import com.aatmik.calculator.fragment.SpeedFragment
 import com.aatmik.calculator.fragment.StoichiometryFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
@@ -161,6 +162,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Number Tables" -> loadFragment(NumberTablesFragment())
                 "Interest Calculator" -> loadFragment(InterestCalculatorFragment())
                 "Loan Calculator" -> loadFragment(LoanCalculatorFragment())
+                "ROI Calculator" -> loadFragment(RoiCalculatorFragment())
                 "Fuel Economy Calculator" -> loadFragment(FuelEconomyCalculatorFragment())
                 "Ohm's Law" -> loadFragment(OhmsLawFragment())
                 "Molarity Calculator" -> loadFragment(MolarityFragment())

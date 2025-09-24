@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".fragment.RoiCalculatorFragment">
+
+        <!-- Header Section -->
+        <LinearLayout
+            android:id="@+id/linearLayout5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/backIv"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="15dp"
+                android:padding="3dp"
+                android:src="@drawable/arrow_left" />
+
+        </LinearLayout>
+
+        <!-- Title Section -->
+        <LinearLayout
+            android:id="@+id/linearLayout6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp"
+                app:cardCornerRadius="10dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:background="@drawable/four_lines"
+                        android:backgroundTint="?attr/colorSurface"
+                        android:translationX="-10dp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/itemImage"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_margin="15dp"
+                        android:src="@drawable/percentage"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/itemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="20dp"
+                android:gravity="center"
+                android:text="ROI Calculator"
+                android:textSize="23sp" />
+
+        </LinearLayout>
+
+        <!-- Main Content -->
+        <LinearLayout
+            android:id="@+id/linearLayout7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
+
+            <!-- Input Section -->
+            <LinearLayout
+                android:id="@+id/roiLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- ROI Calculation Type Selector -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginVertical="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Calculation Type:"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="16sp" />
+
+                    <Spinner
+                        android:id="@+id/spinnerCalculationType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rounded_button_background"
+                        android:backgroundTint="?attr/colorPrimary"
+                        android:padding="12dp" />
+
+                </LinearLayout>
+
+                <!-- Initial Investment -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    app:cardCornerRadius="10dp">
+
+                    <EditText
+                        android:id="@+id/etInitialInvestment"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="@drawable/transparent"
+                        android:focusableInTouchMode="true"
+                        android:gravity="center"
+                        android:hint="Initial Investment "
+                        android:inputType="numberDecimal"
+                        android:padding="15dp"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="18sp" />
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Current/Final Value -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    app:cardCornerRadius="10dp">
+
+                    <EditText
+                        android:id="@+id/etFinalValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="@drawable/transparent"
+                        android:focusableInTouchMode="true"
+                        android:gravity="center"
+                        android:hint="Current/Final Value "
+                        android:inputType="numberDecimal"
+                        android:padding="15dp"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="18sp" />
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Time Period Container -->
+                <LinearLayout
+                    android:id="@+id/layoutTimePeriod"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <!-- Time Period -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:layout_weight="1"
+                            app:cardCornerRadius="10dp">
+
+                            <EditText
+                                android:id="@+id/etTimePeriod"
+                                android:layout_width="match_parent"
+                                android:layout_height="60dp"
+                                android:background="@drawable/transparent"
+                                android:focusableInTouchMode="true"
+                                android:gravity="center"
+                                android:hint="Time Period"
+                                android:inputType="numberDecimal"
+                                android:padding="15dp"
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:textSize="18sp" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <Spinner
+                            android:id="@+id/spinnerTimeUnit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/rounded_button_background"
+                            android:backgroundTint="?attr/colorPrimary"
+                            android:padding="12dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Additional Investment (Optional) -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardAdditionalInvestment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:visibility="gone"
+                    app:cardCornerRadius="10dp">
+
+                    <EditText
+                        android:id="@+id/etAdditionalInvestment"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="@drawable/transparent"
+                        android:focusableInTouchMode="true"
+                        android:gravity="center"
+                        android:hint="Additional Investment "
+                        android:inputType="numberDecimal"
+                        android:padding="15dp"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="18sp" />
+
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+            <!-- Instructions -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="10dp">
+
+                <TextView
+                    android:id="@+id/tvInstructions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:text="Enter investment details to calculate ROI"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:textSize="14sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Calculate and Clear Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnCalculate"
+                    style="@style/Dark_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="Calculate"
+                    android:textSize="14sp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnClear"
+                    style="@style/Light_Button_Style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="Clear"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <!-- Results Section -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_marginTop="20dp"
+                android:elevation="8dp"
+                android:padding="16dp"
+                app:cardCornerRadius="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <!-- ROI Percentage -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/percentage" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="sans-serif"
+                            android:text="ROI Percentage:"
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/tvRoiPercentage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0%"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Total Gain/Loss -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/dollor" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="sans-serif"
+                            android:text="Total Gain/Loss:"
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/tvTotalGainLoss"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Annualized ROI -->
+                    <LinearLayout
+                        android:id="@+id/layoutAnnualizedROI"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingBottom="8dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/calculator_new" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="sans-serif"
+                            android:text="Annualized ROI:"
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/tvAnnualizedRoi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0%"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Total Investment -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/saving" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="sans-serif"
+                            android:text="Total Investment:"
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/tvTotalInvestment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Investment Performance -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/piechart" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="sans-serif"
+                            android:text="Performance:"
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/tvPerformance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Neutral"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Calculation Details -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardCalculationDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:elevation="8dp"
+                android:padding="16dp"
+                app:cardCornerRadius="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center"
+                        android:text="Calculation Details"
+                        android:textColor="?attr/colorPrimary"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvCalculationDetails"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:padding="16dp"
+                        android:text="Enter investment details to see calculation breakdown"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
