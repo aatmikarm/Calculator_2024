@@ -47,6 +47,7 @@ object CalculatorCategoriesUtil {
         "Tax Calculator" to "Financial",
         "Contribution Calculator" to "Financial",
         "Tip" to "Financial",
+        "Ratio Calculator" to "Financial",
 
         // Health & Fitness
         "Body Mass Index" to "Health & Fitness",
@@ -70,6 +71,7 @@ object CalculatorCategoriesUtil {
 
         // Math
         "Area Calculator" to "Math",
+        "Ratio Calculator" to "Math",
         "GPA Calculator" to "Math",
         "Shapes" to "Math",
         "Bodies" to "Math",
