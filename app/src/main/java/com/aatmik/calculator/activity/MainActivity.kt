@@ -516,6 +516,10 @@ class MainActivity : AppCompatActivity() {
                 putExtra("calculatorName", calculatorName)
             }
 
+            "LCM & GCD Calculator" -> Intent(this, CalculatorActivity::class.java).apply { // Add this case
+                putExtra("calculatorName", calculatorName)
+            }
+
             "Number Tables" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }

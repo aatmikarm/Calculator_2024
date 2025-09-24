@@ -34,6 +34,7 @@ object CalculatorUtils {
             Calculator("Fraction Calculator", R.drawable.fraction),
             Calculator("Ratio Calculator", R.drawable.ratio),
             Calculator("Proportion Calculator", R.drawable.proportion),
+            Calculator("LCM & GCD Calculator", R.drawable.lcm_hcf),
             Calculator("Number Tables", R.drawable.multiplication),
             Calculator("Interest Calculator", R.drawable.percentage),
             Calculator("Loan Calculator", R.drawable.dollor),

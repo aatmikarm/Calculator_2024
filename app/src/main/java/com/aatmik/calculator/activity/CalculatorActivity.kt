@@ -30,6 +30,7 @@ import com.aatmik.calculator.fragment.FuelEconomyCalculatorFragment
 import com.aatmik.calculator.fragment.GpaCalculatorFragment
 import com.aatmik.calculator.fragment.IdealGasLawFragment
 import com.aatmik.calculator.fragment.InterestCalculatorFragment
+import com.aatmik.calculator.fragment.LcmGcdCalculatorFragment
 import com.aatmik.calculator.fragment.LengthFragment
 import com.aatmik.calculator.fragment.LevelCalculatorFragment
 import com.aatmik.calculator.fragment.LightningCalculatorFragment
@@ -156,6 +157,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Ratio Calculator" -> loadFragment(RatioCalculatorFragment())
                 "Fraction Calculator" -> loadFragment(FractionCalculatorFragment())
                 "Proportion Calculator" -> loadFragment(ProportionCalculatorFragment())
+                "LCM & GCD Calculator" -> loadFragment(LcmGcdCalculatorFragment())
                 "Number Tables" -> loadFragment(NumberTablesFragment())
                 "Interest Calculator" -> loadFragment(InterestCalculatorFragment())
                 "Loan Calculator" -> loadFragment(LoanCalculatorFragment())
