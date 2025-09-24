@@ -38,7 +38,7 @@ object CalculatorUtils {
             Calculator("Number Tables", R.drawable.multiplication),
             Calculator("Interest Calculator", R.drawable.percentage),
             Calculator("Loan Calculator", R.drawable.dollor),
-            Calculator("ROI Calculator", R.drawable.percentage),
+            Calculator("ROI Calculator", R.drawable.roi),
             Calculator("Fuel Economy Calculator", R.drawable.speed),
             Calculator("Ohm's Law", R.drawable.electric),
             Calculator("Molarity Calculator", R.drawable.molarity),
