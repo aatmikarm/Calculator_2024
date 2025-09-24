@@ -29,6 +29,7 @@ object CalculatorCategoriesUtil {
     private val calculatorCategoryMap = mapOf(
         //"Basic" to "Basic",
         "Equation" to "Math",
+        "Number Tables" to "Math",
 
         // Converters
         "Convertor" to "Converters",

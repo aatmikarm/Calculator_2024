@@ -34,6 +34,7 @@ import com.aatmik.calculator.fragment.LightningCalculatorFragment
 import com.aatmik.calculator.fragment.LoanCalculatorFragment
 import com.aatmik.calculator.fragment.LoveCalculatorFragment
 import com.aatmik.calculator.fragment.MolarityFragment
+import com.aatmik.calculator.fragment.NumberTablesFragment
 import com.aatmik.calculator.fragment.OhmsLawFragment
 import com.aatmik.calculator.fragment.OvulationFertilityFragment
 import com.aatmik.calculator.fragment.PercentageFragment
@@ -148,6 +149,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Stopwatch" -> loadFragment(StopwatchFragment())
                 "Time Zone Converter" -> loadFragment(TimeZoneFragment())
                 "Percentage" -> loadFragment(PercentageFragment())
+                "Number Tables" -> loadFragment(NumberTablesFragment())
                 "Interest Calculator" -> loadFragment(InterestCalculatorFragment())
                 "Loan Calculator" -> loadFragment(LoanCalculatorFragment())
                 "Fuel Economy Calculator" -> loadFragment(FuelEconomyCalculatorFragment())
