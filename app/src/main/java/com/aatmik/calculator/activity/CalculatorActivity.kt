@@ -24,6 +24,7 @@ import com.aatmik.calculator.fragment.ContributionCalculatorFragment
 import com.aatmik.calculator.fragment.ConverterFragment
 import com.aatmik.calculator.fragment.CurrencyConverterFragment
 import com.aatmik.calculator.fragment.FreeFallFragment
+import com.aatmik.calculator.fragment.FriendshipCalculatorFragment
 import com.aatmik.calculator.fragment.FuelEconomyCalculatorFragment
 import com.aatmik.calculator.fragment.GpaCalculatorFragment
 import com.aatmik.calculator.fragment.IdealGasLawFragment
@@ -169,6 +170,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Compass" -> loadFragment(CompassFragment())
                 "Level" -> loadFragment(LevelCalculatorFragment())
                 "Love Calculator" -> loadFragment(LoveCalculatorFragment())
+                "Friendship Calculator" -> loadFragment(FriendshipCalculatorFragment())
                 "Free Fall" -> loadFragment(FreeFallFragment())
                 "Area Calculator" -> loadFragment(AreaCalculatorFragment())
                 "GPA Calculator" -> loadFragment(GpaCalculatorFragment())

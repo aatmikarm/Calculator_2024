@@ -1,6 +1,9 @@
 package com.aatmik.calculator.fragment
 
 import android.animation.ValueAnimator
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,9 +15,12 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.aatmik.calculator.R
 import com.aatmik.calculator.databinding.FragmentLoveCalculatorBinding
+import java.io.File
+import java.io.FileOutputStream
 import kotlin.math.abs
 
 class LoveCalculatorFragment : Fragment() {
@@ -58,6 +64,10 @@ class LoveCalculatorFragment : Fragment() {
         // Toggle insights visibility
         binding.root.findViewById<Button>(R.id.btnToggleInsights)?.setOnClickListener {
             toggleInsightsVisibility()
+        }
+
+        binding.shareBt.setOnClickListener {
+            captureAndShareScreenshot()
         }
     }
 
@@ -891,6 +901,40 @@ class LoveCalculatorFragment : Fragment() {
         val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
                 as android.view.inputmethod.InputMethodManager
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+    }
+
+    private fun captureAndShareScreenshot() {
+        val screenshotView = binding.loveResultCard
+        val bitmap = Bitmap.createBitmap(
+            screenshotView.width,
+            screenshotView.height,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        screenshotView.draw(canvas)
+
+        // Save the bitmap to a file
+        val file = File(requireContext().cacheDir, "love_result_screenshot.png")
+        FileOutputStream(file).use { out ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+        }
+
+        // Get a content URI for the file using FileProvider
+        val contentUri = FileProvider.getUriForFile(
+            requireContext(),
+            "${requireContext().packageName}.fileprovider",
+            file
+        )
+
+        // Create a share intent
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "image/png"
+            putExtra(Intent.EXTRA_STREAM, contentUri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        // Start the share activity
+        startActivity(Intent.createChooser(shareIntent, "Share Love Result"))
     }
 
     companion object {

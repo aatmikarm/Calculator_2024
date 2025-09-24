@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
-    tools:context=".fragment.LoveCalculatorFragment">
+    tools:context=".fragment.FriendshipCalculatorFragment">
 
     <!-- Header Layout -->
     <LinearLayout
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Love Calculator ❤️"
+            android:text="Friendship Calculator 🤝"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -97,7 +97,7 @@
                         app:boxCornerRadiusBottomStart="8dp"
                         app:boxCornerRadiusTopEnd="8dp"
                         app:boxCornerRadiusTopStart="8dp"
-                        app:boxStrokeColor="#FF6B9D"
+                        app:boxStrokeColor="#4CAF50"
                         app:hintTextColor="#CCCCCC">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -120,7 +120,7 @@
                         android:layout_marginVertical="8dp"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
                         android:src="@drawable/ic_swap_vert"
-                        app:tint="#FF6B9D" />
+                        app:tint="#4CAF50" />
 
                     <!-- Second Name Input -->
                     <com.google.android.material.textfield.TextInputLayout
@@ -134,7 +134,7 @@
                         app:boxCornerRadiusBottomStart="8dp"
                         app:boxCornerRadiusTopEnd="8dp"
                         app:boxCornerRadiusTopStart="8dp"
-                        app:boxStrokeColor="#FF6B9D"
+                        app:boxStrokeColor="#4CAF50"
                         app:hintTextColor="#CCCCCC">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -165,10 +165,10 @@
                     android:layout_height="56dp"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
-                    android:backgroundTint="#FF6B9D"
+                    android:backgroundTint="#4CAF50"
                     android:textAllCaps="false"
                     android:enabled="false"
-                    android:text="Calculate Love"
+                    android:text="Calculate"
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -193,10 +193,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginBottom="10dp"
                 android:drawableEnd="@drawable/share"
-                android:backgroundTint="#FF6B9D"
                 android:text="Share"
+                android:backgroundTint="#4CAF50"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"/>
 
@@ -208,9 +209,9 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <!-- Love Result Card -->
+                <!-- Friendship Result Card -->
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/loveResultCard"
+                    android:id="@+id/friendshipResultCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
@@ -232,12 +233,12 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="20dp"
                             android:gravity="center"
-                            android:text="John ❤️ Jane"
+                            android:text="John 🤝 Jane"
                             android:textColor="@android:color/white"
                             android:textSize="20sp"
                             android:textStyle="bold" />
 
-                        <!-- Love Score Circle -->
+                        <!-- Friendship Score Circle -->
                         <FrameLayout
                             android:layout_width="200dp"
                             android:layout_height="200dp"
@@ -261,20 +262,20 @@
                                 android:orientation="vertical">
 
                                 <TextView
-                                    android:id="@+id/tvLoveScore"
+                                    android:id="@+id/tvFriendshipScore"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="0%"
-                                    android:textColor="#FF6B9D"
+                                    android:textColor="#4CAF50"
                                     android:textSize="36sp"
                                     android:textStyle="bold" />
 
                                 <TextView
-                                    android:id="@+id/tvLoveEmoji"
+                                    android:id="@+id/tvFriendshipEmoji"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="8dp"
-                                    android:text="❤️"
+                                    android:text="🤝"
                                     android:textSize="32sp" />
 
                             </LinearLayout>
@@ -287,8 +288,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Perfect Match! You're soulmates!"
-                            android:textColor="#FF6B9D"
+                            android:text="Best Friends Forever! Perfect match!"
+                            android:textColor="#4CAF50"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -296,9 +297,9 @@
 
                 </androidx.cardview.widget.CardView>
 
-                <!-- Detailed Relationship Analysis Card -->
+                <!-- Detailed Friendship Analysis Card -->
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/loveTipsCard"
+                    android:id="@+id/friendshipTipsCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cardBackgroundColor="#1E1E1E"
@@ -315,7 +316,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="12dp"
-                            android:text="🔍 Detailed Relationship Analysis"
+                            android:text="🔍 Detailed Friendship Analysis"
                             android:textColor="@android:color/white"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -328,11 +329,11 @@
                             android:fadeScrollbars="true">
 
                             <TextView
-                                android:id="@+id/loveTipsContent"
+                                android:id="@+id/friendshipTipsContent"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:lineSpacingExtra="4dp"
-                                android:text="• Communication is key to any relationship\n• Spend quality time together\n• Show appreciation and gratitude\n• Be supportive of each other's goals\n• Remember: this is just for fun! 😊"
+                                android:text="• Be honest and open with each other\n• Spend quality time together regularly\n• Support each other through good times and bad\n• Respect each other's boundaries and differences\n• Remember: this is just for fun! 😊"
                                 android:textColor="#CCCCCC"
                                 android:textSize="14sp"
                                 android:textIsSelectable="true" />
@@ -348,7 +349,7 @@
                             android:layout_marginTop="12dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:text="Show Less"
-                            android:textColor="#FF6B9D"
+                            android:textColor="#4CAF50"
                             android:textSize="12sp"
                             android:textAllCaps="false"
                             android:visibility="gone" />

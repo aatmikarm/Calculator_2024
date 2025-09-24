@@ -90,4 +90,9 @@
     <color name="error_color">#F44336</color>
     <color name="memory_indicator_color">#FF9800</color>
     <color name="primary_text_color">?attr/colorPrimary</color>
+
+    <color name="friendship_excellent">#4CAF50</color>  <!-- Green -->
+    <color name="friendship_good">#2196F3</color>       <!-- Blue -->
+    <color name="friendship_average">#FF9800</color>    <!-- Orange -->
+    <color name="friendship_poor">#9E9E9E</color>       <!-- Gray -->
 </resources>

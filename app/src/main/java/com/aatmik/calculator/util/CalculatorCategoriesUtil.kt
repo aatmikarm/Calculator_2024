@@ -82,7 +82,8 @@ object CalculatorCategoriesUtil {
          "Ideal Gas Law" to "Chemistry",
 
         // Fun
-        "Love Calculator" to "Fun"
+        "Love Calculator" to "Fun",
+        "Friendship Calculator" to "Fun"
     )
 
     /**

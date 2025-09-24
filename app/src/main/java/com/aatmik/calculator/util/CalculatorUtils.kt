@@ -51,6 +51,7 @@ object CalculatorUtils {
             Calculator("Compass", R.drawable.compass),
             Calculator("Level", R.drawable.level),
             Calculator("Love Calculator", R.drawable.love),
+            Calculator("Friendship Calculator", R.drawable.friends),
             Calculator("Free Fall", R.drawable.length),
             Calculator("Area Calculator", R.drawable.shapes_new),
             Calculator("GPA Calculator", R.drawable.percentage),
