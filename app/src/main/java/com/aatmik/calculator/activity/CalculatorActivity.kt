@@ -43,6 +43,7 @@ import com.aatmik.calculator.fragment.PercentageFragment
 import com.aatmik.calculator.fragment.PeriodCalculatorFragment
 import com.aatmik.calculator.fragment.PhCalculatorFragment
 import com.aatmik.calculator.fragment.PregnancyCalculatorFragment
+import com.aatmik.calculator.fragment.ProportionCalculatorFragment
 import com.aatmik.calculator.fragment.RatioCalculatorFragment
 import com.aatmik.calculator.fragment.SpeedFragment
 import com.aatmik.calculator.fragment.StoichiometryFragment
@@ -154,6 +155,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Percentage" -> loadFragment(PercentageFragment())
                 "Ratio Calculator" -> loadFragment(RatioCalculatorFragment())
                 "Fraction Calculator" -> loadFragment(FractionCalculatorFragment())
+                "Proportion Calculator" -> loadFragment(ProportionCalculatorFragment())
                 "Number Tables" -> loadFragment(NumberTablesFragment())
                 "Interest Calculator" -> loadFragment(InterestCalculatorFragment())
                 "Loan Calculator" -> loadFragment(LoanCalculatorFragment())

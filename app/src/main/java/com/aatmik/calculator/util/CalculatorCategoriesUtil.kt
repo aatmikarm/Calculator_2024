@@ -73,6 +73,7 @@ object CalculatorCategoriesUtil {
         "Area Calculator" to "Math",
         "Ratio Calculator" to "Math",
         "Fraction Calculator" to "Math",
+        "Proportion Calculator" to "Math",
         "GPA Calculator" to "Math",
         "Shapes" to "Math",
         "Bodies" to "Math",

@@ -33,6 +33,7 @@ object CalculatorUtils {
             Calculator("Percentage", R.drawable.percentage),
             Calculator("Fraction Calculator", R.drawable.fraction),
             Calculator("Ratio Calculator", R.drawable.ratio),
+            Calculator("Proportion Calculator", R.drawable.proportion),
             Calculator("Number Tables", R.drawable.multiplication),
             Calculator("Interest Calculator", R.drawable.percentage),
             Calculator("Loan Calculator", R.drawable.dollor),
