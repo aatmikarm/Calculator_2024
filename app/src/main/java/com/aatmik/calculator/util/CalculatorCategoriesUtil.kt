@@ -13,9 +13,15 @@ object CalculatorCategoriesUtil {
         Category("Financial"),
         Category("Health & Fitness"),
         Category("Tools"),
+        Category("Engineering"),
+        Category("MBA"),
         Category("Physics"),
         Category("Math"),
+        Category("Graphs"),
+        Category("Biology"),
         Category("Chemistry"),
+        Category("Probability"),
+        Category("Music"),
         Category("Fun")
     )
 
@@ -47,6 +53,7 @@ object CalculatorCategoriesUtil {
         "Age" to "Health & Fitness",
         "Pregnancy Calculator" to "Health & Fitness",
         "Period Calculator" to "Health & Fitness",
+        "Ovulation & Fertility" to "Health & Fitness",
 
         // Tools
         "Stopwatch" to "Tools",

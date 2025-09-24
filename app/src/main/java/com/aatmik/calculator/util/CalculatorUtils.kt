@@ -41,7 +41,7 @@ object CalculatorUtils {
             Calculator("Ideal Gas Law", R.drawable.gas),
             Calculator("Pregnancy Calculator", R.drawable.pregnant),
             Calculator("Period Calculator", R.drawable.period),
-            Calculator("Ovulation & Fertility", R.drawable.period),
+            Calculator("Ovulation & Fertility", R.drawable.fertilization),
             Calculator("Budget Calculator", R.drawable.dollor),
             Calculator("Trip Estimate", R.drawable.trip),
             Calculator("Tax Calculator", R.drawable.tax),
