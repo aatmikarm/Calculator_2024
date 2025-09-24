@@ -42,6 +42,7 @@ import com.aatmik.calculator.fragment.PercentageFragment
 import com.aatmik.calculator.fragment.PeriodCalculatorFragment
 import com.aatmik.calculator.fragment.PhCalculatorFragment
 import com.aatmik.calculator.fragment.PregnancyCalculatorFragment
+import com.aatmik.calculator.fragment.RatioCalculatorFragment
 import com.aatmik.calculator.fragment.SpeedFragment
 import com.aatmik.calculator.fragment.StoichiometryFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
@@ -150,6 +151,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Stopwatch" -> loadFragment(StopwatchFragment())
                 "Time Zone Converter" -> loadFragment(TimeZoneFragment())
                 "Percentage" -> loadFragment(PercentageFragment())
+                "Ratio Calculator" -> loadFragment(RatioCalculatorFragment())
                 "Number Tables" -> loadFragment(NumberTablesFragment())
                 "Interest Calculator" -> loadFragment(InterestCalculatorFragment())
                 "Loan Calculator" -> loadFragment(LoanCalculatorFragment())
