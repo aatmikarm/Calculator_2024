@@ -667,4 +667,6 @@
         <item>st</item>
     </string-array>
 
+
+    <string name="rating_icon">Rating star icon</string>
 </resources>

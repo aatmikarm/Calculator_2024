@@ -61,6 +61,7 @@ import com.aatmik.calculator.fragment.bodies.BodiesFragment
 import com.aatmik.calculator.fragment.shapes.ShapesFragment
 import com.aatmik.calculator.util.AdConfig
 import com.aatmik.calculator.util.NetworkUtil
+import com.aatmik.calculator.util.RatingManager
 import com.aatmik.calculator.util.ThemeManager
 import com.example.yourapp.MathEquationSolverFragment
 import com.google.android.gms.ads.AdRequest
@@ -150,6 +151,12 @@ class CalculatorActivity : AppCompatActivity() {
 
     private fun setUpCalculator(calculatorType: String?) {
         if (supportFragmentManager.findFragmentById(R.id.calculatorFragmentContainer) == null) {
+
+            // Track calculator usage for rating system
+            calculatorType?.let {
+                RatingManager.trackCalculatorUsage(this, it)
+            }
+
             when (calculatorType) {
                 "Basic" -> loadFragment(BasicCalculatorFragment())
                 "Convertor" -> loadFragment(ConverterFragment())
