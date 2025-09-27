@@ -3,8 +3,11 @@ package com.aatmik.calculator.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.aatmik.calculator.databinding.RatingDialogLayoutBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class RatingManager {
 
@@ -13,7 +16,7 @@ class RatingManager {
         private const val KEY_USED_CALCULATORS = "used_calculators"
         private const val KEY_RATING_SHOWN = "rating_shown"
         private const val KEY_NEVER_SHOW_AGAIN = "never_show_again"
-        private const val USAGE_THRESHOLD = 3
+        private const val USAGE_THRESHOLD = 5
 
         fun trackCalculatorUsage(context: Context, calculatorName: String) {
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -52,10 +55,10 @@ class RatingManager {
             // Ensure dialog is shown on main thread
             context.runOnUiThread {
                 // Option 1: Simple AlertDialog (easier to implement)
-                showSimpleRatingDialog(context, prefs)
+                // showSimpleRatingDialog(context, prefs)
 
                 // Option 2: Custom Dialog with ViewBinding (uncomment if you want to use the custom layout)
-                // showCustomRatingDialog(context, prefs)
+                showCustomRatingDialog(context, prefs)
             }
         }
 
@@ -90,6 +93,36 @@ class RatingManager {
                 .setCancelable(false)
                 .show()
         }
+
+        private fun showCustomRatingDialog(context: AppCompatActivity, prefs: android.content.SharedPreferences) {
+            val binding = RatingDialogLayoutBinding.inflate(LayoutInflater.from(context))
+
+            val dialog = MaterialAlertDialogBuilder(context)
+                .setView(binding.root)
+                .setCancelable(false)
+                .create()
+
+            binding.btnClose.setOnClickListener { dialog.dismiss() }
+
+            binding.btnNever.setOnClickListener {
+                prefs.edit().putBoolean(KEY_NEVER_SHOW_AGAIN, true).apply()
+                dialog.dismiss()
+            }
+
+            binding.btnLater.setOnClickListener {
+                prefs.edit().remove(KEY_USED_CALCULATORS).apply()
+                dialog.dismiss()
+            }
+
+            binding.btnRate.setOnClickListener {
+                prefs.edit().putBoolean(KEY_RATING_SHOWN, true).apply()
+                openPlayStore(context)
+                dialog.dismiss()
+            }
+
+            dialog.show()
+        }
+
         private fun openPlayStore(context: Context) {
             try {
                 val appPackageName = "com.aatmik.calculator"
@@ -107,7 +140,5 @@ class RatingManager {
                 context.startActivity(intent)
             }
         }
-
-
     }
 }

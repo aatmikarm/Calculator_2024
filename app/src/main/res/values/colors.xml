@@ -95,4 +95,6 @@
     <color name="friendship_good">#2196F3</color>       <!-- Blue -->
     <color name="friendship_average">#FF9800</color>    <!-- Orange -->
     <color name="friendship_poor">#9E9E9E</color>       <!-- Gray -->
+
+    <color name="star_gold">#FFD700</color>
 </resources>

@@ -202,4 +202,19 @@
         <item name="android:windowBackground">@color/pink_background</item>
     </style>
 
+
+    <style name="RatingDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.6</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/RatingDialogBodyText</item>
+    </style>
+
+    <style name="RatingDialogBodyText" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+
 </resources>
