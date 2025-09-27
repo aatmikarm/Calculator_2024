@@ -3,6 +3,7 @@ package com.aatmik.calculator.util
 object AdConfig {
     // Toggle between true (test ads) and false (production ads)
     private const val USE_TEST_ADS = true
+    private const val DISABLE_ALL_ADS = true
 
     // Production Ad IDs
     private const val PROD_BANNER_AD_ID = "ca-app-pub-5678552217308395/1592290092"
@@ -14,11 +15,23 @@ object AdConfig {
 
     // Method to get the correct Banner Ad ID based on the environment
     fun getBannerAdId(): String {
-        return if (USE_TEST_ADS) TEST_BANNER_AD_ID else PROD_BANNER_AD_ID
+        return if (DISABLE_ALL_ADS) {
+            "" // Return empty string when ads are disabled
+        } else if (USE_TEST_ADS) {
+            TEST_BANNER_AD_ID
+        } else {
+            PROD_BANNER_AD_ID
+        }
     }
 
     // Method to get the correct Interstitial Ad ID based on the environment
     fun getInterstitialAdId(): String {
-        return if (USE_TEST_ADS) TEST_INTERSTITIAL_AD_ID else PROD_INTERSTITIAL_AD_ID
+        return if (DISABLE_ALL_ADS) {
+            "" // Return empty string when ads are disabled
+        } else if (USE_TEST_ADS) {
+            TEST_INTERSTITIAL_AD_ID
+        } else {
+            PROD_INTERSTITIAL_AD_ID
+        }
     }
 }
