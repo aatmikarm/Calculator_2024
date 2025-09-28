@@ -32,6 +32,7 @@ import com.aatmik.calculator.util.CalculatorCategoriesUtil
 import com.aatmik.calculator.util.CalculatorUtils
 import com.aatmik.calculator.util.NetworkUtil
 import com.aatmik.calculator.util.ThemeManager
+import com.aatmik.calculator.util.UpdateManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -80,6 +81,9 @@ class MainActivity : AppCompatActivity() {
         // Handle system bar insets for edge-to-edge
         setupEdgeToEdgeInsets()
 
+        // Check for app updates automatically on startup
+        UpdateManager.checkForUpdatesAutomatically(this)
+
         runAds()
 
         Log.d("MainActivity", "About to load calculator order")
@@ -93,10 +97,6 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         filterByCategory("All")
         Log.d("MainActivity", "RecyclerView setup completed")
-
-        // Only call this if you have the filterByCategory method
-        // Comment this out for now to test
-        // filterByCategory("All")
 
         search()
         binding.menuIv.setOnClickListener {
@@ -234,7 +234,7 @@ class MainActivity : AppCompatActivity() {
         currentSelectedCategory = "All"
         currentCategoryIndex = 0
 
-        // ADD THIS LINE to scroll to the "All" category at the beginning
+        // Scroll to the "All" category at the beginning
         categoriesRV.scrollToPosition(0)
     }
 
@@ -307,9 +307,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         bottomSheetBinding.btnGetUpdate.setOnClickListener {
-            updateApp()
+            // Check for updates manually when user clicks update button
+            UpdateManager.checkForUpdatesManually(this)
             bottomSheetDialog.dismiss()
         }
+
         bottomSheetBinding.btnTheme.setOnClickListener {
             bottomSheetDialog.dismiss()
             showThemeSelector()
@@ -416,7 +418,7 @@ class MainActivity : AppCompatActivity() {
             calculatorList = ArrayList(CalculatorUtils.calculatorList)
         }
 
-        // ADD THIS LINE to initialize originalCalculatorList
+        // Initialize originalCalculatorList
         originalCalculatorList = ArrayList(CalculatorUtils.calculatorList)
     }
 
@@ -478,8 +480,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         calculatorRV.adapter = calculatorAdapter
-
-
     }
 
     private fun handleCalculatorSelection(calculatorName: String) {
@@ -516,7 +516,7 @@ class MainActivity : AppCompatActivity() {
                 putExtra("calculatorName", calculatorName)
             }
 
-            "LCM & GCD Calculator" -> Intent(this, CalculatorActivity::class.java).apply { // Add this case
+            "LCM & GCD Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }
 
@@ -532,11 +532,11 @@ class MainActivity : AppCompatActivity() {
                 putExtra("calculatorName", calculatorName)
             }
 
-            "ROI Calculator" -> Intent(this, CalculatorActivity::class.java).apply { // Add this case
+            "ROI Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }
 
-            "Investment Calculator" -> Intent(this, CalculatorActivity::class.java).apply { // Add this case
+            "Investment Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }
 
@@ -677,8 +677,6 @@ class MainActivity : AppCompatActivity() {
 
         intent?.let { startActivity(it) }
     }
-
-
 
     override fun onDestroy() {
         adView?.destroy()
