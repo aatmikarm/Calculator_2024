@@ -40,6 +40,7 @@ object CalculatorUtils {
             Calculator("Loan Calculator", R.drawable.dollor),
             Calculator("ROI Calculator", R.drawable.roi),
             Calculator("Investment Calculator", R.drawable.saving),
+            Calculator("GST Calculator", R.drawable.gst),
             Calculator("Fuel Economy Calculator", R.drawable.speed),
             Calculator("Ohm's Law", R.drawable.electric),
             Calculator("Molarity Calculator", R.drawable.molarity),

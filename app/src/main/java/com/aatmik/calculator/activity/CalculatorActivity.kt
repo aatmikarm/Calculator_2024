@@ -28,6 +28,7 @@ import com.aatmik.calculator.fragment.FreeFallFragment
 import com.aatmik.calculator.fragment.FriendshipCalculatorFragment
 import com.aatmik.calculator.fragment.FuelEconomyCalculatorFragment
 import com.aatmik.calculator.fragment.GpaCalculatorFragment
+import com.aatmik.calculator.fragment.GstCalculatorFragment
 import com.aatmik.calculator.fragment.IdealGasLawFragment
 import com.aatmik.calculator.fragment.InterestCalculatorFragment
 import com.aatmik.calculator.fragment.InvestmentCalculatorFragment
@@ -172,6 +173,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Loan Calculator" -> loadFragment(LoanCalculatorFragment())
                 "ROI Calculator" -> loadFragment(RoiCalculatorFragment())
                 "Investment Calculator" -> loadFragment(InvestmentCalculatorFragment())
+                "GST Calculator" -> loadFragment(GstCalculatorFragment())
                 "Fuel Economy Calculator" -> loadFragment(FuelEconomyCalculatorFragment())
                 "Ohm's Law" -> loadFragment(OhmsLawFragment())
                 "Molarity Calculator" -> loadFragment(MolarityFragment())
