@@ -142,6 +142,8 @@ class CalculatorActivity : AppCompatActivity() {
             // Track calculator usage for rating system
             calculatorType?.let {
                 RatingManager.trackCalculatorUsage(this, it)
+                // Track calculator usage for ad frequency management
+                AdFrequencyManager.trackCalculatorUsage(this, it)
             }
 
             when (calculatorType) {
@@ -229,21 +231,31 @@ class CalculatorActivity : AppCompatActivity() {
      * Preload interstitial ad to ensure it's ready when needed
      */
     private fun preloadInterstitialAd() {
-        if (!::adRequest.isInitialized || AdConfig.getInterstitialAdId().isEmpty()) {
+        Log.d("InterstitialAd", "preloadInterstitialAd() called")
+
+        if (!::adRequest.isInitialized) {
+            Log.d("InterstitialAd", "Cannot preload - adRequest not initialized")
             return
         }
+
+        if (AdConfig.getInterstitialAdId().isEmpty()) {
+            Log.d("InterstitialAd", "Cannot preload - ad ID is empty")
+            return
+        }
+
+        Log.d("InterstitialAd", "Loading interstitial ad with ID: ${AdConfig.getInterstitialAdId()}")
 
         InterstitialAd.load(this,
             AdConfig.getInterstitialAdId(),
             adRequest,
             object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
-                    Log.d("InterstitialAd", "Failed to load: ${adError.message}")
+                    Log.e("InterstitialAd", "Failed to load: ${adError.message} (Code: ${adError.code})")
                     interstitialAd = null
                 }
 
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                    Log.d("InterstitialAd", "Ad loaded successfully")
+                    Log.d("InterstitialAd", "✓ Ad loaded successfully and ready to show")
                     this@CalculatorActivity.interstitialAd = interstitialAd
                 }
             })
@@ -253,6 +265,14 @@ class CalculatorActivity : AppCompatActivity() {
      * Show interstitial ad based on usage frequency
      */
     private fun showInterstitialAdIfNeeded() {
+        Log.d("InterstitialAd", "showInterstitialAdIfNeeded() called")
+
+        // Check if ads are enabled
+        if (!AdConfig.areAdsEnabled()) {
+            Log.d("InterstitialAd", "Ad not shown - ads are disabled in config")
+            return
+        }
+
         // Check if ad should be shown based on usage frequency
         if (!AdFrequencyManager.shouldShowInterstitialAd(this)) {
             Log.d("InterstitialAd", "Ad not shown - usage threshold not met")
@@ -265,16 +285,22 @@ class CalculatorActivity : AppCompatActivity() {
             return
         }
 
+        // Check if we have a valid ad ID
+        if (AdConfig.getInterstitialAdId().isEmpty()) {
+            Log.d("InterstitialAd", "Ad not shown - ad ID is empty")
+            return
+        }
+
         // Show the ad if it's loaded
         interstitialAd?.let { ad ->
-            Log.d("InterstitialAd", "Showing interstitial ad")
+            Log.d("InterstitialAd", "✓ Showing interstitial ad NOW")
             AdFrequencyManager.markAdShownInSession(this)
             ad.show(this)
 
             // Preload next ad for future use
             preloadInterstitialAd()
         } ?: run {
-            Log.d("InterstitialAd", "Ad not shown - not loaded yet")
+            Log.d("InterstitialAd", "✗ Ad not shown - interstitialAd is null (not loaded yet)")
             // If ad is not loaded, preload it for next time
             preloadInterstitialAd()
         }
