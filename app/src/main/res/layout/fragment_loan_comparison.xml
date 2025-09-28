@@ -1,0 +1,1141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.LoanComparisonFragment">
+
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/backIv"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="15dp"
+            android:padding="3dp"
+            android:src="@drawable/arrow_left" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+
+            <!-- Icon and Title Section -->
+            <LinearLayout
+                android:id="@+id/linearLayout6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginVertical="10dp"
+                    app:cardCornerRadius="10dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/itemImage"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_margin="15dp"
+                            android:src="@drawable/dollor"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/itemName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginVertical="20dp"
+                    android:gravity="center"
+                    android:text="International Loan Comparison Calculator"
+                    android:textSize="23sp" />
+
+            </LinearLayout>
+
+            <!-- Country/Currency Selection -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/countrySelectionCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="Select Your Country"
+                        android:textColor="?attr/colorPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:padding="8dp"
+                            android:text="Country:"
+                            android:textSize="14sp" />
+
+                        <Spinner
+                            android:id="@+id/spinnerCountry"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:padding="8dp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="88dp"
+                        android:layout_marginTop="4dp"
+                        android:text="Interest rates and currency will adjust automatically"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Input and Results Section -->
+            <LinearLayout
+                android:id="@+id/linearLayout4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/countrySelectionCard">
+
+                <!-- Loan 1 Input Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/loan1InputCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:text="Loan 1 Details"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <!-- Loan 1 Type -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Loan Type"
+                                android:textSize="14sp" />
+
+                            <Spinner
+                                android:id="@+id/spinnerLoan1Type"
+                                android:layout_width="0dp"
+                                android:layout_height="48dp"
+                                android:layout_weight="1"
+                                android:padding="8dp" />
+
+                        </LinearLayout>
+
+                        <!-- Loan 1 Amount -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvLoan1AmountLabel"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Amount ($)"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etLoan1Amount"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Loan amount"
+                                android:inputType="numberDecimal"
+                                android:maxLength="12"
+                                android:padding="8dp"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <!-- Loan 1 Interest Rate -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Rate (% p.a.)"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etLoan1Rate"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Interest rate"
+                                android:inputType="numberDecimal"
+                                android:maxLength="6"
+                                android:padding="8dp"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvLoan1RateHint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="108dp"
+                            android:layout_marginBottom="12dp"
+                            android:text="Typical: 6% - 36%"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="12sp" />
+
+                        <!-- Loan 1 Tenure -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Tenure (Yrs)"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etLoan1Tenure"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Loan tenure"
+                                android:inputType="numberDecimal"
+                                android:maxLength="4"
+                                android:padding="8dp"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <!-- Loan 1 Processing Fee -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvLoan1ProcessingFeeLabel"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Proc. Fee ($)"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etLoan1ProcessingFee"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Processing fee"
+                                android:inputType="numberDecimal"
+                                android:maxLength="10"
+                                android:padding="8dp"
+                                android:text="0"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <!-- Loan 1 Results -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="8dp"
+                            android:background="?attr/colorSurface" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:text="Loan 1 Results"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnCount="2"
+                            android:rowCount="4">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="Monthly EMI"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="Total Interest"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvLoan1Emi"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="$0.00"
+                                android:textColor="?attr/colorPrimary"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvLoan1TotalInterest"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="$0.00"
+                                android:textColor="?attr/colorPrimary"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:layout_marginTop="8dp"
+                                android:gravity="center"
+                                android:text="Total Payment"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:layout_marginTop="8dp"
+                                android:gravity="center"
+                                android:text="Total Cost"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvLoan1TotalPayment"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="$0.00"
+                                android:textColor="#FF6B6B"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvLoan1TotalCost"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="$0.00"
+                                android:textColor="#FF6B6B"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                        </GridLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Loan 2 Add/Remove Button -->
+                <Button
+                    android:id="@+id/btnToggleLoan2"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Remove Loan 2"
+                    android:textAllCaps="false" />
+
+                <!-- Loan 2 Input Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/layoutLoan2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:text="Loan 2 Details"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <!-- Loan 2 Type -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Loan Type"
+                                android:textSize="14sp" />
+
+                            <Spinner
+                                android:id="@+id/spinnerLoan2Type"
+                                android:layout_width="0dp"
+                                android:layout_height="48dp"
+                                android:layout_weight="1"
+                                android:padding="8dp" />
+
+                        </LinearLayout>
+
+                        <!-- Loan 2 Amount -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvLoan2AmountLabel"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Amount ($)"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etLoan2Amount"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Loan amount"
+                                android:inputType="numberDecimal"
+                                android:maxLength="12"
+                                android:padding="8dp"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <!-- Loan 2 Interest Rate -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Rate (% p.a.)"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etLoan2Rate"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Interest rate"
+                                android:inputType="numberDecimal"
+                                android:maxLength="6"
+                                android:padding="8dp"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvLoan2RateHint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="108dp"
+                            android:layout_marginBottom="12dp"
+                            android:text="Typical: 3% - 8%"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="12sp" />
+
+                        <!-- Loan 2 Tenure -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Tenure (Yrs)"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etLoan2Tenure"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Loan tenure"
+                                android:inputType="numberDecimal"
+                                android:maxLength="4"
+                                android:padding="8dp"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <!-- Loan 2 Processing Fee -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvLoan2ProcessingFeeLabel"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Proc. Fee ($)"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etLoan2ProcessingFee"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Processing fee"
+                                android:inputType="numberDecimal"
+                                android:maxLength="10"
+                                android:padding="8dp"
+                                android:text="0"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <!-- Loan 2 Results -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="8dp"
+                            android:background="?attr/colorSurface" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:text="Loan 2 Results"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnCount="2"
+                            android:rowCount="4">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="Monthly EMI"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="Total Interest"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvLoan2Emi"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="$0.00"
+                                android:textColor="?attr/colorPrimary"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvLoan2TotalInterest"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="$0.00"
+                                android:textColor="?attr/colorPrimary"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:layout_marginTop="8dp"
+                                android:gravity="center"
+                                android:text="Total Payment"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:layout_marginTop="8dp"
+                                android:gravity="center"
+                                android:text="Total Cost"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvLoan2TotalPayment"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="$0.00"
+                                android:textColor="#FF6B6B"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvLoan2TotalCost"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="$0.00"
+                                android:textColor="#FF6B6B"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                        </GridLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Loan 3 Add/Remove Button -->
+                <Button
+                    android:id="@+id/btnToggleLoan3"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Add Loan 3"
+                    android:textAllCaps="false" />
+
+                <!-- Loan 3 Input Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/layoutLoan3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:visibility="gone"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:text="Loan 3 Details"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <!-- Loan 3 Type -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Loan Type"
+                                android:textSize="14sp" />
+
+                            <Spinner
+                                android:id="@+id/spinnerLoan3Type"
+                                android:layout_width="0dp"
+                                android:layout_height="48dp"
+                                android:layout_weight="1"
+                                android:padding="8dp" />
+
+                        </LinearLayout>
+
+                        <!-- Loan 3 Amount -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvLoan3AmountLabel"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Amount ($)"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etLoan3Amount"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Loan amount"
+                                android:inputType="numberDecimal"
+                                android:maxLength="12"
+                                android:padding="8dp"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <!-- Loan 3 Interest Rate -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Rate (% p.a.)"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etLoan3Rate"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Interest rate"
+                                android:inputType="numberDecimal"
+                                android:maxLength="6"
+                                android:padding="8dp"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvLoan3RateHint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="108dp"
+                            android:layout_marginBottom="12dp"
+                            android:text="Typical: 4% - 18%"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="12sp" />
+
+                        <!-- Loan 3 Tenure -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Tenure (Yrs)"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etLoan3Tenure"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Loan tenure"
+                                android:inputType="numberDecimal"
+                                android:maxLength="4"
+                                android:padding="8dp"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <!-- Loan 3 Processing Fee -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvLoan3ProcessingFeeLabel"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:text="Proc. Fee ($)"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etLoan3ProcessingFee"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Processing fee"
+                                android:inputType="numberDecimal"
+                                android:maxLength="10"
+                                android:padding="8dp"
+                                android:text="0"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <!-- Loan 3 Results -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="8dp"
+                            android:background="?attr/colorSurface" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:text="Loan 3 Results"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnCount="2"
+                            android:rowCount="4">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="Monthly EMI"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="Total Interest"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvLoan3Emi"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="$0.00"
+                                android:textColor="?attr/colorPrimary"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvLoan3TotalInterest"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="$0.00"
+                                android:textColor="?attr/colorPrimary"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:layout_marginTop="8dp"
+                                android:gravity="center"
+                                android:text="Total Payment"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:layout_marginTop="8dp"
+                                android:gravity="center"
+                                android:text="Total Cost"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvLoan3TotalPayment"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="$0.00"
+                                android:textColor="#FF6B6B"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvLoan3TotalCost"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_columnWeight="1"
+                                android:gravity="center"
+                                android:text="$0.00"
+                                android:textColor="#FF6B6B"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                        </GridLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Action Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="end"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnClear"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Clear All"
+                        android:textAllCaps="false" />
+
+                    <Button
+                        android:id="@+id/shareBt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/share"
+                        android:text="Share"
+                        android:textAllCaps="false"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                </LinearLayout>
+
+                <!-- Comparison Results Section -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/loanComparisonCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="2dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <!-- Comparison Results Header -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="International Loan Comparison Analysis"
+                                android:textColor="?attr/colorPrimary"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginBottom="16dp"
+                                android:background="?attr/colorSurface" />
+
+                            <!-- Comparison Analysis -->
+                            <LinearLayout
+                                android:id="@+id/layoutComparison"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:visibility="gone">
+
+                                <ScrollView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:maxHeight="400dp">
+
+                                    <TextView
+                                        android:id="@+id/tvComparisonAnalysis"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:lineSpacingExtra="2dp"
+                                        android:padding="8dp"
+                                        android:text="Enter loan details to see detailed comparison analysis"
+                                        android:textSize="12sp" />
+
+                                </ScrollView>
+
+                            </LinearLayout>
+
+                            <!-- Instructions when no comparison available -->
+                            <TextView
+                                android:id="@+id/tvComparisonInstructions"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:padding="16dp"
+                                android:text="Select your country and add at least 2 loans to see detailed comparison analysis with localized interest rates and currency"
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="16dp"
+                                android:text="@string/powered_by"
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:textSize="10sp" />
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

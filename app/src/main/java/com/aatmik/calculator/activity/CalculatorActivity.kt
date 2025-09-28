@@ -37,6 +37,7 @@ import com.aatmik.calculator.fragment.LengthFragment
 import com.aatmik.calculator.fragment.LevelCalculatorFragment
 import com.aatmik.calculator.fragment.LightningCalculatorFragment
 import com.aatmik.calculator.fragment.LoanCalculatorFragment
+import com.aatmik.calculator.fragment.LoanComparisonFragment
 import com.aatmik.calculator.fragment.LoveCalculatorFragment
 import com.aatmik.calculator.fragment.MolarityFragment
 import com.aatmik.calculator.fragment.NumberTablesFragment
@@ -174,6 +175,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "ROI Calculator" -> loadFragment(RoiCalculatorFragment())
                 "Investment Calculator" -> loadFragment(InvestmentCalculatorFragment())
                 "GST Calculator" -> loadFragment(GstCalculatorFragment())
+                "Loan Comparison" -> loadFragment(LoanComparisonFragment())
                 "Fuel Economy Calculator" -> loadFragment(FuelEconomyCalculatorFragment())
                 "Ohm's Law" -> loadFragment(OhmsLawFragment())
                 "Molarity Calculator" -> loadFragment(MolarityFragment())
