@@ -62,6 +62,7 @@ import com.aatmik.calculator.fragment.WeightFragment
 import com.aatmik.calculator.fragment.bodies.BodiesFragment
 import com.aatmik.calculator.fragment.shapes.ShapesFragment
 import com.aatmik.calculator.util.AdConfig
+import com.aatmik.calculator.util.AdFrequencyManager
 import com.aatmik.calculator.util.NetworkUtil
 import com.aatmik.calculator.util.RatingManager
 import com.aatmik.calculator.util.ThemeManager
@@ -79,7 +80,7 @@ import kotlinx.coroutines.launch
 class CalculatorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCalculatorBinding
     private lateinit var adRequest: AdRequest
-    private lateinit var interstitialAd1: InterstitialAd
+    private var interstitialAd: InterstitialAd? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.initializeTheme(this)
@@ -105,21 +106,6 @@ class CalculatorActivity : AppCompatActivity() {
             coroutineLaunch(calculatorType)
         }
     }
-
-    /**
-     * Enable edge-to-edge display for Android 15+
-     */
-//    private fun enableEdgeToEdge() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-//            window.statusBarColor = android.graphics.Color.TRANSPARENT
-//            window.navigationBarColor = android.graphics.Color.TRANSPARENT
-//
-//            // Set system bar appearance
-//            val controller = WindowInsetsControllerCompat(window, window.decorView)
-//            controller.isAppearanceLightStatusBars = false
-//            controller.isAppearanceLightNavigationBars = false
-//        }
-//    }
 
     /**
      * Handle window insets for proper edge-to-edge layout
@@ -149,7 +135,6 @@ class CalculatorActivity : AppCompatActivity() {
     private fun normalLaunch(calculatorType: String) {
         setUpCalculator(calculatorType)
     }
-
 
     private fun setUpCalculator(calculatorType: String?) {
         if (supportFragmentManager.findFragmentById(R.id.calculatorFragmentContainer) == null) {
@@ -224,16 +209,15 @@ class CalculatorActivity : AppCompatActivity() {
     }
 
     private fun runAds() {
-
         if (NetworkUtil.isNetworkAvailable(this)) {
             MobileAds.initialize(this)
             adRequest = AdRequest.Builder().build()
             loadBanner()
+            preloadInterstitialAd() // Preload the interstitial ad
         } else {
             // Handle the case where there's no network available
             Log.d("NetworkCheck", "No internet connection available.")
         }
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -241,31 +225,65 @@ class CalculatorActivity : AppCompatActivity() {
         return true
     }
 
-    private fun interstitialAd() {
-
-        if (::adRequest.isInitialized) {
-            InterstitialAd.load(this,
-                AdConfig.getInterstitialAdId(),
-                adRequest,
-                object : InterstitialAdLoadCallback() {
-                    override fun onAdFailedToLoad(adError: LoadAdError) {
-                        // mInterstitialAd = null
-                    }
-
-                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                        interstitialAd1 = interstitialAd
-                        interstitialAd.show(this@CalculatorActivity)
-                    }
-                })
+    /**
+     * Preload interstitial ad to ensure it's ready when needed
+     */
+    private fun preloadInterstitialAd() {
+        if (!::adRequest.isInitialized || AdConfig.getInterstitialAdId().isEmpty()) {
+            return
         }
 
+        InterstitialAd.load(this,
+            AdConfig.getInterstitialAdId(),
+            adRequest,
+            object : InterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.d("InterstitialAd", "Failed to load: ${adError.message}")
+                    interstitialAd = null
+                }
+
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    Log.d("InterstitialAd", "Ad loaded successfully")
+                    this@CalculatorActivity.interstitialAd = interstitialAd
+                }
+            })
     }
 
+    /**
+     * Show interstitial ad based on usage frequency
+     */
+    private fun showInterstitialAdIfNeeded() {
+        // Check if ad should be shown based on usage frequency
+        if (!AdFrequencyManager.shouldShowInterstitialAd(this)) {
+            Log.d("InterstitialAd", "Ad not shown - usage threshold not met")
+            return
+        }
+
+        // Check if ad was recently shown to prevent spam
+        if (AdFrequencyManager.wasAdRecentlyShown(this)) {
+            Log.d("InterstitialAd", "Ad not shown - recently shown")
+            return
+        }
+
+        // Show the ad if it's loaded
+        interstitialAd?.let { ad ->
+            Log.d("InterstitialAd", "Showing interstitial ad")
+            AdFrequencyManager.markAdShownInSession(this)
+            ad.show(this)
+
+            // Preload next ad for future use
+            preloadInterstitialAd()
+        } ?: run {
+            Log.d("InterstitialAd", "Ad not shown - not loaded yet")
+            // If ad is not loaded, preload it for next time
+            preloadInterstitialAd()
+        }
+    }
 
     override fun onStop() {
         super.onStop()
-        // its much better this way
-        interstitialAd()
+        // Show interstitial ad based on frequency management
+        showInterstitialAdIfNeeded()
     }
 
     private var adView: AdView? = null
@@ -287,6 +305,10 @@ class CalculatorActivity : AppCompatActivity() {
         }
 
     private fun loadBanner() {
+        if (AdConfig.getBannerAdId().isEmpty()) {
+            return
+        }
+
         val adView = AdView(this)
         adView.adUnitId = AdConfig.getBannerAdId()
         adView.setAdSize(adSize)

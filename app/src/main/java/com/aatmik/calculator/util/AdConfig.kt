@@ -3,7 +3,7 @@ package com.aatmik.calculator.util
 object AdConfig {
     // Toggle between true (test ads) and false (production ads)
     private const val USE_TEST_ADS = true
-    private const val DISABLE_ALL_ADS = true
+    private const val DISABLE_ALL_ADS = false // Set to true to completely disable ads during development
 
     // Production Ad IDs
     private const val PROD_BANNER_AD_ID = "ca-app-pub-5678552217308395/1592290092"
@@ -33,5 +33,15 @@ object AdConfig {
         } else {
             PROD_INTERSTITIAL_AD_ID
         }
+    }
+
+    // Check if ads are enabled
+    fun areAdsEnabled(): Boolean {
+        return !DISABLE_ALL_ADS
+    }
+
+    // Check if using test ads
+    fun isUsingTestAds(): Boolean {
+        return USE_TEST_ADS && areAdsEnabled()
     }
 }
