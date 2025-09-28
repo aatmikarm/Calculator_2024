@@ -23,6 +23,7 @@ import com.aatmik.calculator.fragment.CompassFragment
 import com.aatmik.calculator.fragment.ContributionCalculatorFragment
 import com.aatmik.calculator.fragment.ConverterFragment
 import com.aatmik.calculator.fragment.CurrencyConverterFragment
+import com.aatmik.calculator.fragment.DiceRollerFragment
 import com.aatmik.calculator.fragment.FractionCalculatorFragment
 import com.aatmik.calculator.fragment.FreeFallFragment
 import com.aatmik.calculator.fragment.FriendshipCalculatorFragment
@@ -48,6 +49,7 @@ import com.aatmik.calculator.fragment.PeriodCalculatorFragment
 import com.aatmik.calculator.fragment.PhCalculatorFragment
 import com.aatmik.calculator.fragment.PregnancyCalculatorFragment
 import com.aatmik.calculator.fragment.ProportionCalculatorFragment
+import com.aatmik.calculator.fragment.RandomNumberGeneratorFragment
 import com.aatmik.calculator.fragment.RatioCalculatorFragment
 import com.aatmik.calculator.fragment.RoiCalculatorFragment
 import com.aatmik.calculator.fragment.SpeedFragment
@@ -61,6 +63,7 @@ import com.aatmik.calculator.fragment.TripEstimateFragment
 import com.aatmik.calculator.fragment.WeightFragment
 import com.aatmik.calculator.fragment.bodies.BodiesFragment
 import com.aatmik.calculator.fragment.shapes.ShapesFragment
+import com.aatmik.calculator.model.Calculator
 import com.aatmik.calculator.util.AdConfig
 import com.aatmik.calculator.util.AdFrequencyManager
 import com.aatmik.calculator.util.NetworkUtil
@@ -165,6 +168,8 @@ class CalculatorActivity : AppCompatActivity() {
                 "Loan Comparison" -> loadFragment(LoanComparisonFragment())
                 "Fuel Economy Calculator" -> loadFragment(FuelEconomyCalculatorFragment())
                 "Ohm's Law" -> loadFragment(OhmsLawFragment())
+                "Roll a Dice" -> loadFragment(DiceRollerFragment())
+                "Random Number Generator" -> loadFragment(RandomNumberGeneratorFragment())
                 "Molarity Calculator" -> loadFragment(MolarityFragment())
                 "pH Calculator" -> loadFragment(PhCalculatorFragment())
                 "Stoichiometry Calculator" -> loadFragment(StoichiometryFragment())

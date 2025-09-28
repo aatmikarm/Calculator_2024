@@ -44,6 +44,8 @@ object CalculatorUtils {
             Calculator("Loan Comparison", R.drawable.loan),
             Calculator("Fuel Economy Calculator", R.drawable.speed),
             Calculator("Ohm's Law", R.drawable.electric),
+            Calculator("Roll a Dice", R.drawable.dice_3),
+            Calculator("Random Number Generator", R.drawable.random),
             Calculator("Molarity Calculator", R.drawable.molarity),
             Calculator("pH Calculator", R.drawable.ph),
             Calculator("Stoichiometry Calculator", R.drawable.stoichiometry),

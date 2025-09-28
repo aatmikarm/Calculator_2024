@@ -92,7 +92,9 @@ object CalculatorCategoriesUtil {
 
         // Fun
         "Love Calculator" to "Fun",
-        "Friendship Calculator" to "Fun"
+        "Friendship Calculator" to "Fun",
+        "Roll a Dice" to "Fun",
+        "Random Number Generator" to "Fun"
     )
 
     /**

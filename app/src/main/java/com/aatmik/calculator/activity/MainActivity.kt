@@ -556,6 +556,14 @@ class MainActivity : AppCompatActivity() {
                 putExtra("calculatorName", calculatorName)
             }
 
+            "Roll a Dice" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+
+            "Random Number Generator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+
             "Molarity Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }
