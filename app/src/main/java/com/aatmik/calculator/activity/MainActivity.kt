@@ -1,6 +1,11 @@
 package com.aatmik.calculator.activity
 
+import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -317,8 +322,68 @@ class MainActivity : AppCompatActivity() {
             showThemeSelector()
         }
 
+        bottomSheetBinding.btnCustomerSupport.setOnClickListener {
+            openCustomerSupport()
+            bottomSheetDialog.dismiss()
+        }
+
         bottomSheetDialog.setContentView(bottomSheetBinding.root)
         bottomSheetDialog.show()
+    }
+
+    private fun openCustomerSupport() {
+        val supportEmail = "aatmikarm@gmail.com"
+        val subject = "Calculator App Support Request"
+        val body = """
+        Dear Support Team,
+        
+        I need assistance with the Calculator App.
+        
+        Device Information:
+        - App Version: ${getAppVersion()}
+        - Android Version: ${Build.VERSION.RELEASE}
+        - Device Model: ${Build.MODEL}
+        - Device Manufacturer: ${Build.MANUFACTURER}
+        
+        Issue Description:
+        [Please describe your issue here]
+        
+        Best regards,
+        [Your name]
+    """.trimIndent()
+
+        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(supportEmail))
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, body)
+        }
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send Email"))
+        } catch (ex: ActivityNotFoundException) {
+            Toast.makeText(
+                this,
+                "No email app found. Please send an email to: $supportEmail",
+                Toast.LENGTH_LONG
+            ).show()
+
+            // Copy email to clipboard as fallback
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("Support Email", supportEmail)
+            clipboard.setPrimaryClip(clip)
+
+            Toast.makeText(this, "Email address copied to clipboard", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getAppVersion(): String {
+        return try {
+            val packageInfo = packageManager.getPackageInfo(packageName, 0)
+            packageInfo.versionName ?: "Unknown"
+        } catch (e: PackageManager.NameNotFoundException) {
+            "Unknown"
+        }
     }
 
     private fun showThemeSelector() {
