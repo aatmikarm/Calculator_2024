@@ -41,6 +41,8 @@ object ThemeManager {
     fun getThemeStyle(context: Context): Int {
         val theme = getSavedTheme(context)
         return when (theme) {
+            THEME_LIGHT -> R.style.Theme_Calculator_Light
+            THEME_DARK -> R.style.Theme_Calculator_Dark
             THEME_RED -> R.style.Theme_Calculator_Red
             THEME_GREEN -> R.style.Theme_Calculator_Green
             THEME_BLUE -> R.style.Theme_Calculator_Blue
