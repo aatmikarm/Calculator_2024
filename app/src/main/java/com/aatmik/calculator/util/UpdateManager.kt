@@ -99,9 +99,10 @@ class UpdateManager {
                             Log.d(TAG, "checkForUpdates: Version already skipped by user, not showing dialog")
                         }
                     } else if (playStoreVersion == null && isManualCheck) {
-                        // Fallback mechanism: Direct Play Store opening when version detection fails for manual checks
-                        Log.w(TAG, "checkForUpdates: Version detection failed for manual check, opening Play Store directly")
+                        // Fallback mechanism: Open Play Store when version detection fails for manual checks
+                        Log.w(TAG, "checkForUpdates: Version detection failed for manual check, showing fallback dialog")
                         withContext(Dispatchers.Main) {
+                            //showVersionDetectionFailedDialog(context)
                             openPlayStore(context)
                         }
                     } else if (isManualCheck) {
@@ -298,6 +299,9 @@ class UpdateManager {
                 .setCancelable(true)
                 .create()
 
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+
             binding.btnClose.setOnClickListener {
                 Log.d(TAG, "showUpdateDialog: User clicked close button")
                 dialog.dismiss()
@@ -319,6 +323,24 @@ class UpdateManager {
 
             dialog.show()
             Log.i(TAG, "showUpdateDialog: Update dialog displayed successfully")
+        }
+
+        private fun showVersionDetectionFailedDialog(context: Context) {
+            Log.d(TAG, "showVersionDetectionFailedDialog: Showing fallback dialog for version detection failure")
+            AlertDialog.Builder(context)
+                .setTitle("Unable to Check for Updates")
+                .setMessage("We couldn't automatically detect the latest version information. Would you like to check for updates manually on Google Play Store?")
+                .setPositiveButton("Open Play Store") { dialog, _ ->
+                    Log.d(TAG, "showVersionDetectionFailedDialog: User chose to open Play Store")
+                    openPlayStore(context)
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    Log.d(TAG, "showVersionDetectionFailedDialog: User cancelled")
+                    dialog.dismiss()
+                }
+                .setCancelable(true)
+                .show()
         }
 
         private fun showNoUpdateDialog(context: Context) {
