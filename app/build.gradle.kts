@@ -13,8 +13,8 @@ android {
         applicationId = "com.aatmik.calculator"
         minSdk = 25
         targetSdk = 35
-        versionCode = 8
-        versionName = "8.0"
+        versionCode = 9
+        versionName = "9.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

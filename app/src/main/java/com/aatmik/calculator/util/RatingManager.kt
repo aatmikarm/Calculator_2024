@@ -16,7 +16,7 @@ class RatingManager {
         private const val KEY_USED_CALCULATORS = "used_calculators"
         private const val KEY_RATING_SHOWN = "rating_shown"
         private const val KEY_NEVER_SHOW_AGAIN = "never_show_again"
-        private const val USAGE_THRESHOLD = 5
+        private const val USAGE_THRESHOLD = 10
 
         fun trackCalculatorUsage(context: Context, calculatorName: String) {
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
