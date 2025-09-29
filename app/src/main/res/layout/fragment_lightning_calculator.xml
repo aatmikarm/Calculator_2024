@@ -257,7 +257,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_marginHorizontal="16dp"
-                    android:drawableEnd="@drawable/share"
+                    android:drawableEnd="@drawable/share_new"
                     android:text="Share"
                     android:textAllCaps="false"
                     android:textColor="?android:attr/textColorPrimary" />

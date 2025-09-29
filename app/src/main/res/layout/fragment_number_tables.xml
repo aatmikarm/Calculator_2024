@@ -194,7 +194,7 @@
                     android:id="@+id/shareBt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/share"
+                    android:drawableEnd="@drawable/share_new"
                     android:text="Share"
                     android:textAllCaps="false"
                     android:textColor="?android:attr/textColorPrimary" />

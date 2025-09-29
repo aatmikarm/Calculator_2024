@@ -306,6 +306,11 @@ class MainActivity : AppCompatActivity() {
             bottomSheetDialog.dismiss()
         }
 
+        bottomSheetBinding.btnShareApp.setOnClickListener {
+            shareApp()
+            bottomSheetDialog.dismiss()
+        }
+
         bottomSheetBinding.btnRemoveAds.setOnClickListener {
             removeAds()
             bottomSheetDialog.dismiss()
@@ -329,6 +334,32 @@ class MainActivity : AppCompatActivity() {
 
         bottomSheetDialog.setContentView(bottomSheetBinding.root)
         bottomSheetDialog.show()
+    }
+
+    private fun shareApp() {
+        val appPackageName = "com.aatmik.calculator"
+        val appName = "Calculator App"
+        val playStoreLink = "https://play.google.com/store/apps/details?id=$appPackageName"
+
+        val shareMessage = """
+        Hey! Check out this amazing calculator app I've been using.
+        
+        $appName - All-in-one calculator with multiple features including basic calculations, unit conversions, financial calculators, and much more!
+        
+        Download it here: $playStoreLink
+    """.trimIndent()
+
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, "Check out $appName")
+            putExtra(Intent.EXTRA_TEXT, shareMessage)
+        }
+
+        try {
+            startActivity(Intent.createChooser(shareIntent, "Share via"))
+        } catch (e: Exception) {
+            Toast.makeText(this, "Unable to share", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun openCustomerSupport() {

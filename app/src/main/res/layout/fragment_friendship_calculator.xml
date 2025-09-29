@@ -293,7 +293,7 @@
                     android:layout_gravity="end"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginBottom="10dp"
-                    android:drawableEnd="@drawable/share"
+                    android:drawableEnd="@drawable/share_new"
                     android:text="Share"
                     android:backgroundTint="#4CAF50"
                     android:textAllCaps="false"
