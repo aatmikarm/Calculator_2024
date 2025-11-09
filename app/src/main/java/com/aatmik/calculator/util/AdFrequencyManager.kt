@@ -9,8 +9,8 @@ class AdFrequencyManager {
         private const val PREFS_NAME = "ad_frequency_prefs"
         private const val KEY_CALCULATOR_USAGE_COUNT = "calculator_usage_count"
         private const val KEY_LAST_AD_SHOWN_SESSION = "last_ad_shown_session"
-        private const val USAGE_THRESHOLD = 3 // Show ad after every 3 calculator usages
-        private const val AD_COOLDOWN_SECONDS = 30 // Configurable cooldown period in seconds
+        private const val USAGE_THRESHOLD = 1 // Show ad after every 3 or x no of calculator usages
+        private const val AD_COOLDOWN_SECONDS = 10 // Configurable cooldown period in seconds
 
         /**
          * Track calculator usage - call this when a calculator is actually used
