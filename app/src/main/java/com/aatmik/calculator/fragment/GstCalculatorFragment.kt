@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.aatmik.calculator.databinding.FragmentGstCalculatorBinding
+import com.aatmik.calculator.util.AnalyticsManager
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.math.roundToInt
@@ -313,6 +314,8 @@ class GstCalculatorFragment : Fragment() {
     private fun calculateGst() {
         binding.apply {
             try {
+                AnalyticsManager.logCalculationPerformed("GST Calculator", "calculateGst_clicked")
+
                 val baseAmount = etBaseAmount.text.toString().toDoubleOrNull() ?: 0.0
                 val quantity = etQuantity.text.toString().toDoubleOrNull() ?: 1.0
                 val calculationType = spinnerCalculationType.selectedItem.toString()
@@ -593,6 +596,7 @@ class GstCalculatorFragment : Fragment() {
     }
 
     private fun shareGstCalculation() {
+        AnalyticsManager.logCalculationPerformed("GST Calculator", "shareGstCalculation_clicked")
         val options = arrayOf("Share as Text", "Share as Image")
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Share GST Calculation")

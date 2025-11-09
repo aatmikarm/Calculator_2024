@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.R
 import com.aatmik.calculator.model.Calculator
+import com.aatmik.calculator.util.AnalyticsManager
 
 class CalculatorAdapter(
     private var calculatorList: ArrayList<Calculator>,
@@ -82,7 +83,13 @@ class CalculatorAdapter(
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION && position < calculatorList.size) {
-                    onItemClick(calculatorList[position])
+                    val calculator = calculatorList[position]
+
+                    // Log calculator opened
+                    AnalyticsManager.logCalculatorOpened(calculator.name)
+
+                    onItemClick(calculator)
+
                 }
             }
         }

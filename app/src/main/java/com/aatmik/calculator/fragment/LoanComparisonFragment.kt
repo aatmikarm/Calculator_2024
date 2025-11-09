@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.aatmik.calculator.databinding.FragmentLoanComparisonBinding
+import com.aatmik.calculator.util.AnalyticsManager
 import java.io.File
 import java.io.FileOutputStream
 import java.text.NumberFormat
@@ -200,6 +201,7 @@ class LoanComparisonFragment : Fragment() {
                     selectedCountry = countries[position]
                     val countryInfo = countryData[selectedCountry]!!
                     selectedCurrency = countryInfo.currency
+                    AnalyticsManager.log("country_selected", "country" to selectedCountry)
 
                     // Update all rate hints and currency displays
                     updateAllCurrencyDisplays()
@@ -360,6 +362,7 @@ class LoanComparisonFragment : Fragment() {
     private fun calculateLoans() {
         binding.apply {
             try {
+                AnalyticsManager.logCalculationPerformed("Loan Comparison", "calculateLoans_clicked")
                 // Calculate Loan 1
                 val loan1 = calculateLoanDetails(
                     etLoan1Amount.text.toString().toDoubleOrNull() ?: 0.0,
@@ -586,6 +589,7 @@ class LoanComparisonFragment : Fragment() {
         val loan1Type = binding.spinnerLoan1Type.selectedItem.toString()
         val loan1Emi = binding.tvLoan1Emi.text.toString()
         val loan1TotalCost = binding.tvLoan1TotalCost.text.toString()
+        AnalyticsManager.log("loan_comparison_shared", "share_type" to "text")
 
         val shareText = buildString {
             append("Loan Comparison Results ($selectedCountry - ${currencyInfo.currency})\n\n")
@@ -629,6 +633,7 @@ class LoanComparisonFragment : Fragment() {
         )
         val canvas = Canvas(bitmap)
         screenshotView.draw(canvas)
+        AnalyticsManager.log("loan_comparison_shared", "share_type" to "image")
 
         val file = File(requireContext().cacheDir, "loan_comparison_${selectedCountry.lowercase().replace(" ", "_")}.png")
         FileOutputStream(file).use { out ->

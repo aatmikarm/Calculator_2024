@@ -10,6 +10,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.Fragment
 import com.aatmik.calculator.R
 import com.aatmik.calculator.databinding.FragmentDiceRollerBinding
+import com.aatmik.calculator.util.AnalyticsManager
 import kotlin.random.Random
 
 class DiceRollerFragment : Fragment() {
@@ -127,6 +128,7 @@ class DiceRollerFragment : Fragment() {
                 } else {
                     // Animation finished, show final result
                     onAnimationEnd()
+                    AnalyticsManager.logCalculationPerformed("Roll a Dice", "roll")
                     // Re-enable roll button
                     binding.rollButton.isEnabled = true
                 }

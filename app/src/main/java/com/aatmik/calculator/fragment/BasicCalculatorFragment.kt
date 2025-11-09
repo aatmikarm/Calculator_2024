@@ -19,6 +19,7 @@ import com.aatmik.calculator.R
 import com.aatmik.calculator.adapter.HistoryAdapter
 import com.aatmik.calculator.databinding.FragmentBasicCalculatorBinding
 import com.aatmik.calculator.model.CalculationHistory
+import com.aatmik.calculator.util.AnalyticsManager
 import com.aatmik.calculator.util.ButtonUtil.addNumberValueToText
 import com.aatmik.calculator.util.ButtonUtil.addOperatorValueToText
 import com.aatmik.calculator.util.ButtonUtil.invalidInputToast
@@ -121,6 +122,8 @@ class BasicCalculatorFragment : Fragment() {
             addToExpressionHistory(binding.tvPrimaryBC.text.toString())
             binding.tvPrimaryBC.text = historyItem.result
             validateAndUpdateUI()
+
+            AnalyticsManager.log("calculation_history_used")
         }
 
         recyclerView.adapter = historyAdapter
@@ -129,6 +132,10 @@ class BasicCalculatorFragment : Fragment() {
         binding.btHistory.setOnClickListener {
             binding.rvHistory.visibility =
                 if (binding.rvHistory.visibility == View.GONE) View.VISIBLE else View.GONE
+
+            if (binding.rvHistory.visibility == View.VISIBLE) {
+                AnalyticsManager.log("calculation_history_opened")
+            }
         }
     }
 
@@ -183,6 +190,8 @@ class BasicCalculatorFragment : Fragment() {
                 addedBC = false
                 clearError()
                 resetCalculatorState()
+
+                AnalyticsManager.log("calculator_cleared")
             }
 
             // Delete button
@@ -319,6 +328,8 @@ class BasicCalculatorFragment : Fragment() {
                     memoryValue += current
                     showMemoryIndicator(memoryValue != 0.0)
                     saveMemoryState()
+
+                    AnalyticsManager.log("memory_operation", "operation" to "add")
                 }
             }
 
@@ -329,6 +340,8 @@ class BasicCalculatorFragment : Fragment() {
                     memoryValue -= current
                     showMemoryIndicator(memoryValue != 0.0)
                     saveMemoryState()
+
+                    AnalyticsManager.log("memory_operation", "operation" to "subtract")
                 }
             }
 
@@ -337,6 +350,8 @@ class BasicCalculatorFragment : Fragment() {
                 addToExpressionHistory(tvPrimaryBC.text.toString())
                 tvPrimaryBC.text = smartFormatResult(memoryValue)
                 validateAndUpdateUI()
+
+                AnalyticsManager.log("memory_operation", "operation" to "recall")
             }
 
             btMemoryClear.setOnClickListener {
@@ -344,6 +359,8 @@ class BasicCalculatorFragment : Fragment() {
                 memoryValue = 0.0
                 showMemoryIndicator(false)
                 saveMemoryState()
+
+                AnalyticsManager.log("memory_operation", "operation" to "clear")
             }
         }
     }
@@ -394,6 +411,7 @@ class BasicCalculatorFragment : Fragment() {
             baseValue = null
 
             addNewCalculationHistory(historyExpression, smartFormatResult(result))
+            AnalyticsManager.logCalculationPerformed("Basic Calculator", "power")
         } else {
             showError("Invalid power operation", ErrorType.SYNTAX)
         }
@@ -414,6 +432,7 @@ class BasicCalculatorFragment : Fragment() {
                         clearError()
 
                         addNewCalculationHistory(input, formattedResult)
+                        AnalyticsManager.logCalculationPerformed("Basic Calculator", "calculate")
                     }
                     is CalculationResult.Error -> {
                         showError(result.message, ErrorType.CALCULATION)
@@ -451,6 +470,8 @@ class BasicCalculatorFragment : Fragment() {
         val inputStr = currentInput?.toString() ?: ""
         val functionStr = getFunctionDisplayString(function, inputStr)
         binding.tvSecondaryBC.text = "$functionStr = ${smartFormatResult(result)}"
+
+        AnalyticsManager.logCalculationPerformed("Basic Calculator", "scientific_$function")
     }
 
     private fun calculateScientificFunction(function: String, input: Double?): Double {
@@ -559,6 +580,8 @@ class BasicCalculatorFragment : Fragment() {
                 btDeg.alpha = 1.0f
             }
         }
+
+        AnalyticsManager.log("angle_mode_toggled", "mode" to if (isSecondMode) "inverse" else "normal")
     }
 
     private fun toggleAngleMode() {
@@ -572,6 +595,8 @@ class BasicCalculatorFragment : Fragment() {
         } else {
             enableSecondButton()
         }
+
+        AnalyticsManager.log("angle_unit_changed", "unit" to if (isInDegreesMode) "degrees" else "radians")
     }
 
     private fun enableScientificNotation() {
@@ -757,7 +782,7 @@ class BasicCalculatorFragment : Fragment() {
 
     private fun clearError() {
         binding.tvErrorBC.visibility = View.GONE
-       // binding.tvPrimaryBC.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+        // binding.tvPrimaryBC.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
     }
 
     // Real-time validation
@@ -815,6 +840,8 @@ class BasicCalculatorFragment : Fragment() {
                 slideUp(binding.advancedScientificPanel)
                 slideUp(binding.memoryControlPanel)
                 binding.toggleArrow.rotation = 180f
+
+                AnalyticsManager.log("scientific_panel_opened")
             }
             isPanelVisible = !isPanelVisible
         }

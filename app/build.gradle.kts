@@ -121,5 +121,7 @@ dependencies {
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation("com.google.firebase:firebase-analytics")
 
+    implementation("androidx.lifecycle:lifecycle-process:2.9.4")
+
 
 }

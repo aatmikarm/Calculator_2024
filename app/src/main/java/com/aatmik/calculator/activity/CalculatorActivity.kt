@@ -66,6 +66,7 @@ import com.aatmik.calculator.fragment.shapes.ShapesFragment
 import com.aatmik.calculator.model.Calculator
 import com.aatmik.calculator.util.AdConfig
 import com.aatmik.calculator.util.AdFrequencyManager
+import com.aatmik.calculator.util.AnalyticsManager
 import com.aatmik.calculator.util.NetworkUtil
 import com.aatmik.calculator.util.RatingManager
 import com.aatmik.calculator.util.ThemeManager
@@ -102,6 +103,11 @@ class CalculatorActivity : AppCompatActivity() {
         runAds()
         // Get the calculator type passed from MainActivity
         val calculatorType = intent.getStringExtra("calculatorName")
+
+        // Log screen view for analytics
+        calculatorType?.let {
+            AnalyticsManager.logScreenView("Calculator: $it", this::class.java.simpleName)
+        }
 
         if (calculatorType == "Stopwatch" || calculatorType == "Convertor") {
             normalLaunch(calculatorType)
@@ -260,7 +266,7 @@ class CalculatorActivity : AppCompatActivity() {
                 }
 
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                    Log.d("InterstitialAd", "✓ Ad loaded successfully and ready to show")
+                    Log.d("InterstitialAd", "Ad loaded successfully and ready to show")
                     this@CalculatorActivity.interstitialAd = interstitialAd
                 }
             })
@@ -298,14 +304,17 @@ class CalculatorActivity : AppCompatActivity() {
 
         // Show the ad if it's loaded
         interstitialAd?.let { ad ->
-            Log.d("InterstitialAd", "✓ Showing interstitial ad NOW")
+            Log.d("InterstitialAd", "Showing interstitial ad NOW")
             AdFrequencyManager.markAdShownInSession(this)
             ad.show(this)
+
+            // Log ad shown event
+            AnalyticsManager.logAdEvent("ad_shown", "interstitial")
 
             // Preload next ad for future use
             preloadInterstitialAd()
         } ?: run {
-            Log.d("InterstitialAd", "✗ Ad not shown - interstitialAd is null (not loaded yet)")
+            Log.d("InterstitialAd", "Ad not shown - interstitialAd is null (not loaded yet)")
             // If ad is not loaded, preload it for next time
             preloadInterstitialAd()
         }

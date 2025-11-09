@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -47,6 +48,9 @@ import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.math.abs
 
@@ -54,6 +58,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var analytics: FirebaseAnalytics
+    private val TAG = "MainActivity"
+
+    // Session tracking
+    private var sessionStartTime: Long = 0
 
     // recycler view for calculators
     lateinit var calculatorRV: RecyclerView
@@ -76,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         private const val SWIPE_VELOCITY_THRESHOLD = 100
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)  {
         ThemeManager.initializeTheme(this)
         setTheme(ThemeManager.getThemeStyle(this))
         super.onCreate(savedInstanceState)
@@ -88,23 +96,21 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        // Initialize Analytics Manager once
 
         // Safe Firebase initialization
-        try {
-            // Initialize Firebase if not already initialized
-            if (FirebaseApp.getApps(this).isEmpty()) {
-                FirebaseApp.initializeApp(this)
-            }
-
-            // Test event - this will only work if initialization succeeds
-            AnalyticsManager.init(this)
-            AnalyticsManager.logAppOpen()
-            AnalyticsManager.log("MainActivity is opened inside onCreate")
-            Log.d("MainActivity", "Firebase Analytics initialized successfully")
-        } catch (e: Exception) {
-            Log.e("MainActivity", "Firebase initialization failed: ${e.message}")
-        }
+//        try {
+//            // Initialize Firebase if not already initialized
+//            if (FirebaseApp.getApps(this).isEmpty()) {
+//                FirebaseApp.initializeApp(this)
+//            }
+//
+//            // Initialize Analytics Manager
+//            AnalyticsManager.init(this)
+//            AnalyticsManager.logAppOpen()
+//            Log.d("MainActivity", "Firebase Analytics initialized successfully")
+//        } catch (e: Exception) {
+//            Log.e("MainActivity", "Firebase initialization failed: ${e.message}")
+//        }
 
         // Handle system bar insets for edge-to-edge
         setupEdgeToEdgeInsets()
@@ -195,6 +201,7 @@ class MainActivity : AppCompatActivity() {
         if (currentCategoryIndex < totalCategories - 1) {
             currentCategoryIndex++
             selectCategoryByIndex(currentCategoryIndex)
+            AnalyticsManager.log("category_swiped", "direction" to "left")
         }
     }
 
@@ -205,6 +212,7 @@ class MainActivity : AppCompatActivity() {
         if (currentCategoryIndex > 0) {
             currentCategoryIndex--
             selectCategoryByIndex(currentCategoryIndex)
+            AnalyticsManager.log("category_swiped", "direction" to "right")
         }
     }
 
@@ -254,6 +262,8 @@ class MainActivity : AppCompatActivity() {
             currentSelectedCategory = selectedCategory
             currentCategoryIndex = position
             filterByCategory(selectedCategory)
+
+            AnalyticsManager.log("category_selected", "category" to selectedCategory)
         }
 
         categoriesRV.adapter = categoryAdapter
@@ -342,6 +352,7 @@ class MainActivity : AppCompatActivity() {
         bottomSheetBinding.btnGetUpdate.setOnClickListener {
             // Check for updates manually when user clicks update button
             UpdateManager.checkForUpdatesManually(this)
+            AnalyticsManager.log("update_checked")
             bottomSheetDialog.dismiss()
         }
 
@@ -357,6 +368,8 @@ class MainActivity : AppCompatActivity() {
 
         bottomSheetDialog.setContentView(bottomSheetBinding.root)
         bottomSheetDialog.show()
+
+        AnalyticsManager.log("menu_opened")
     }
 
     private fun shareApp() {
@@ -380,6 +393,7 @@ class MainActivity : AppCompatActivity() {
 
         try {
             startActivity(Intent.createChooser(shareIntent, "Share via"))
+            AnalyticsManager.logAppShared("system_share")
         } catch (e: Exception) {
             Toast.makeText(this, "Unable to share", Toast.LENGTH_SHORT).show()
         }
@@ -415,6 +429,7 @@ class MainActivity : AppCompatActivity() {
 
         try {
             startActivity(Intent.createChooser(emailIntent, "Send Email"))
+            AnalyticsManager.log("customer_support_opened")
         } catch (ex: ActivityNotFoundException) {
             Toast.makeText(
                 this,
@@ -483,7 +498,9 @@ class MainActivity : AppCompatActivity() {
                     else -> ThemeManager.THEME_DEFAULT
                 }
 
+                val themeName = options[which]
                 ThemeManager.saveTheme(this, selectedTheme)
+                AnalyticsManager.logThemeChanged(themeName)
                 recreate() // Restart activity to apply new theme
                 dialog.dismiss()
             }
@@ -499,11 +516,13 @@ class MainActivity : AppCompatActivity() {
                 Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName&showRating=true")
             )
         )
+        AnalyticsManager.log("rate_app_clicked")
     }
 
     private fun removeAds() {
         Toast.makeText(this, "Removing ads / Starting premium subscription", Toast.LENGTH_SHORT)
             .show()
+        AnalyticsManager.log("remove_ads_clicked")
     }
 
     private fun updateApp() {
@@ -542,6 +561,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun search() {
+        var searchJob: Job? = null
+
         binding.searchEt.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
@@ -558,6 +579,15 @@ class MainActivity : AppCompatActivity() {
                 // Restore cursor visibility when the user starts typing again
                 if (s.isNullOrEmpty().not()) {
                     binding.searchEt.isCursorVisible = true
+                }
+
+                // Debounce search analytics - only log after user stops typing for 1 second
+                searchJob?.cancel()
+                if (!s.isNullOrEmpty() && s.length >= 3) {
+                    searchJob = lifecycleScope.launch {
+                        delay(1000) // 1 second delay
+                        AnalyticsManager.logSearch(searchQuery)
+                    }
                 }
             }
 
@@ -578,6 +608,8 @@ class MainActivity : AppCompatActivity() {
             imm.hideSoftInputFromWindow(binding.searchEt.windowToken, 0)
             // Hide the cursor when text is cleared
             binding.searchEt.isCursorVisible = false
+
+            AnalyticsManager.log("search_cleared")
         }
     }
 

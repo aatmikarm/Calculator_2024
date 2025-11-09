@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.aatmik.calculator.R
 import com.aatmik.calculator.databinding.FragmentRandomNumberGeneratorBinding
+import com.aatmik.calculator.util.AnalyticsManager
 import kotlin.random.Random
 
 class RandomNumberGeneratorFragment : Fragment() {
@@ -134,6 +135,8 @@ class RandomNumberGeneratorFragment : Fragment() {
 
             // Animate number generation
             animateNumberGeneration(minValue, maxValue)
+
+            AnalyticsManager.logCalculationPerformed("Random Number Generator", "generate")
 
         } catch (e: Exception) {
             showError("Error generating number: ${e.message}")
