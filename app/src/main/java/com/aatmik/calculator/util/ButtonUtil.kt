@@ -33,8 +33,10 @@ object ButtonUtil {
 
             when (id) {
                 0 -> {
-                    if (addedBC) textViewId.text =
-                        textViewId.text.subSequence(0, textViewId.length() - 1)
+                    // Add length check to prevent crash
+                    if (addedBC && textViewId.length() > 0) {
+                        textViewId.text = textViewId.text.subSequence(0, textViewId.length() - 1)
+                    }
                     textViewId.text = textViewId.text.toString() + text
                     addedBC = true
                 }
