@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.R
 import com.aatmik.calculator.model.Calculator
 import com.aatmik.calculator.util.AnalyticsManager
+import com.bumptech.glide.Glide
 
 class CalculatorAdapter(
     private var calculatorList: ArrayList<Calculator>,
@@ -54,7 +55,11 @@ class CalculatorAdapter(
     override fun onBindViewHolder(holder: CalculatorAdapter.CalculatorViewHolder, position: Int) {
         val calculator = calculatorList[position]
         holder.itemName.text = calculator.name
-        holder.itemImage.setImageResource(calculator.image)
+        //holder.itemImage.setImageResource(calculator.image)
+        // now uses Glide with better image caching and loading
+        Glide.with(holder.itemView.context)
+            .load(calculator.image)
+            .into(holder.itemImage)
     }
 
     override fun getItemCount(): Int {

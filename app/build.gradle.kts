@@ -123,5 +123,8 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-process:2.9.4")
 
+    // Glide
+    implementation("com.github.bumptech.glide:glide:5.0.5")
+
 
 }
