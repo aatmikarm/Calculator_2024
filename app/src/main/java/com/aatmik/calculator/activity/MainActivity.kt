@@ -33,6 +33,7 @@ import com.aatmik.calculator.databinding.BottomSheetLayoutBinding
 import com.aatmik.calculator.model.Calculator
 import com.aatmik.calculator.model.Category
 import com.aatmik.calculator.util.AdConfig
+import com.aatmik.calculator.util.AnalyticsManager
 import com.aatmik.calculator.util.CalculatorCategoriesUtil
 import com.aatmik.calculator.util.CalculatorUtils
 import com.aatmik.calculator.util.NetworkUtil
@@ -42,12 +43,17 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.Firebase
+import com.google.firebase.FirebaseApp
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import java.util.Locale
 import kotlin.math.abs
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var analytics: FirebaseAnalytics
 
     // recycler view for calculators
     lateinit var calculatorRV: RecyclerView
@@ -82,6 +88,23 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        // Initialize Analytics Manager once
+
+        // Safe Firebase initialization
+        try {
+            // Initialize Firebase if not already initialized
+            if (FirebaseApp.getApps(this).isEmpty()) {
+                FirebaseApp.initializeApp(this)
+            }
+
+            // Test event - this will only work if initialization succeeds
+            AnalyticsManager.init(this)
+            AnalyticsManager.logAppOpen()
+            AnalyticsManager.log("MainActivity is opened inside onCreate")
+            Log.d("MainActivity", "Firebase Analytics initialized successfully")
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Firebase initialization failed: ${e.message}")
+        }
 
         // Handle system bar insets for edge-to-edge
         setupEdgeToEdgeInsets()

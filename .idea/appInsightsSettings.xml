@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.aatmik.calculator" />
+                  <option name="mobileSdkAppId" value="1:804514820353:android:23571229dd3d8b06db6b00" />
+                  <option name="projectId" value="all-in-one-calculator-f6b00" />
+                  <option name="projectNumber" value="804514820353" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

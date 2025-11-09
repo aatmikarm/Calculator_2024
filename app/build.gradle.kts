@@ -3,6 +3,9 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-android")
     id("kotlin-parcelize")
+
+    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -111,5 +114,12 @@ dependencies {
 
     // Add this for ListenableFuture support
     implementation("com.google.guava:guava:33.5.0-android")
+
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
+
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation("com.google.firebase:firebase-analytics")
+
 
 }
