@@ -10,22 +10,31 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.R
 import com.aatmik.calculator.adapter.HistoryAdapter
+import com.aatmik.calculator.adapter.HistoryBottomSheetAdapter
 import com.aatmik.calculator.databinding.FragmentBasicCalculatorBinding
 import com.aatmik.calculator.model.CalculationHistory
 import com.aatmik.calculator.util.AnalyticsManager
+import com.aatmik.calculator.util.ButtonUtil
 import com.aatmik.calculator.util.ButtonUtil.addNumberValueToText
 import com.aatmik.calculator.util.ButtonUtil.addOperatorValueToText
 import com.aatmik.calculator.util.ButtonUtil.invalidInputToast
 import com.aatmik.calculator.util.ButtonUtil.vibratePhone
 import com.aatmik.calculator.util.CalculationUtil
+import com.aatmik.calculator.util.HistoryManager
 import com.aatmik.calculator.util.PrefUtil
+import com.aatmik.calculator.util.SwipeGestureListener
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
@@ -38,6 +47,10 @@ class BasicCalculatorFragment : Fragment() {
     private val calculationHistory = mutableListOf<CalculationHistory>()
     private lateinit var historyAdapter: HistoryAdapter
     private lateinit var recyclerView: RecyclerView
+
+    private var historyBottomSheet: BottomSheetDialog? = null
+    private var historyOverlayView: View? = null
+    private var isHistoryVisible = false
 
     // Advanced calculator states
     private var isPowerMode = false
@@ -100,6 +113,16 @@ class BasicCalculatorFragment : Fragment() {
         setupButtons()
         historyView()
         restoreMemoryState()
+        setupSwipeGesture()
+    }
+
+    private fun setupSwipeGesture() {
+        val swipeListener = SwipeGestureListener(requireContext()) {
+            if (!isHistoryVisible) {
+                showHistoryFromTop()
+            }
+        }
+        binding.root.setOnTouchListener(swipeListener)
     }
 
     private fun setupUI() {
@@ -122,7 +145,6 @@ class BasicCalculatorFragment : Fragment() {
             addToExpressionHistory(binding.tvPrimaryBC.text.toString())
             binding.tvPrimaryBC.text = historyItem.result
             validateAndUpdateUI()
-
             AnalyticsManager.log("calculation_history_used")
         }
 
@@ -130,14 +152,227 @@ class BasicCalculatorFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         binding.btHistory.setOnClickListener {
-            binding.rvHistory.visibility =
-                if (binding.rvHistory.visibility == View.GONE) View.VISIBLE else View.GONE
-
-            if (binding.rvHistory.visibility == View.VISIBLE) {
-                AnalyticsManager.log("calculation_history_opened")
+            ButtonUtil.vibratePhone(requireContext())
+            if (isHistoryVisible) {
+                hideHistoryFromTop()
+            } else {
+                showHistoryFromTop()
             }
         }
     }
+
+    // New method: Show history with top-down animation
+    private fun showHistoryFromTop() {
+        if (isHistoryVisible) return
+
+        val parentView = requireActivity().findViewById<ViewGroup>(android.R.id.content)
+        val historyView = layoutInflater.inflate(R.layout.bottom_sheet_history, parentView, false)
+
+        // Setup views
+        val rvHistoryList = historyView.findViewById<RecyclerView>(R.id.rvHistoryList)
+        val emptyStateLayout = historyView.findViewById<LinearLayout>(R.id.emptyStateLayout)
+        val btnClearHistory = historyView.findViewById<ImageView>(R.id.btnClearHistory)
+        val btnCloseHistory = historyView.findViewById<ImageView>(R.id.btnCloseHistory)
+
+        // Get history data
+        val historyList = HistoryManager.getHistory(requireContext())
+
+        // Show/hide empty state
+        if (historyList.isEmpty()) {
+            emptyStateLayout.visibility = View.VISIBLE
+            rvHistoryList.visibility = View.GONE
+        } else {
+            emptyStateLayout.visibility = View.GONE
+            rvHistoryList.visibility = View.VISIBLE
+        }
+
+        // Setup adapter with fast animation
+        val adapter = HistoryBottomSheetAdapter(
+            historyList,
+            onReuse = { result ->
+                // Fast population animation
+                animateResultPopulation(result)
+                hideHistoryFromTop()
+            },
+            onDelete = { position ->
+                showDeleteConfirmationDialog(position) {
+                    refreshHistoryInOverlay(rvHistoryList, emptyStateLayout)
+                }
+            }
+        )
+
+        rvHistoryList.adapter = adapter
+        rvHistoryList.layoutManager = LinearLayoutManager(requireContext())
+
+        // Button listeners
+        btnClearHistory.setOnClickListener {
+            ButtonUtil.vibratePhone(requireContext())
+            showClearAllConfirmationDialog {
+                refreshHistoryInOverlay(rvHistoryList, emptyStateLayout)
+            }
+        }
+
+        btnCloseHistory.setOnClickListener {
+            ButtonUtil.vibratePhone(requireContext())
+            hideHistoryFromTop()
+        }
+
+        // Click outside to close
+        historyView.setOnClickListener {
+            hideHistoryFromTop()
+        }
+
+        // Prevent clicks from passing through
+        rvHistoryList.setOnClickListener { /* Consume click */ }
+        historyView.findViewById<LinearLayout>(R.id.emptyStateLayout)?.setOnClickListener { /* Consume */ }
+
+        // Add to parent and animate
+        historyView.translationY = -parentView.height.toFloat()
+        parentView.addView(historyView)
+        historyOverlayView = historyView
+        isHistoryVisible = true
+
+        // Slide down animation
+        historyView.animate()
+            .translationY(0f)
+            .setDuration(300)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
+
+        AnalyticsManager.log("history_overlay_opened")
+    }
+
+    // New method: Hide history with top-up animation
+    private fun hideHistoryFromTop() {
+        if (!isHistoryVisible || historyOverlayView == null) return
+
+        val view = historyOverlayView!!
+        val parentView = view.parent as? ViewGroup
+
+        view.animate()
+            .translationY(-view.height.toFloat())
+            .setDuration(250)
+            .setInterpolator(DecelerateInterpolator())
+            .withEndAction {
+                parentView?.removeView(view)
+                historyOverlayView = null
+                isHistoryVisible = false
+            }
+            .start()
+
+        AnalyticsManager.log("history_overlay_closed")
+    }
+
+    // New method: Animate result population with bounce effect
+    private fun animateResultPopulation(result: String) {
+        ButtonUtil.vibratePhone(requireContext())
+
+        val startText = binding.tvPrimaryBC.text.toString()
+        binding.tvPrimaryBC.text = result
+
+        // Scale animation for visual feedback
+        binding.tvPrimaryBC.apply {
+            scaleX = 0.7f
+            scaleY = 0.7f
+            alpha = 0.5f
+
+            animate()
+                .scaleX(1.1f)
+                .scaleY(1.1f)
+                .alpha(1f)
+                .setDuration(200)
+                .withEndAction {
+                    animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(100)
+                        .start()
+                }
+                .start()
+        }
+
+        validateAndUpdateUI()
+        AnalyticsManager.log("history_result_populated", "result" to result)
+    }
+
+    // Replace the old showDeleteConfirmation method with this:
+    private fun showDeleteConfirmationDialog(position: Int, onDeleted: () -> Unit) {
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Delete Calculation")
+            .setMessage("Are you sure you want to delete this calculation?")
+            .setPositiveButton("Delete") { _, _ ->
+                HistoryManager.deleteHistoryItem(requireContext(), position)
+                onDeleted()
+                Toast.makeText(requireContext(), "Calculation deleted", Toast.LENGTH_SHORT).show()
+                AnalyticsManager.log("history_item_deleted")
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    // And update the clear all method:
+    private fun showClearAllConfirmationDialog(onCleared: () -> Unit) {
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Clear All History")
+            .setMessage("Are you sure you want to delete all calculation history?")
+            .setPositiveButton("Clear All") { _, _ ->
+                HistoryManager.clearHistory(requireContext())
+                onCleared()
+                Toast.makeText(requireContext(), "History cleared", Toast.LENGTH_SHORT).show()
+                AnalyticsManager.log("history_cleared")
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun refreshHistoryInOverlay(recyclerView: RecyclerView, emptyState: LinearLayout) {
+        val historyList = HistoryManager.getHistory(requireContext())
+
+        if (historyList.isEmpty()) {
+            emptyState.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        } else {
+            emptyState.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+            (recyclerView.adapter as? HistoryBottomSheetAdapter)?.updateHistory(historyList)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (isHistoryVisible) {
+                hideHistoryFromTop()
+            } else {
+                isEnabled = false
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (isHistoryVisible) {
+            (historyOverlayView?.parent as? ViewGroup)?.removeView(historyOverlayView)
+            historyOverlayView = null
+            isHistoryVisible = false
+        }
+    }
+
+    private fun refreshHistoryList(recyclerView: RecyclerView, emptyState: LinearLayout) {
+        val historyList = HistoryManager.getHistory(requireContext())
+
+        if (historyList.isEmpty()) {
+            emptyState.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        } else {
+            emptyState.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+            (recyclerView.adapter as? HistoryBottomSheetAdapter)?.updateHistory(historyList)
+        }
+    }
+
 
     private fun addNewCalculationHistory(expression: String, result: String) {
         val newHistoryItem = CalculationHistory(expression, result)
@@ -430,6 +665,9 @@ class BasicCalculatorFragment : Fragment() {
                         binding.tvSecondaryBC.text = "$input = $formattedResult"
                         addedBC = false
                         clearError()
+
+                        // Save to persistent history
+                        HistoryManager.saveCalculation(requireContext(), input, formattedResult)
 
                         addNewCalculationHistory(input, formattedResult)
                         AnalyticsManager.logCalculationPerformed("Basic Calculator", "calculate")

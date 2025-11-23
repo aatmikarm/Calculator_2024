@@ -673,207 +673,156 @@ class MainActivity : AppCompatActivity() {
             "Basic" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }
-
             "Convertor" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }
-
-            "Stopwatch" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Time Zone Converter" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Percentage" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Ratio Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Fraction Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Proportion Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "LCM & GCD Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Number Tables" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Interest Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Loan Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "ROI Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Investment Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "GST Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Loan Comparison" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Fuel Economy Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Ohm's Law" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Roll a Dice" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Random Number Generator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Molarity Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "pH Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Stoichiometry Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Ideal Gas Law" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Pregnancy Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Period Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Ovulation & Fertility" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Budget Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Trip Estimate" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Tax Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Contribution Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Lightning Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Compass" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Level" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Love Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Friendship Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Free Fall" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Area Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "GPA Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Age" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Length" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Weight" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Speed" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Tip" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Body Mass Index" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Calorie Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Shapes" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
-            "Equation" -> Intent(this, CalculatorActivity::class.java).apply {
-                putExtra("calculatorName", calculatorName)
-            }
-
             "Currency Converter" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }
-
+            "Percentage" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Age" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Tip" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Body Mass Index" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Loan Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Interest Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "GST Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
             "Temperature" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }
-
+            "Length" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Weight" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Area Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Calorie Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Investment Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Tax Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Speed" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Fuel Economy Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "GPA Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Budget Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Stopwatch" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Fraction Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Ratio Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "ROI Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Loan Comparison" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Shapes" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Equation" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Time Zone Converter" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Proportion Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Trip Estimate" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "LCM & GCD Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Number Tables" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Pregnancy Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Period Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Ovulation & Fertility" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Contribution Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Ohm's Law" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Free Fall" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
             "Bodies" -> Intent(this, CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }
-
+            "Lightning Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Compass" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Level" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Molarity Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "pH Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Stoichiometry Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Ideal Gas Law" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Love Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Friendship Calculator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Roll a Dice" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
+            "Random Number Generator" -> Intent(this, CalculatorActivity::class.java).apply {
+                putExtra("calculatorName", calculatorName)
+            }
             else -> null
         }
 

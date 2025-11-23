@@ -51,19 +51,39 @@
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="36dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="36dp"
                     android:elevation="10dp"
                     android:backgroundTint="?attr/colorPrimary"
-                    ads:cardCornerRadius="18dp">
+                    ads:cardCornerRadius="12dp">
 
-                    <ImageView
-                        android:id="@+id/historyArrow"
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/file_search"
-                        android:backgroundTint="?attr/colorOnPrimary" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/historyArrow"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="10dp"
+                            android:background="@drawable/file_search"
+                            android:backgroundTint="?attr/colorOnPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Calculation History"
+                            android:textSize="14sp"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:layout_marginHorizontal="10dp" />
+
+                    </LinearLayout>
+
+
 
                 </androidx.cardview.widget.CardView>
 
@@ -520,7 +540,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     android:backgroundTint="?attr/colorPrimary"
-                    ads:cardCornerRadius="14dp">
+                    ads:cardCornerRadius="12dp">
 
                     <ImageView
                         android:id="@+id/toggleArrow"
