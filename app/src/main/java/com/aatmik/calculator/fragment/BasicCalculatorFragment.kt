@@ -2,15 +2,18 @@ package com.aatmik.calculator.fragment
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -33,7 +36,6 @@ import com.aatmik.calculator.util.ButtonUtil.vibratePhone
 import com.aatmik.calculator.util.CalculationUtil
 import com.aatmik.calculator.util.HistoryManager
 import com.aatmik.calculator.util.PrefUtil
-import com.aatmik.calculator.util.SwipeGestureListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.math.BigDecimal
 import java.math.MathContext
@@ -47,10 +49,12 @@ class BasicCalculatorFragment : Fragment() {
     private val calculationHistory = mutableListOf<CalculationHistory>()
     private lateinit var historyAdapter: HistoryAdapter
     private lateinit var recyclerView: RecyclerView
-
-    private var historyBottomSheet: BottomSheetDialog? = null
     private var historyOverlayView: View? = null
+    private var historyPanel: LinearLayout? = null
     private var isHistoryVisible = false
+    private var isHistoryExpanded = false
+    private var initialY = 0f
+    private var currentY = 0f
 
     // Advanced calculator states
     private var isPowerMode = false
@@ -116,29 +120,119 @@ class BasicCalculatorFragment : Fragment() {
         setupSwipeGesture()
     }
 
+//    // Setup swipe gesture with large detection area
+//    @SuppressLint("ClickableViewAccessibility")
+//    private fun setupSwipeGesture() {
+//        // Large swipe area - top 40% of screen
+//        val swipeAreaHeight = (resources.displayMetrics.heightPixels * 0.7).toInt()
+//
+//        binding.root.setOnTouchListener { v, event ->
+//            when (event.action) {
+//                MotionEvent.ACTION_DOWN -> {
+//                    initialY = event.y
+//                    // Check if touch is in top area
+//                    if (event.y < swipeAreaHeight && !isHistoryVisible) {
+//                        true
+//                    } else {
+//                        false
+//                    }
+//                }
+//                MotionEvent.ACTION_MOVE -> {
+//                    if (initialY < swipeAreaHeight && !isHistoryVisible) {
+//                        val deltaY = event.y - initialY
+//                        // If swiping down more than 50px
+//                        if (deltaY > 30) {
+//                            showHistoryHalfScreen()
+//                            true
+//                        } else {
+//                            false
+//                        }
+//                    } else {
+//                        false
+//                    }
+//                }
+//                else -> false
+//            }
+//        }
+//    }
+
+    // Setup swipe gesture with large detection area
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupSwipeGesture() {
-        val swipeListener = SwipeGestureListener(requireContext()) {
-            if (!isHistoryVisible) {
-                showHistoryFromTop()
+        var startY = 0f
+        var startX = 0f
+        var isTracking = false
+
+        // Set up gesture on the entire upper constraint layout area
+        val upperArea = binding.btHistory.parent as View
+
+        upperArea.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    startY = event.rawY
+                    startX = event.rawX
+                    isTracking = true
+                    false  // Don't consume, let children handle clicks
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    if (isTracking && !isHistoryVisible) {
+                        val deltaY = event.rawY - startY
+                        val deltaX = kotlin.math.abs(event.rawX - startX)
+
+                        // Vertical swipe down with minimal horizontal movement
+                        if (deltaY > 80 && deltaX < 100) {
+                            showHistoryHalfScreen()
+                            isTracking = false
+                            true
+                        } else {
+                            false
+                        }
+                    } else {
+                        false
+                    }
+                }
+
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    isTracking = false
+                    false
+                }
+
+                else -> false
             }
         }
-        binding.root.setOnTouchListener(swipeListener)
+
+        // ALSO add gesture to display area for maximum coverage
+        binding.linearLayout2.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    startY = event.rawY
+                    startX = event.rawX
+                    false
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    if (!isHistoryVisible) {
+                        val deltaY = event.rawY - startY
+                        val deltaX = kotlin.math.abs(event.rawX - startX)
+
+                        if (deltaY > 60 && deltaX < 100) {
+                            showHistoryHalfScreen()
+                            true
+                        } else {
+                            false
+                        }
+                    } else {
+                        false
+                    }
+                }
+
+                else -> false
+            }
+        }
     }
 
-    private fun setupUI() {
-        toggleBarLogic()
-        // Clear any error states on start
-        clearError()
-    }
-
-    private fun setupButtons() {
-        setupBasicButtons()
-        setupScientificButtons()
-        setupAdvancedButtons()
-        setupMemoryButtons()
-        setupControlButtons()
-    }
-
+    // Update history button
     private fun historyView() {
         recyclerView = binding.rvHistory
         historyAdapter = HistoryAdapter(calculationHistory) { historyItem ->
@@ -154,25 +248,27 @@ class BasicCalculatorFragment : Fragment() {
         binding.btHistory.setOnClickListener {
             ButtonUtil.vibratePhone(requireContext())
             if (isHistoryVisible) {
-                hideHistoryFromTop()
+                hideHistoryPanel()
             } else {
-                showHistoryFromTop()
+                showHistoryHalfScreen()
             }
         }
     }
 
-    // New method: Show history with top-down animation
-    private fun showHistoryFromTop() {
+    // Show history at half screen
+    private fun showHistoryHalfScreen() {
         if (isHistoryVisible) return
 
         val parentView = requireActivity().findViewById<ViewGroup>(android.R.id.content)
-        val historyView = layoutInflater.inflate(R.layout.bottom_sheet_history, parentView, false)
+        val historyView = layoutInflater.inflate(R.layout.sliding_history_panel, parentView, false)
 
-        // Setup views
+        val historyPanel = historyView.findViewById<LinearLayout>(R.id.historyPanel)
+        val swipeHandleArea = historyView.findViewById<LinearLayout>(R.id.swipeHandleArea)
         val rvHistoryList = historyView.findViewById<RecyclerView>(R.id.rvHistoryList)
         val emptyStateLayout = historyView.findViewById<LinearLayout>(R.id.emptyStateLayout)
         val btnClearHistory = historyView.findViewById<ImageView>(R.id.btnClearHistory)
         val btnCloseHistory = historyView.findViewById<ImageView>(R.id.btnCloseHistory)
+        val overlay = historyView.findViewById<FrameLayout>(R.id.historyOverlay)
 
         // Get history data
         val historyList = HistoryManager.getHistory(requireContext())
@@ -186,13 +282,12 @@ class BasicCalculatorFragment : Fragment() {
             rvHistoryList.visibility = View.VISIBLE
         }
 
-        // Setup adapter with fast animation
+        // Setup adapter
         val adapter = HistoryBottomSheetAdapter(
             historyList,
             onReuse = { result ->
-                // Fast population animation
                 animateResultPopulation(result)
-                hideHistoryFromTop()
+                hideHistoryPanel()
             },
             onDelete = { position ->
                 showDeleteConfirmationDialog(position) {
@@ -214,73 +309,149 @@ class BasicCalculatorFragment : Fragment() {
 
         btnCloseHistory.setOnClickListener {
             ButtonUtil.vibratePhone(requireContext())
-            hideHistoryFromTop()
+            hideHistoryPanel()
         }
 
-        // Click outside to close
-        historyView.setOnClickListener {
-            hideHistoryFromTop()
+        // Click overlay to close
+        overlay.setOnClickListener {
+            hideHistoryPanel()
         }
 
         // Prevent clicks from passing through
-        rvHistoryList.setOnClickListener { /* Consume click */ }
-        historyView.findViewById<LinearLayout>(R.id.emptyStateLayout)?.setOnClickListener { /* Consume */ }
+        historyPanel.setOnClickListener { /* Consume click */ }
+
+        // Setup swipe gesture on handle area
+        setupPanelSwipeGesture(swipeHandleArea, historyPanel)
 
         // Add to parent and animate
-        historyView.translationY = -parentView.height.toFloat()
+        historyPanel.translationY = -historyPanel.height.toFloat()
         parentView.addView(historyView)
         historyOverlayView = historyView
+        this.historyPanel = historyPanel
         isHistoryVisible = true
+        isHistoryExpanded = false
+
+        // Make overlay transparent initially
+        overlay.alpha = 0f
 
         // Slide down animation
-        historyView.animate()
-            .translationY(0f)
+        historyPanel.post {
+            val screenHeight = parentView.height
+            val halfScreenPosition = screenHeight * 0.5f
+
+            historyPanel.animate()
+                .translationY(0f)
+                .setDuration(350)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+
+            overlay.animate()
+                .alpha(1f)
+                .setDuration(350)
+                .start()
+        }
+
+        AnalyticsManager.log("history_half_screen_opened")
+    }
+
+    // Setup swipe gesture on panel
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setupPanelSwipeGesture(handleArea: View, panel: LinearLayout) {
+        var startY = 0f
+        var startTranslationY = 0f
+
+        handleArea.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    startY = event.rawY
+                    startTranslationY = panel.translationY
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val deltaY = event.rawY - startY
+                    val newTranslationY = startTranslationY + deltaY
+
+                    // Only allow upward movement (negative translation)
+                    if (newTranslationY <= 0) {
+                        panel.translationY = newTranslationY
+                    }
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    val deltaY = event.rawY - startY
+                    val threshold = 100f
+
+                    if (deltaY < -threshold) {
+                        // Swiped up - keep at current position or snap
+                        panel.animate()
+                            .translationY(0f)
+                            .setDuration(200)
+                            .start()
+                    } else if (deltaY > threshold) {
+                        // Swiped down - close panel
+                        hideHistoryPanel()
+                    } else {
+                        // Small movement - snap back
+                        panel.animate()
+                            .translationY(0f)
+                            .setDuration(200)
+                            .start()
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    // Hide history panel
+    private fun hideHistoryPanel() {
+        if (!isHistoryVisible || historyOverlayView == null) return
+
+        val view = historyOverlayView!!
+        val panel = historyPanel!!
+        val overlay = view.findViewById<FrameLayout>(R.id.historyOverlay)
+        val parentView = view.parent as? ViewGroup
+
+        // Slide up animation
+        panel.animate()
+            .translationY(-panel.height.toFloat())
             .setDuration(300)
             .setInterpolator(DecelerateInterpolator())
             .start()
 
-        AnalyticsManager.log("history_overlay_opened")
-    }
-
-    // New method: Hide history with top-up animation
-    private fun hideHistoryFromTop() {
-        if (!isHistoryVisible || historyOverlayView == null) return
-
-        val view = historyOverlayView!!
-        val parentView = view.parent as? ViewGroup
-
-        view.animate()
-            .translationY(-view.height.toFloat())
-            .setDuration(250)
-            .setInterpolator(DecelerateInterpolator())
+        overlay.animate()
+            .alpha(0f)
+            .setDuration(300)
             .withEndAction {
                 parentView?.removeView(view)
                 historyOverlayView = null
+                historyPanel = null
                 isHistoryVisible = false
+                isHistoryExpanded = false
             }
             .start()
 
-        AnalyticsManager.log("history_overlay_closed")
+        AnalyticsManager.log("history_panel_closed")
     }
 
-    // New method: Animate result population with bounce effect
+    // Animate result population
     private fun animateResultPopulation(result: String) {
         ButtonUtil.vibratePhone(requireContext())
 
-        val startText = binding.tvPrimaryBC.text.toString()
         binding.tvPrimaryBC.text = result
 
-        // Scale animation for visual feedback
+        // Scale animation
         binding.tvPrimaryBC.apply {
             scaleX = 0.7f
             scaleY = 0.7f
             alpha = 0.5f
 
             animate()
-                .scaleX(1.1f)
-                .scaleY(1.1f)
+                .scaleX(1.15f)
+                .scaleY(1.15f)
                 .alpha(1f)
-                .setDuration(200)
+                .setDuration(150)
                 .withEndAction {
                     animate()
                         .scaleX(1f)
@@ -295,7 +466,7 @@ class BasicCalculatorFragment : Fragment() {
         AnalyticsManager.log("history_result_populated", "result" to result)
     }
 
-    // Replace the old showDeleteConfirmation method with this:
+    // Delete confirmation
     private fun showDeleteConfirmationDialog(position: Int, onDeleted: () -> Unit) {
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Delete Calculation")
@@ -310,7 +481,7 @@ class BasicCalculatorFragment : Fragment() {
             .show()
     }
 
-    // And update the clear all method:
+    // Clear all confirmation
     private fun showClearAllConfirmationDialog(onCleared: () -> Unit) {
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Clear All History")
@@ -325,6 +496,7 @@ class BasicCalculatorFragment : Fragment() {
             .show()
     }
 
+    // Refresh history in overlay
     private fun refreshHistoryInOverlay(recyclerView: RecyclerView, emptyState: LinearLayout) {
         val historyList = HistoryManager.getHistory(requireContext())
 
@@ -338,12 +510,13 @@ class BasicCalculatorFragment : Fragment() {
         }
     }
 
+    // Handle back press
     override fun onResume() {
         super.onResume()
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (isHistoryVisible) {
-                hideHistoryFromTop()
+                hideHistoryPanel()
             } else {
                 isEnabled = false
                 requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -351,28 +524,30 @@ class BasicCalculatorFragment : Fragment() {
         }
     }
 
+    // Clean up
     override fun onDestroyView() {
         super.onDestroyView()
         if (isHistoryVisible) {
             (historyOverlayView?.parent as? ViewGroup)?.removeView(historyOverlayView)
             historyOverlayView = null
+            historyPanel = null
             isHistoryVisible = false
         }
     }
 
-    private fun refreshHistoryList(recyclerView: RecyclerView, emptyState: LinearLayout) {
-        val historyList = HistoryManager.getHistory(requireContext())
-
-        if (historyList.isEmpty()) {
-            emptyState.visibility = View.VISIBLE
-            recyclerView.visibility = View.GONE
-        } else {
-            emptyState.visibility = View.GONE
-            recyclerView.visibility = View.VISIBLE
-            (recyclerView.adapter as? HistoryBottomSheetAdapter)?.updateHistory(historyList)
-        }
+    private fun setupUI() {
+        toggleBarLogic()
+        // Clear any error states on start
+        clearError()
     }
 
+    private fun setupButtons() {
+        setupBasicButtons()
+        setupScientificButtons()
+        setupAdvancedButtons()
+        setupMemoryButtons()
+        setupControlButtons()
+    }
 
     private fun addNewCalculationHistory(expression: String, result: String) {
         val newHistoryItem = CalculationHistory(expression, result)
