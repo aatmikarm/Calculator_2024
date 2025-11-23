@@ -77,7 +77,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
@@ -96,6 +96,7 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
+            android:id="@+id/removeAdsText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

@@ -16,8 +16,8 @@ android {
         applicationId = "com.aatmik.calculator"
         minSdk = 25
         targetSdk = 35
-        versionCode = 10
-        versionName = "10.0"
+        versionCode = 13
+        versionName = "13.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -125,6 +125,9 @@ dependencies {
 
     // Glide
     implementation("com.github.bumptech.glide:glide:5.0.5")
+
+    // Google Play Billing
+    implementation("com.android.billingclient:billing-ktx:8.1.0")
 
 
 }

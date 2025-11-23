@@ -38,6 +38,7 @@ import com.aatmik.calculator.util.AnalyticsManager
 import com.aatmik.calculator.util.CalculatorCategoriesUtil
 import com.aatmik.calculator.util.CalculatorUtils
 import com.aatmik.calculator.util.NetworkUtil
+import com.aatmik.calculator.util.SubscriptionManager
 import com.aatmik.calculator.util.ThemeManager
 import com.aatmik.calculator.util.UpdateManager
 import com.google.android.gms.ads.AdRequest
@@ -315,6 +316,18 @@ class MainActivity : AppCompatActivity() {
         }
 
     private fun loadBanner() {
+        // Check if ads are enabled (will be false if user is premium)
+        if (!AdConfig.areAdsEnabled()) {
+            Log.d("BannerAd", "User is premium - No ads!")
+            binding.adViewContainer.visibility = View.GONE
+            return
+        }
+
+        if (AdConfig.getBannerAdId().isEmpty()) {
+            binding.adViewContainer.visibility = View.GONE
+            return
+        }
+
         val adView = AdView(this)
         adView.adUnitId = AdConfig.getBannerAdId()
         adView.setAdSize(adSize)
@@ -333,6 +346,12 @@ class MainActivity : AppCompatActivity() {
 
         // Make theme button visible
         bottomSheetBinding.btnTheme.visibility = View.VISIBLE
+
+        // Show premium status on text
+        if (SubscriptionManager.isPremium()) {
+            // Change text to show user is already premium
+            bottomSheetBinding.removeAdsText.text = "Premium Active ✓"
+        }
 
         bottomSheetBinding.rateApp.setOnClickListener {
             rateApp()
@@ -520,8 +539,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun removeAds() {
-        Toast.makeText(this, "Removing ads / Starting premium subscription", Toast.LENGTH_SHORT)
+        if (SubscriptionManager.isPremium()) {
+            Toast.makeText(this, "You're already a Premium user! 🎉", Toast.LENGTH_SHORT).show()
+            AnalyticsManager.log("premium_already_active")
+            return
+        }
+
+        // Show premium dialog
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Go Premium")
+            .setMessage("Remove all ads and unlock all features for just ₹200/year!\n\n✓ No Banner Ads\n✓ No Interstitial Ads\n✓ All Features Unlocked\n✓ Works on all your devices")
+            .setPositiveButton("Subscribe ₹200/year") { _, _ ->
+                SubscriptionManager.startSubscriptionPurchase(this) { error ->
+                    Toast.makeText(this, error, Toast.LENGTH_LONG).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
             .show()
+
         AnalyticsManager.log("remove_ads_clicked")
     }
 

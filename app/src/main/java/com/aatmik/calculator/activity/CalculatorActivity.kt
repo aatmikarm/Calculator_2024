@@ -3,6 +3,7 @@ package com.aatmik.calculator.activity
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.WindowMetrics
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -345,7 +346,15 @@ class CalculatorActivity : AppCompatActivity() {
         }
 
     private fun loadBanner() {
+        // Check if ads are enabled (will be false if user is premium)
+        if (!AdConfig.areAdsEnabled()) {
+            Log.d("BannerAd", "User is premium - No ads!")
+            binding.adViewContainer.visibility = View.GONE
+            return
+        }
+
         if (AdConfig.getBannerAdId().isEmpty()) {
+            binding.adViewContainer.visibility = View.GONE
             return
         }
 

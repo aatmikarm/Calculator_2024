@@ -8,6 +8,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.aatmik.calculator.util.AnalyticsManager
+import com.aatmik.calculator.util.SubscriptionManager
 import com.google.firebase.FirebaseApp
 
 class CalculatorApplication : Application(), Application.ActivityLifecycleCallbacks {
@@ -31,6 +32,10 @@ class CalculatorApplication : Application(), Application.ActivityLifecycleCallba
         // Initialize Analytics
         AnalyticsManager.init(this)
         Log.d(TAG, "Analytics initialized")
+
+        // **NEW: Initialize Subscription Manager - MUST BE BEFORE OTHER INITIALIZATIONS**
+        SubscriptionManager.init(this)
+        Log.d(TAG, "Subscription Manager initialized")
 
         // Register lifecycle callbacks
         registerActivityLifecycleCallbacks(this)
