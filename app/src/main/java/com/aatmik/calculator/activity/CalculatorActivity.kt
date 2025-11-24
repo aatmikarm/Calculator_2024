@@ -20,11 +20,13 @@ import com.aatmik.calculator.fragment.BasicCalculatorFragment
 import com.aatmik.calculator.fragment.BodyMassIndexFragment
 import com.aatmik.calculator.fragment.BudgetCalculatorFragment
 import com.aatmik.calculator.fragment.CalorieCalculatorFragment
+import com.aatmik.calculator.fragment.CellDilutionFragment
 import com.aatmik.calculator.fragment.CompassFragment
 import com.aatmik.calculator.fragment.ContributionCalculatorFragment
 import com.aatmik.calculator.fragment.ConverterFragment
 import com.aatmik.calculator.fragment.CurrencyConverterFragment
 import com.aatmik.calculator.fragment.DiceRollerFragment
+import com.aatmik.calculator.fragment.FdCalculatorFragment
 import com.aatmik.calculator.fragment.FractionCalculatorFragment
 import com.aatmik.calculator.fragment.FreeFallFragment
 import com.aatmik.calculator.fragment.FriendshipCalculatorFragment
@@ -50,6 +52,7 @@ import com.aatmik.calculator.fragment.PeriodCalculatorFragment
 import com.aatmik.calculator.fragment.PhCalculatorFragment
 import com.aatmik.calculator.fragment.PregnancyCalculatorFragment
 import com.aatmik.calculator.fragment.ProportionCalculatorFragment
+import com.aatmik.calculator.fragment.PunnettSquareFragment
 import com.aatmik.calculator.fragment.RandomNumberGeneratorFragment
 import com.aatmik.calculator.fragment.RatioCalculatorFragment
 import com.aatmik.calculator.fragment.RoiCalculatorFragment
@@ -164,6 +167,7 @@ class CalculatorActivity : AppCompatActivity() {
                 "Age" -> loadFragment(AgeFragment())
                 "Tip" -> loadFragment(TipFragment())
                 "Body Mass Index" -> loadFragment(BodyMassIndexFragment())
+                "FD Calculator" -> loadFragment(FdCalculatorFragment())
                 "Loan Calculator" -> loadFragment(LoanCalculatorFragment())
                 "Interest Calculator" -> loadFragment(InterestCalculatorFragment())
                 "GST Calculator" -> loadFragment(GstCalculatorFragment())
@@ -193,6 +197,8 @@ class CalculatorActivity : AppCompatActivity() {
                 "Pregnancy Calculator" -> loadFragment(PregnancyCalculatorFragment())
                 "Period Calculator" -> loadFragment(PeriodCalculatorFragment())
                 "Ovulation & Fertility" -> loadFragment(OvulationFertilityFragment())
+                "Punnett Square" -> loadFragment(PunnettSquareFragment())
+                "Cell Dilution" -> loadFragment(CellDilutionFragment())
                 "Contribution Calculator" -> loadFragment(ContributionCalculatorFragment())
                 "Ohm's Law" -> loadFragment(OhmsLawFragment())
                 "Free Fall" -> loadFragment(FreeFallFragment())

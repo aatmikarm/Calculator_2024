@@ -41,6 +41,7 @@ object CalculatorCategoriesUtil {
 
         // Financial
         "Percentage" to "Financial",
+        "FD Calculator" to "Financial",
         "Interest Calculator" to "Financial",
         "Loan Calculator" to "Financial",
         "ROI Calculator" to "Financial",
@@ -82,6 +83,10 @@ object CalculatorCategoriesUtil {
         "GPA Calculator" to "Math",
         "Shapes" to "Math",
         "Bodies" to "Math",
+
+        // Biology
+        "Punnett Square" to "Biology",
+        "Cell Dilution" to "Biology",
 
         // Chemistry
         // Add your chemistry calculators here when ready
