@@ -73,6 +73,8 @@ object CalculatorUtils {
             Calculator("Column Buckling", R.drawable.bodies),
             Calculator("Voltage Divider", R.drawable.electric),
             Calculator("Function Grapher", R.drawable.equation_xy),
+            Calculator("Statistical Graph Generator", R.drawable.statistical),
+            Calculator("Coordinate Geometry", R.drawable.geometry),
             Calculator("Free Fall", R.drawable.length),
             Calculator("Bodies", R.drawable.bodies),
             Calculator("Lightning Calculator", R.drawable.electric),

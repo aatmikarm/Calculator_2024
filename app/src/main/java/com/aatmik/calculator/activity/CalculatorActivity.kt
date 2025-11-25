@@ -27,6 +27,7 @@ import com.aatmik.calculator.fragment.ColumnBucklingFragment
 import com.aatmik.calculator.fragment.CompassFragment
 import com.aatmik.calculator.fragment.ContributionCalculatorFragment
 import com.aatmik.calculator.fragment.ConverterFragment
+import com.aatmik.calculator.fragment.CoordinateGeometryFragment
 import com.aatmik.calculator.fragment.CurrencyConverterFragment
 import com.aatmik.calculator.fragment.DiceRollerFragment
 import com.aatmik.calculator.fragment.FdCalculatorFragment
@@ -62,6 +63,7 @@ import com.aatmik.calculator.fragment.RandomNumberGeneratorFragment
 import com.aatmik.calculator.fragment.RatioCalculatorFragment
 import com.aatmik.calculator.fragment.RoiCalculatorFragment
 import com.aatmik.calculator.fragment.SpeedFragment
+import com.aatmik.calculator.fragment.StatisticalGraphFragment
 import com.aatmik.calculator.fragment.StoichiometryFragment
 import com.aatmik.calculator.fragment.StopwatchFragment
 import com.aatmik.calculator.fragment.TaxCalculatorFragment
@@ -213,6 +215,8 @@ class CalculatorActivity : AppCompatActivity() {
                 "Column Buckling" -> loadFragment(ColumnBucklingFragment())
                 "Voltage Divider" -> loadFragment(VoltageDividerFragment())
                 "Function Grapher" -> loadFragment(FunctionGrapherFragment())
+                "Statistical Graph Generator" -> loadFragment(StatisticalGraphFragment())
+                "Coordinate Geometry" -> loadFragment(CoordinateGeometryFragment())
                 "Free Fall" -> loadFragment(FreeFallFragment())
                 "Bodies" -> loadFragment(BodiesFragment())
                 "Lightning Calculator" -> loadFragment(LightningCalculatorFragment())

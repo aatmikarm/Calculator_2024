@@ -65,6 +65,8 @@ object CalculatorCategoriesUtil {
 
         // Graphs
         "Function Grapher" to "Graphs",
+        "Statistical Graph Generator" to "Graphs",
+        "Coordinate Geometry" to "Graphs",
 
         // Health & Fitness
         "Body Mass Index" to "Health & Fitness",
