@@ -17,10 +17,13 @@ import com.aatmik.calculator.databinding.ActivityCalculatorBinding
 import com.aatmik.calculator.fragment.AgeFragment
 import com.aatmik.calculator.fragment.AreaCalculatorFragment
 import com.aatmik.calculator.fragment.BasicCalculatorFragment
+import com.aatmik.calculator.fragment.BeamCalculatorFragment
 import com.aatmik.calculator.fragment.BodyMassIndexFragment
+import com.aatmik.calculator.fragment.BreakEvenAnalysisFragment
 import com.aatmik.calculator.fragment.BudgetCalculatorFragment
 import com.aatmik.calculator.fragment.CalorieCalculatorFragment
 import com.aatmik.calculator.fragment.CellDilutionFragment
+import com.aatmik.calculator.fragment.ColumnBucklingFragment
 import com.aatmik.calculator.fragment.CompassFragment
 import com.aatmik.calculator.fragment.ContributionCalculatorFragment
 import com.aatmik.calculator.fragment.ConverterFragment
@@ -31,6 +34,7 @@ import com.aatmik.calculator.fragment.FractionCalculatorFragment
 import com.aatmik.calculator.fragment.FreeFallFragment
 import com.aatmik.calculator.fragment.FriendshipCalculatorFragment
 import com.aatmik.calculator.fragment.FuelEconomyCalculatorFragment
+import com.aatmik.calculator.fragment.FunctionGrapherFragment
 import com.aatmik.calculator.fragment.GpaCalculatorFragment
 import com.aatmik.calculator.fragment.GstCalculatorFragment
 import com.aatmik.calculator.fragment.IdealGasLawFragment
@@ -44,6 +48,7 @@ import com.aatmik.calculator.fragment.LoanCalculatorFragment
 import com.aatmik.calculator.fragment.LoanComparisonFragment
 import com.aatmik.calculator.fragment.LoveCalculatorFragment
 import com.aatmik.calculator.fragment.MolarityFragment
+import com.aatmik.calculator.fragment.NpvIrrFragment
 import com.aatmik.calculator.fragment.NumberTablesFragment
 import com.aatmik.calculator.fragment.OhmsLawFragment
 import com.aatmik.calculator.fragment.OvulationFertilityFragment
@@ -64,6 +69,7 @@ import com.aatmik.calculator.fragment.TemperatureFragment
 import com.aatmik.calculator.fragment.TimeZoneFragment
 import com.aatmik.calculator.fragment.TipFragment
 import com.aatmik.calculator.fragment.TripEstimateFragment
+import com.aatmik.calculator.fragment.VoltageDividerFragment
 import com.aatmik.calculator.fragment.WeightFragment
 import com.aatmik.calculator.fragment.bodies.BodiesFragment
 import com.aatmik.calculator.fragment.shapes.ShapesFragment
@@ -186,7 +192,9 @@ class CalculatorActivity : AppCompatActivity() {
                 "Fraction Calculator" -> loadFragment(FractionCalculatorFragment())
                 "Ratio Calculator" -> loadFragment(RatioCalculatorFragment())
                 "ROI Calculator" -> loadFragment(RoiCalculatorFragment())
+                "Break-Even Analysis" -> loadFragment(BreakEvenAnalysisFragment())
                 "Loan Comparison" -> loadFragment(LoanComparisonFragment())
+                "NPV & IRR Calculator" -> loadFragment(NpvIrrFragment())
                 "Shapes" -> loadFragment(ShapesFragment())
                 "Equation" -> loadFragment(MathEquationSolverFragment())
                 "Time Zone Converter" -> loadFragment(TimeZoneFragment())
@@ -201,6 +209,10 @@ class CalculatorActivity : AppCompatActivity() {
                 "Cell Dilution" -> loadFragment(CellDilutionFragment())
                 "Contribution Calculator" -> loadFragment(ContributionCalculatorFragment())
                 "Ohm's Law" -> loadFragment(OhmsLawFragment())
+                "Beam Calculator" -> loadFragment(BeamCalculatorFragment())
+                "Column Buckling" -> loadFragment(ColumnBucklingFragment())
+                "Voltage Divider" -> loadFragment(VoltageDividerFragment())
+                "Function Grapher" -> loadFragment(FunctionGrapherFragment())
                 "Free Fall" -> loadFragment(FreeFallFragment())
                 "Bodies" -> loadFragment(BodiesFragment())
                 "Lightning Calculator" -> loadFragment(LightningCalculatorFragment())

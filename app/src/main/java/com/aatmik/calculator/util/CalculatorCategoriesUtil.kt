@@ -54,6 +54,18 @@ object CalculatorCategoriesUtil {
         "Tip" to "Financial",
         "Ratio Calculator" to "Financial",
 
+        // MBA
+        "Break-Even Analysis" to "MBA",
+        "NPV & IRR Calculator" to "MBA",
+
+        // Engineering
+        "Beam Calculator" to "Engineering",
+        "Column Buckling" to "Engineering",
+        "Voltage Divider" to "Engineering",
+
+        // Graphs
+        "Function Grapher" to "Graphs",
+
         // Health & Fitness
         "Body Mass Index" to "Health & Fitness",
         "Calorie Calculator" to "Health & Fitness",
