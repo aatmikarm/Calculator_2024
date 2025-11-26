@@ -3,14 +3,17 @@ package com.aatmik.calculator.fragment
 import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.WindowMetrics
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
@@ -27,6 +30,7 @@ import com.aatmik.calculator.adapter.HistoryAdapter
 import com.aatmik.calculator.adapter.HistoryBottomSheetAdapter
 import com.aatmik.calculator.databinding.FragmentBasicCalculatorBinding
 import com.aatmik.calculator.model.CalculationHistory
+import com.aatmik.calculator.util.AdConfig
 import com.aatmik.calculator.util.AnalyticsManager
 import com.aatmik.calculator.util.ButtonUtil
 import com.aatmik.calculator.util.ButtonUtil.addNumberValueToText
@@ -35,7 +39,11 @@ import com.aatmik.calculator.util.ButtonUtil.invalidInputToast
 import com.aatmik.calculator.util.ButtonUtil.vibratePhone
 import com.aatmik.calculator.util.CalculationUtil
 import com.aatmik.calculator.util.HistoryManager
+import com.aatmik.calculator.util.NetworkUtil
 import com.aatmik.calculator.util.PrefUtil
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.math.BigDecimal
 import java.math.MathContext
@@ -75,6 +83,8 @@ class BasicCalculatorFragment : Fragment() {
 
     // Precision handling
     private val mathContext = MathContext(34, RoundingMode.HALF_UP)
+
+    private var adView: AdView? = null
 
     companion object {
         var addedBC = false
@@ -118,43 +128,59 @@ class BasicCalculatorFragment : Fragment() {
         historyView()
         restoreMemoryState()
         setupSwipeGesture()
+        runAds()
     }
 
-//    // Setup swipe gesture with large detection area
-//    @SuppressLint("ClickableViewAccessibility")
-//    private fun setupSwipeGesture() {
-//        // Large swipe area - top 40% of screen
-//        val swipeAreaHeight = (resources.displayMetrics.heightPixels * 0.7).toInt()
-//
-//        binding.root.setOnTouchListener { v, event ->
-//            when (event.action) {
-//                MotionEvent.ACTION_DOWN -> {
-//                    initialY = event.y
-//                    // Check if touch is in top area
-//                    if (event.y < swipeAreaHeight && !isHistoryVisible) {
-//                        true
-//                    } else {
-//                        false
-//                    }
-//                }
-//                MotionEvent.ACTION_MOVE -> {
-//                    if (initialY < swipeAreaHeight && !isHistoryVisible) {
-//                        val deltaY = event.y - initialY
-//                        // If swiping down more than 50px
-//                        if (deltaY > 30) {
-//                            showHistoryHalfScreen()
-//                            true
-//                        } else {
-//                            false
-//                        }
-//                    } else {
-//                        false
-//                    }
-//                }
-//                else -> false
-//            }
-//        }
-//    }
+    private fun runAds() {
+        if (NetworkUtil.isNetworkAvailable(requireContext())) {
+            loadBanner()
+        } else {
+            Log.d("NetworkCheck", "No internet connection available.")
+        }
+    }
+
+    // ADD THIS METHOD: Get ad size
+    private val adSize: AdSize
+        get() {
+            val displayMetrics = resources.displayMetrics
+            val adWidthPixels = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val windowMetrics: WindowMetrics = requireActivity().windowManager.currentWindowMetrics
+                windowMetrics.bounds.width()
+            } else {
+                displayMetrics.widthPixels
+            }
+            val density = displayMetrics.density
+            val adWidth = (adWidthPixels / density).toInt()
+            return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(requireContext(), adWidth)
+        }
+
+    // ADD THIS METHOD: Load banner ad
+    private fun loadBanner() {
+        // Check if ads are enabled (will be false if user is premium)
+        if (!AdConfig.areAdsEnabled()) {
+            Log.d("BannerAd", "User is premium - No ads!")
+            binding.adViewContainer.visibility = View.GONE
+            return
+        }
+
+        if (AdConfig.getBannerAdId().isEmpty()) {
+            binding.adViewContainer.visibility = View.GONE
+            return
+        }
+
+        val adView = AdView(requireContext())
+        adView.adUnitId = AdConfig.getBannerAdId()
+        adView.setAdSize(adSize)
+        this.adView = adView
+
+        binding.adViewContainer.removeAllViews()
+        binding.adViewContainer.addView(adView)
+
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
+
+        Log.d("BannerAd", "Banner ad loaded in BasicCalculatorFragment")
+    }
 
     // Setup swipe gesture with large detection area
     @SuppressLint("ClickableViewAccessibility")
@@ -533,6 +559,10 @@ class BasicCalculatorFragment : Fragment() {
             historyPanel = null
             isHistoryVisible = false
         }
+        inputRunnable?.let { inputHandler.removeCallbacks(it) }
+
+        // Destroy ad view
+        adView?.destroy()
     }
 
     private fun setupUI() {

@@ -31,19 +31,32 @@
         android:roundIcon="@mipmap/calculator_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Calculator">
+
+        <!-- NEW: ContainerActivity - Main launcher with ViewPager -->
         <activity
-            android:name=".activity.CalculatorActivity"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.ContainerActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- CalculatorActivity - For individual calculator screens -->
+        <activity
+            android:name=".activity.CalculatorActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait" />
+
+        <!-- MainActivity - Keep for backward compatibility or remove if not needed -->
+        <activity
+            android:name=".activity.MainActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

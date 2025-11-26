@@ -129,5 +129,8 @@ dependencies {
     // Google Play Billing
     implementation("com.android.billingclient:billing-ktx:8.1.0")
 
+    // viewpager 2
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
+
 
 }
