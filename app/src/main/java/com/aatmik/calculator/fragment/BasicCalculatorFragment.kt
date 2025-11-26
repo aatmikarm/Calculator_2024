@@ -41,9 +41,6 @@ import com.aatmik.calculator.util.CalculationUtil
 import com.aatmik.calculator.util.HistoryManager
 import com.aatmik.calculator.util.NetworkUtil
 import com.aatmik.calculator.util.PrefUtil
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.math.BigDecimal
 import java.math.MathContext
@@ -83,8 +80,6 @@ class BasicCalculatorFragment : Fragment() {
 
     // Precision handling
     private val mathContext = MathContext(34, RoundingMode.HALF_UP)
-
-    private var adView: AdView? = null
 
     companion object {
         var addedBC = false
@@ -128,58 +123,6 @@ class BasicCalculatorFragment : Fragment() {
         historyView()
         restoreMemoryState()
         setupSwipeGesture()
-        runAds()
-    }
-
-    private fun runAds() {
-        if (NetworkUtil.isNetworkAvailable(requireContext())) {
-            loadBanner()
-        } else {
-            Log.d("NetworkCheck", "No internet connection available.")
-        }
-    }
-
-    // ADD THIS METHOD: Get ad size
-    private val adSize: AdSize
-        get() {
-            val displayMetrics = resources.displayMetrics
-            val adWidthPixels = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                val windowMetrics: WindowMetrics = requireActivity().windowManager.currentWindowMetrics
-                windowMetrics.bounds.width()
-            } else {
-                displayMetrics.widthPixels
-            }
-            val density = displayMetrics.density
-            val adWidth = (adWidthPixels / density).toInt()
-            return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(requireContext(), adWidth)
-        }
-
-    // ADD THIS METHOD: Load banner ad
-    private fun loadBanner() {
-        // Check if ads are enabled (will be false if user is premium)
-        if (!AdConfig.areAdsEnabled()) {
-            Log.d("BannerAd", "User is premium - No ads!")
-            binding.adViewContainer.visibility = View.GONE
-            return
-        }
-
-        if (AdConfig.getBannerAdId().isEmpty()) {
-            binding.adViewContainer.visibility = View.GONE
-            return
-        }
-
-        val adView = AdView(requireContext())
-        adView.adUnitId = AdConfig.getBannerAdId()
-        adView.setAdSize(adSize)
-        this.adView = adView
-
-        binding.adViewContainer.removeAllViews()
-        binding.adViewContainer.addView(adView)
-
-        val adRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
-
-        Log.d("BannerAd", "Banner ad loaded in BasicCalculatorFragment")
     }
 
     // Setup swipe gesture with large detection area
@@ -560,9 +503,6 @@ class BasicCalculatorFragment : Fragment() {
             isHistoryVisible = false
         }
         inputRunnable?.let { inputHandler.removeCallbacks(it) }
-
-        // Destroy ad view
-        adView?.destroy()
     }
 
     private fun setupUI() {

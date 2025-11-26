@@ -17,7 +17,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowMetrics
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.GestureDetectorCompat
@@ -33,17 +32,12 @@ import com.aatmik.calculator.adapter.CategoryAdapter
 import com.aatmik.calculator.databinding.FragmentAllCalculatorsBinding
 import com.aatmik.calculator.databinding.BottomSheetLayoutBinding
 import com.aatmik.calculator.model.Calculator
-import com.aatmik.calculator.util.AdConfig
 import com.aatmik.calculator.util.AnalyticsManager
 import com.aatmik.calculator.util.CalculatorCategoriesUtil
 import com.aatmik.calculator.util.CalculatorUtils
-import com.aatmik.calculator.util.NetworkUtil
 import com.aatmik.calculator.util.SubscriptionManager
 import com.aatmik.calculator.util.ThemeManager
 import com.aatmik.calculator.util.UpdateManager
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -73,8 +67,6 @@ class AllCalculatorsFragment : Fragment() {
     // Gesture detector for swipe functionality
     private lateinit var gestureDetector: GestureDetectorCompat
 
-    private var adView: AdView? = null
-
     companion object {
         private const val GRID_COLUMN_COUNT = 4
         private const val SWIPE_THRESHOLD = 100
@@ -98,7 +90,6 @@ class AllCalculatorsFragment : Fragment() {
         // Check for app updates automatically on startup
         UpdateManager.checkForUpdatesAutomatically(requireActivity())
 
-        runAds()
 
         Log.d("AllCalculatorsFragment", "About to load calculator order")
         loadCalculatorOrder()
@@ -239,55 +230,6 @@ class AllCalculatorsFragment : Fragment() {
         }
 
         calculatorAdapter.updateCalculatorList(filteredList)
-    }
-
-    private fun runAds() {
-        if (NetworkUtil.isNetworkAvailable(requireContext())) {
-            loadBanner()
-        } else {
-            Log.d("NetworkCheck", "No internet connection available.")
-        }
-    }
-
-    // Get the ad size with screen width.
-    private val adSize: AdSize
-        get() {
-            val displayMetrics = resources.displayMetrics
-            val adWidthPixels =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    val windowMetrics: WindowMetrics = requireActivity().windowManager.currentWindowMetrics
-                    windowMetrics.bounds.width()
-                } else {
-                    displayMetrics.widthPixels
-                }
-            val density = displayMetrics.density
-            val adWidth = (adWidthPixels / density).toInt()
-            return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(requireContext(), adWidth)
-        }
-
-    private fun loadBanner() {
-        // Check if ads are enabled (will be false if user is premium)
-        if (!AdConfig.areAdsEnabled()) {
-            Log.d("BannerAd", "User is premium - No ads!")
-            binding.adViewContainer.visibility = View.GONE
-            return
-        }
-
-        if (AdConfig.getBannerAdId().isEmpty()) {
-            binding.adViewContainer.visibility = View.GONE
-            return
-        }
-
-        val adView = AdView(requireContext())
-        adView.adUnitId = AdConfig.getBannerAdId()
-        adView.setAdSize(adSize)
-        this.adView = adView
-
-        binding.adViewContainer.removeAllViews()
-        binding.adViewContainer.addView(adView)
-
-        val adRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
     }
 
     private fun showBottomSheet() {
@@ -804,7 +746,6 @@ class AllCalculatorsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        adView?.destroy()
         _binding = null
     }
 }
