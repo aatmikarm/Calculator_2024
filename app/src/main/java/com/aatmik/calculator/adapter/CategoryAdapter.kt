@@ -1,16 +1,15 @@
 package com.aatmik.calculator.adapter
 
-import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.R
 import com.aatmik.calculator.model.Category
+import com.google.android.material.card.MaterialCardView
 
 class CategoryAdapter(
     private var categoryList: ArrayList<Category>,
@@ -34,44 +33,36 @@ class CategoryAdapter(
         holder.categoryDescription.text = category.description
         holder.categoryIcon.setImageResource(category.icon)
 
-        // Get the inner LinearLayout
-        val contentLayout = holder.categoryCard.getChildAt(0)
+        // Get theme color dynamically (changes with theme selection)
+        val typedValue = android.util.TypedValue()
+        holder.itemView.context.theme.resolveAttribute(
+            android.R.attr.colorPrimary,
+            typedValue,
+            true
+        )
+        val themeColor = typedValue.data
 
         // Update appearance based on selection
         if (position == selectedPosition) {
-            // Selected state - Border with theme color
+            // Selected state - Use dynamic theme color
+            holder.categoryCard.strokeWidth = 6
+            holder.categoryCard.strokeColor = themeColor  // Dynamic theme color!
             holder.categoryCard.setCardBackgroundColor(
                 ContextCompat.getColor(holder.itemView.context, android.R.color.white)
             )
 
-            // Create border programmatically
-            val borderDrawable = GradientDrawable().apply {
-                setColor(ContextCompat.getColor(holder.itemView.context, android.R.color.white))
-                setStroke(
-                    6, // border width in pixels
-                    ContextCompat.getColor(holder.itemView.context, R.color.colorPrimary)
-                )
-                cornerRadius = 12f * holder.itemView.context.resources.displayMetrics.density // 12dp in pixels
-            }
-            contentLayout?.background = borderDrawable
-
-            holder.categoryName.setTextColor(
-                ContextCompat.getColor(holder.itemView.context, R.color.colorPrimary)
-            )
+            holder.categoryName.setTextColor(themeColor)  // Dynamic theme color!
             holder.categoryDescription.setTextColor(
                 ContextCompat.getColor(holder.itemView.context, android.R.color.darker_gray)
             )
-            // Keep original icon colors even when selected
             holder.categoryIcon.clearColorFilter()
             holder.categoryCard.elevation = 8f
         } else {
-            // Unselected state - White background with original icon colors
+            // Unselected state - No border
+            holder.categoryCard.strokeWidth = 0
             holder.categoryCard.setCardBackgroundColor(
                 ContextCompat.getColor(holder.itemView.context, android.R.color.white)
             )
-
-            // Remove border
-            contentLayout?.background = null
 
             holder.categoryName.setTextColor(
                 ContextCompat.getColor(holder.itemView.context, android.R.color.black)
@@ -79,7 +70,6 @@ class CategoryAdapter(
             holder.categoryDescription.setTextColor(
                 ContextCompat.getColor(holder.itemView.context, android.R.color.darker_gray)
             )
-            // Clear color filter to show original icon colors
             holder.categoryIcon.clearColorFilter()
             holder.categoryCard.elevation = 2f
         }
@@ -99,7 +89,7 @@ class CategoryAdapter(
     }
 
     inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val categoryCard: CardView = itemView.findViewById(R.id.categoryCard)
+        val categoryCard: MaterialCardView = itemView.findViewById(R.id.categoryCard)
         val categoryIcon: ImageView = itemView.findViewById(R.id.categoryIcon)
         val categoryName: TextView = itemView.findViewById(R.id.categoryName)
         val categoryDescription: TextView = itemView.findViewById(R.id.categoryDescription)
