@@ -1,33 +1,32 @@
 package com.aatmik.calculator.util
 
+import com.aatmik.calculator.R
 import com.aatmik.calculator.model.Calculator
 import com.aatmik.calculator.model.Category
 
 object CalculatorCategoriesUtil {
 
-    // Define categories
+    // Define categories with icons and descriptions
     val categories = arrayListOf(
-        Category("All"),
-        // Category("Basic"),
-        Category("Converters"),
-        Category("Financial"),
-        Category("Health & Fitness"),
-        Category("Tools"),
-        Category("Engineering"),
-        Category("MBA"),
-        Category("Physics"),
-        Category("Math"),
-        Category("Graphs"),
-        Category("Biology"),
-        Category("Chemistry"),
-        Category("Probability"),
-        Category("Music"),
-        Category("Fun")
+        Category("All", R.drawable.calculator_new, "All calculators"),
+        Category("Converters", R.drawable.convert, "Unit conversions"),
+        Category("Financial", R.drawable.loan, "Money & finance"),
+        Category("Health & Fitness", R.drawable.bmi, "Body & wellness"),
+        Category("Utility & Tools", R.drawable.stopwatch, "Utility & Tools"),
+        Category("Engineering", R.drawable.engineering, "Engineering calcs"),
+        Category("MBA", R.drawable.mba, "Business analysis"),
+        Category("Physics", R.drawable.physics, "Physics formulas"),
+        Category("Math", R.drawable.equation, "Math operations"),
+        Category("Graphs", R.drawable.graphs_bar, "Visual graphs"),
+        Category("Biology", R.drawable.biology, "Life sciences"),
+        Category("Chemistry", R.drawable.chemistry, "Chemical calcs"),
+        Category("Probability", R.drawable.probability, "Random & stats"),
+        Category("Music", R.drawable.music, "Music theory"),
+        Category("Fun", R.drawable.love, "Fun calculators")
     )
 
     // Map calculators to their categories
     private val calculatorCategoryMap = mapOf(
-        //"Basic" to "Basic",
         "Equation" to "Math",
         "Number Tables" to "Math",
 
@@ -77,9 +76,9 @@ object CalculatorCategoriesUtil {
         "Ovulation & Fertility" to "Health & Fitness",
 
         // Tools
-        "Stopwatch" to "Tools",
-        "Compass" to "Tools",
-        "Level" to "Tools",
+        "Stopwatch" to "Utility & Tools",
+        "Compass" to "Utility & Tools",
+        "Level" to "Utility & Tools",
 
         // Physics
         "Free Fall" to "Physics",
@@ -103,11 +102,10 @@ object CalculatorCategoriesUtil {
         "Cell Dilution" to "Biology",
 
         // Chemistry
-        // Add your chemistry calculators here when ready
-         "Molarity Calculator" to "Chemistry",
-         "pH Calculator" to "Chemistry",
-         "Stoichiometry Calculator" to "Chemistry",
-         "Ideal Gas Law" to "Chemistry",
+        "Molarity Calculator" to "Chemistry",
+        "pH Calculator" to "Chemistry",
+        "Stoichiometry Calculator" to "Chemistry",
+        "Ideal Gas Law" to "Chemistry",
 
         // Fun
         "Love Calculator" to "Fun",

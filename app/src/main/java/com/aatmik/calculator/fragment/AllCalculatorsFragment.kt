@@ -64,11 +64,15 @@ class AllCalculatorsFragment : Fragment() {
     private var currentSelectedCategory = "All"
     private var currentCategoryIndex = 0
 
+    // Collapsible category section
+    private var isCategoryExpanded = false
+
     // Gesture detector for swipe functionality
     private lateinit var gestureDetector: GestureDetectorCompat
 
     companion object {
-        private const val GRID_COLUMN_COUNT = 4
+        private const val CALCULATOR_GRID_COLUMN_COUNT = 4
+        private const val CATEGORY_GRID_COLUMN_COUNT = 3
         private const val SWIPE_THRESHOLD = 100
         private const val SWIPE_VELOCITY_THRESHOLD = 100
     }
@@ -90,13 +94,13 @@ class AllCalculatorsFragment : Fragment() {
         // Check for app updates automatically on startup
         UpdateManager.checkForUpdatesAutomatically(requireActivity())
 
-
         Log.d("AllCalculatorsFragment", "About to load calculator order")
         loadCalculatorOrder()
         Log.d("AllCalculatorsFragment", "Calculator list size: ${calculatorList.size}")
 
         setupGestureDetector()
         setupCategoriesRecyclerView()
+        setupCategoryCollapsible()
 
         Log.d("AllCalculatorsFragment", "About to setup RecyclerView")
         setupRecyclerView()
@@ -118,6 +122,67 @@ class AllCalculatorsFragment : Fragment() {
         }
 
         Log.d("AllCalculatorsFragment", "onViewCreated completed")
+    }
+
+    /**
+     * Setup collapsible category section
+     */
+    private fun setupCategoryCollapsible() {
+        binding.categoryHeader.setOnClickListener {
+            toggleCategoryExpansion()
+        }
+    }
+
+    /**
+     * Toggle category section expansion with animation
+     */
+    private fun toggleCategoryExpansion() {
+        if (isCategoryExpanded) {
+            // Collapse
+            collapseView(binding.categoryExpandableContent)
+            rotateIcon(binding.categoryExpandIcon, 180f, 0f)
+            isCategoryExpanded = false
+        } else {
+            // Expand
+            expandView(binding.categoryExpandableContent)
+            rotateIcon(binding.categoryExpandIcon, 0f, 180f)
+            isCategoryExpanded = true
+        }
+    }
+
+    /**
+     * Expand view with animation
+     */
+    private fun expandView(view: View) {
+        view.visibility = View.VISIBLE
+        view.alpha = 0f
+        view.animate()
+            .alpha(1f)
+            .setDuration(300)
+            .start()
+    }
+
+    /**
+     * Collapse view with animation
+     */
+    private fun collapseView(view: View) {
+        view.animate()
+            .alpha(0f)
+            .setDuration(300)
+            .withEndAction {
+                view.visibility = View.GONE
+            }
+            .start()
+    }
+
+    /**
+     * Rotate icon animation
+     */
+    private fun rotateIcon(view: View, fromDegree: Float, toDegree: Float) {
+        view.animate()
+            .rotation(toDegree)
+            .setDuration(300)
+            .start()
     }
 
     /**
@@ -199,7 +264,8 @@ class AllCalculatorsFragment : Fragment() {
 
     private fun setupCategoriesRecyclerView() {
         categoriesRV = binding.categoriesRV
-        categoriesRV.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        // Use GridLayoutManager with 3 columns for categories
+        categoriesRV.layoutManager = GridLayoutManager(requireContext(), CATEGORY_GRID_COLUMN_COUNT)
 
         categoryAdapter = CategoryAdapter(CalculatorCategoriesUtil.categories) { position ->
             val selectedCategory = CalculatorCategoriesUtil.categories[position].name
@@ -230,6 +296,18 @@ class AllCalculatorsFragment : Fragment() {
         }
 
         calculatorAdapter.updateCalculatorList(filteredList)
+
+        // Collapse category section after selection
+        if (isCategoryExpanded) {
+            toggleCategoryExpansion()
+        }
+
+        // Auto-scroll to calculator section
+//        binding.scrollView.post {
+//            // Calculate the position to scroll to (categories height + some offset)
+//            val calculatorSectionY = binding.linearLayout.top
+//            binding.scrollView.smoothScrollTo(0, calculatorSectionY)
+//        }
     }
 
     private fun showBottomSheet() {
@@ -541,7 +619,7 @@ class AllCalculatorsFragment : Fragment() {
 
     private fun setupRecyclerView() {
         calculatorRV = binding.calculatorRV
-        calculatorRV.layoutManager = GridLayoutManager(requireContext(), GRID_COLUMN_COUNT)
+        calculatorRV.layoutManager = GridLayoutManager(requireContext(), CALCULATOR_GRID_COLUMN_COUNT)
 
         calculatorAdapter = CalculatorAdapter(calculatorList) { calculator ->
             handleCalculatorSelection(calculator.name)

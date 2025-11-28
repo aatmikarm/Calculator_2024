@@ -55,10 +55,26 @@ class CalculatorAdapter(
     override fun onBindViewHolder(holder: CalculatorAdapter.CalculatorViewHolder, position: Int) {
         val calculator = calculatorList[position]
         holder.itemName.text = calculator.name
-        //holder.itemImage.setImageResource(calculator.image)
-        // now uses Glide with better image caching and loading
+
+//        // Use direct setImageResource instead of Glide for drawables
+//        // This is more reliable for resource drawables and prevents caching issues
+//        holder.itemImage.setImageResource(calculator.image)
+//
+//        //holder.itemImage.setImageResource(calculator.image)
+//        // now uses Glide with better image caching and loading
+//        // it showing improper images when used
+////        Glide.with(holder.itemView.context)
+////            .load(calculator.image)
+////            .into(holder.itemImage)
+
+        // Use Glide with proper configuration to prevent wrong icons
+        // Key fixes: dontAnimate() and dontTransform() prevent recycling issues
         Glide.with(holder.itemView.context)
             .load(calculator.image)
+            .dontAnimate() // Prevent animation issues causing wrong icons
+            .dontTransform() // Prevent transformation caching
+            .override(200, 200) // Fixed size to prevent memory issues on low-end devices
+            .centerInside() // Proper scaling
             .into(holder.itemImage)
     }
 

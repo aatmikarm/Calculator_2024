@@ -1,9 +1,12 @@
 package com.aatmik.calculator.adapter
 
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.R
@@ -28,18 +31,57 @@ class CategoryAdapter(
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val category = categoryList[position]
         holder.categoryName.text = category.name
+        holder.categoryDescription.text = category.description
+        holder.categoryIcon.setImageResource(category.icon)
+
+        // Get the inner LinearLayout
+        val contentLayout = holder.categoryCard.getChildAt(0)
 
         // Update appearance based on selection
         if (position == selectedPosition) {
-            holder.categoryName.setBackgroundResource(R.drawable.category_selected_bg)
-            holder.categoryName.setTextColor(
-                ContextCompat.getColor(holder.itemView.context, R.color.white)
+            // Selected state - Border with theme color
+            holder.categoryCard.setCardBackgroundColor(
+                ContextCompat.getColor(holder.itemView.context, android.R.color.white)
             )
-        } else {
-            holder.categoryName.setBackgroundResource(R.drawable.category_unselected_bg)
+
+            // Create border programmatically
+            val borderDrawable = GradientDrawable().apply {
+                setColor(ContextCompat.getColor(holder.itemView.context, android.R.color.white))
+                setStroke(
+                    6, // border width in pixels
+                    ContextCompat.getColor(holder.itemView.context, R.color.colorPrimary)
+                )
+                cornerRadius = 12f * holder.itemView.context.resources.displayMetrics.density // 12dp in pixels
+            }
+            contentLayout?.background = borderDrawable
+
             holder.categoryName.setTextColor(
+                ContextCompat.getColor(holder.itemView.context, R.color.colorPrimary)
+            )
+            holder.categoryDescription.setTextColor(
                 ContextCompat.getColor(holder.itemView.context, android.R.color.darker_gray)
             )
+            // Keep original icon colors even when selected
+            holder.categoryIcon.clearColorFilter()
+            holder.categoryCard.elevation = 8f
+        } else {
+            // Unselected state - White background with original icon colors
+            holder.categoryCard.setCardBackgroundColor(
+                ContextCompat.getColor(holder.itemView.context, android.R.color.white)
+            )
+
+            // Remove border
+            contentLayout?.background = null
+
+            holder.categoryName.setTextColor(
+                ContextCompat.getColor(holder.itemView.context, android.R.color.black)
+            )
+            holder.categoryDescription.setTextColor(
+                ContextCompat.getColor(holder.itemView.context, android.R.color.darker_gray)
+            )
+            // Clear color filter to show original icon colors
+            holder.categoryIcon.clearColorFilter()
+            holder.categoryCard.elevation = 2f
         }
     }
 
@@ -57,7 +99,10 @@ class CategoryAdapter(
     }
 
     inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val categoryCard: CardView = itemView.findViewById(R.id.categoryCard)
+        val categoryIcon: ImageView = itemView.findViewById(R.id.categoryIcon)
         val categoryName: TextView = itemView.findViewById(R.id.categoryName)
+        val categoryDescription: TextView = itemView.findViewById(R.id.categoryDescription)
 
         init {
             itemView.setOnClickListener {
