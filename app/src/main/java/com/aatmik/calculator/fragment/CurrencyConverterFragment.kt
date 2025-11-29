@@ -12,6 +12,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.aatmik.calculator.databinding.FragmentCurrencyConvertorBinding
 import com.aatmik.calculator.model.Currency
 import com.aatmik.calculator.util.NetworkUtil
@@ -35,7 +36,7 @@ class CurrencyConverterFragment : Fragment() {
     private val KEY_RATES = "exchange_rates"
     private val KEY_TIMESTAMP = "last_update_timestamp"
     private val KEY_SOURCE = "data_source"
-    private val CACHE_VALIDITY_HOURS = 24 // Refresh after 24 hours
+    private val CACHE_VALIDITY_HOURS = 3 // Refresh after 24 hours
 
     // Data sources - scrape from these websites (riding on their shoulders! 🔥)
     private val SOURCE_XRATES = "https://www.x-rates.com/table/?from=USD&amount=1"
@@ -57,6 +58,7 @@ class CurrencyConverterFragment : Fragment() {
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         setupClickListeners()
+        updateRateSummary()
         fetchExchangeRates()
     }
 
@@ -64,6 +66,15 @@ class CurrencyConverterFragment : Fragment() {
         binding.backIv.setOnClickListener {
             Log.d(TAG, "Back button clicked")
             activity?.onBackPressedDispatcher?.onBackPressed()
+        }
+
+        binding.refreshRatesButton.setOnClickListener {
+            if (NetworkUtil.isNetworkAvailable(requireActivity())) {
+                Toast.makeText(context, "Refreshing exchange rates...", Toast.LENGTH_SHORT).show()
+                clearCacheAndRefresh()
+            } else {
+                Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.convertButton.setOnClickListener {
@@ -134,6 +145,54 @@ class CurrencyConverterFragment : Fragment() {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
+    private fun updateRateSummary() {
+        try {
+            val prefs = requireContext().getSharedPreferences(PREFS_NAME, android.content.Context.MODE_PRIVATE)
+            val timestamp = prefs.getLong(KEY_TIMESTAMP, 0)
+            val source = prefs.getString(KEY_SOURCE, "Unknown") ?: "Unknown"
+
+            // Update timestamp
+            if (timestamp == 0L) {
+                binding.lastUpdatedText.text = "Last updated: Never"
+            } else {
+                val sdf = java.text.SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a", java.util.Locale.getDefault())
+                val date = java.util.Date(timestamp)
+
+                // Calculate time difference in milliseconds
+                val timeDiffMs = System.currentTimeMillis() - timestamp
+                val minutes = timeDiffMs / (1000 * 60)
+                val hours = timeDiffMs / (1000 * 60 * 60)
+                val days = hours / 24
+
+                val ageText = when {
+                    minutes < 1 -> "just now"
+                    minutes == 1L -> "1 min ago"
+                    minutes < 60 -> "$minutes mins ago"
+                    hours == 1L -> {
+                        val remainingMins = minutes % 60
+                        if (remainingMins == 0L) "1 hr ago" else "1 hr $remainingMins min${if (remainingMins > 1) "s" else ""} ago"
+                    }
+                    hours < 24 -> {
+                        val remainingMins = minutes % 60
+                        if (remainingMins == 0L) {
+                            "$hours hrs ago"
+                        } else {
+                            "$hours hr${if (hours > 1) "s" else ""} $remainingMins min${if (remainingMins > 1) "s" else ""} ago"
+                        }
+                    }
+                    days == 1L -> "1 day ago"
+                    else -> "$days days ago"
+                }
+
+                binding.lastUpdatedText.text = "Updated: ${sdf.format(date)} ($ageText)"
+            }
+        } catch (e: Exception) {
+            binding.lastUpdatedText.text = "Last updated: Unknown"
+            Log.e(TAG, "updateRateSummary failed: ${e.message}")
+        }
+    }
+
+
     private fun fetchExchangeRates() {
         Log.d(TAG, "fetchExchangeRates: START")
 
@@ -166,7 +225,8 @@ class CurrencyConverterFragment : Fragment() {
         binding.progressBar.visibility = View.VISIBLE
         binding.convertButton.isEnabled = false
 
-        CoroutineScope(Dispatchers.IO).launch {
+        // CHANGED: Use viewLifecycleOwner.lifecycleScope
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             try {
                 var rates: Map<String, Double>? = null
                 var source = "Unknown"
@@ -216,8 +276,10 @@ class CurrencyConverterFragment : Fragment() {
                     saveCachedRates(rates, source)
 
                     withContext(Dispatchers.Main) {
-                        buildCurrencyList()
-                        //Toast.makeText(context, "Rates from $source", Toast.LENGTH_SHORT).show()
+                        // ADDED: Safety check
+                        if (_binding != null && isAdded) {
+                            buildCurrencyList()
+                        }
                     }
                 } else {
                     throw Exception("All sources failed")
@@ -232,13 +294,19 @@ class CurrencyConverterFragment : Fragment() {
                     Log.d(TAG, "⚠️ Using old cached data as last resort")
                     exchangeRates = fallbackRates
                     withContext(Dispatchers.Main) {
-                        buildCurrencyList()
-                        Toast.makeText(context, "Using old cached rates", Toast.LENGTH_SHORT).show()
+                        // ADDED: Safety check
+                        if (_binding != null && isAdded) {
+                            buildCurrencyList()
+                            Toast.makeText(context, "Using old cached rates", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 } else {
                     withContext(Dispatchers.Main) {
-                        binding.progressBar.visibility = View.GONE
-                        Toast.makeText(context, "All sources failed & no cache", Toast.LENGTH_LONG).show()
+                        // ADDED: Safety check
+                        if (_binding != null && isAdded) {
+                            binding.progressBar.visibility = View.GONE
+                            Toast.makeText(context, "All sources failed & no cache", Toast.LENGTH_LONG).show()
+                        }
                     }
                 }
             }
@@ -409,6 +477,7 @@ class CurrencyConverterFragment : Fragment() {
             isDataLoaded = true
             binding.progressBar.visibility = View.GONE
             binding.convertButton.isEnabled = true
+            updateRateSummary()
             Log.d(TAG, "✅ UI ready with ${allCurrencies.size} currencies")
         }
     }
