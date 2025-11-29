@@ -566,7 +566,7 @@
                 android:rowCount="5"
                 android:useDefaultMargins="false">
 
-                <!-- Row 1: C ( ) ÷ -->
+                <!-- Row 1: C ( ) % ÷ -->
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btACBC"
                     style="@style/Dark_Button_Style"
@@ -588,11 +588,11 @@
                     android:layout_column="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="2dp"
-                    android:text="("
+                    android:text="( )"
                     android:textStyle="bold" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btBracketCloseBC"
+                    android:id="@+id/btPercentageBC"
                     style="@style/Dark_Button_Style"
                     android:layout_width="0dp"
                     android:layout_height="56dp"
@@ -600,7 +600,7 @@
                     android:layout_column="2"
                     android:layout_columnWeight="1"
                     android:layout_margin="2dp"
-                    android:text=")"
+                    android:text="%"
                     android:textStyle="bold" />
 
                 <androidx.appcompat.widget.AppCompatButton

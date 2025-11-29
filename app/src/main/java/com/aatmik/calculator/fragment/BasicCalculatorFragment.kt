@@ -539,9 +539,31 @@ class BasicCalculatorFragment : Fragment() {
             addNumberValueToText(requireContext(), bt8BC, tvPrimaryBC, 0)
             addNumberValueToText(requireContext(), bt9BC, tvPrimaryBC, 0)
 
-            // Bracket buttons
-            addNumberValueToText(requireContext(), btBracketOpenBC, tvPrimaryBC, 0)
-            addNumberValueToText(requireContext(), btBracketCloseBC, tvPrimaryBC, 0)
+            // Smart bracket button - toggles between ( and ) based on context
+            btBracketOpenBC.setOnClickListener {
+                vibratePhone(requireContext())
+                val currentText = tvPrimaryBC.text.toString()
+                val openCount = currentText.count { it == '(' }
+                val closeCount = currentText.count { it == ')' }
+
+                val bracketToAdd = if (openCount > closeCount &&
+                    currentText.isNotEmpty() &&
+                    currentText.last() !in listOf('(', '+', '-', '*', '/')) {
+                    ")"
+                } else {
+                    "("
+                }
+
+                addToExpressionHistory(currentText)
+                tvPrimaryBC.text = currentText + bracketToAdd
+                validateAndUpdateUI()
+            }
+
+            // Percentage button
+            btPercentageBC.setOnClickListener {
+                vibratePhone(requireContext())
+                handlePercentage()
+            }
 
             // Operator buttons
             addOperatorValueToText(requireContext(), btAdditionBC, tvPrimaryBC, "+", 0)
@@ -570,7 +592,6 @@ class BasicCalculatorFragment : Fragment() {
                 addedBC = false
                 clearError()
                 resetCalculatorState()
-
                 AnalyticsManager.log("calculator_cleared")
             }
 
@@ -583,7 +604,6 @@ class BasicCalculatorFragment : Fragment() {
                     val newText = currentText.subSequence(0, currentText.length - 1).toString()
                     tvPrimaryBC.text = newText
                     validateAndUpdateUI()
-
                     if (containsOperator(newText)) {
                         addedBC = false
                     }
@@ -595,6 +615,51 @@ class BasicCalculatorFragment : Fragment() {
                 vibratePhone(requireContext())
                 handleEqualsPress()
             }
+        }
+    }
+
+    // Add this new method for percentage handling
+    private fun handlePercentage() {
+        val currentText = binding.tvPrimaryBC.text.toString()
+
+        if (currentText.isEmpty()) {
+            showError("No value to convert to percentage", ErrorType.SYNTAX)
+            return
+        }
+
+        try {
+            // Get the last number in the expression
+            val lastNumber = getLastNumber(currentText)
+
+            if (lastNumber.isEmpty()) {
+                showError("Invalid percentage operation", ErrorType.SYNTAX)
+                return
+            }
+
+            val number = parseNumber(lastNumber) ?: run {
+                showError("Invalid number for percentage", ErrorType.SYNTAX)
+                return
+            }
+
+            // Calculate percentage (divide by 100)
+            val percentValue = number / 100.0
+
+            // Replace the last number with the percentage value
+            val textBeforeNumber = currentText.dropLast(lastNumber.length)
+            val formattedPercent = smartFormatResult(percentValue)
+
+            addToExpressionHistory(currentText)
+            binding.tvPrimaryBC.text = textBeforeNumber + formattedPercent
+
+            // Show what happened
+            binding.tvSecondaryBC.text = "$lastNumber% = $formattedPercent"
+
+            validateAndUpdateUI()
+
+            AnalyticsManager.log("percentage_calculated", "value" to lastNumber)
+
+        } catch (e: Exception) {
+            showError("Percentage calculation error", ErrorType.CALCULATION)
         }
     }
 
