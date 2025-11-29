@@ -20,19 +20,12 @@
         <LinearLayout
             android:id="@+id/swipeHandleArea"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
             android:orientation="vertical"
             android:gravity="center"
             android:background="?attr/colorSurface"
             android:paddingVertical="12dp">
-
-            <!-- Visual Handle -->
-            <View
-                android:layout_width="40dp"
-                android:layout_height="4dp"
-                android:background="?attr/colorPrimary"
-                android:alpha="0.5"
-                android:layout_gravity="center" />
 
         </LinearLayout>
 

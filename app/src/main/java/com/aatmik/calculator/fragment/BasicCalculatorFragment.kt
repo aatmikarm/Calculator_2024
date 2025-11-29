@@ -1230,7 +1230,9 @@ class BasicCalculatorFragment : Fragment() {
 
     private fun clearError() {
         binding.tvErrorBC.visibility = View.GONE
-        // binding.tvPrimaryBC.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+        val typedValue = android.util.TypedValue()
+        requireContext().theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)
+        binding.tvPrimaryBC.setTextColor(typedValue.data)
     }
 
     // Real-time validation
