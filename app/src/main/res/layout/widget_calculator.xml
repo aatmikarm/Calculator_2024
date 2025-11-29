@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@drawable/widget_background">
+
+    <!-- Display -->
+    <TextView
+        android:id="@+id/widgetDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="end|bottom"
+        android:text="0"
+        android:textColor="#FFFDFD"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:padding="12dp"
+        android:maxLines="2"
+        android:ellipsize="end" />
+
+    <!-- Buttons Grid -->
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="4"
+        android:rowCount="5"
+        android:alignmentMode="alignBounds"
+        android:useDefaultMargins="false">
+
+        <!-- Row 1: C ( ) ÷ -->
+        <Button
+            android:id="@+id/widgetBtnClear"
+            style="@style/WidgetButtonTextColor"
+            android:text="AC" />
+
+        <Button
+            android:id="@+id/widgetBtnBracket"
+            style="@style/WidgetButtonTextColor"
+            android:text="( )" />
+
+        <Button
+            android:id="@+id/widgetBtnPercent"
+            style="@style/WidgetButtonTextColor"
+            android:text="%" />
+
+        <Button
+            android:id="@+id/widgetBtnDivide"
+            style="@style/WidgetButtonTextColor"
+            android:text="÷" />
+
+        <!-- Row 2: 7 8 9 × -->
+        <Button
+            android:id="@+id/widgetBtn7"
+            style="@style/WidgetButton"
+            android:text="7" />
+
+        <Button
+            android:id="@+id/widgetBtn8"
+            style="@style/WidgetButton"
+            android:text="8" />
+
+        <Button
+            android:id="@+id/widgetBtn9"
+            style="@style/WidgetButton"
+            android:text="9" />
+
+        <Button
+            android:id="@+id/widgetBtnMultiply"
+            style="@style/WidgetButtonTextColor"
+            android:text="×" />
+
+        <!-- Row 3: 4 5 6 - -->
+        <Button
+            android:id="@+id/widgetBtn4"
+            style="@style/WidgetButton"
+            android:text="4" />
+
+        <Button
+            android:id="@+id/widgetBtn5"
+            style="@style/WidgetButton"
+            android:text="5" />
+
+        <Button
+            android:id="@+id/widgetBtn6"
+            style="@style/WidgetButton"
+            android:text="6" />
+
+        <Button
+            android:id="@+id/widgetBtnSubtract"
+            style="@style/WidgetButtonTextColor"
+            android:text="-" />
+
+        <!-- Row 4: 1 2 3 + -->
+        <Button
+            android:id="@+id/widgetBtn1"
+            style="@style/WidgetButton"
+            android:text="1" />
+
+        <Button
+            android:id="@+id/widgetBtn2"
+            style="@style/WidgetButton"
+            android:text="2" />
+
+        <Button
+            android:id="@+id/widgetBtn3"
+            style="@style/WidgetButton"
+            android:text="3" />
+
+        <Button
+            android:id="@+id/widgetBtnAdd"
+            style="@style/WidgetButtonTextColor"
+            android:text="+" />
+
+        <!-- Row 5: DEL 0 . = -->
+        <Button
+            android:id="@+id/widgetBtnDelete"
+            style="@style/WidgetButtonTextColor"
+            android:text="⌫" />
+
+        <Button
+            android:id="@+id/widgetBtn0"
+            style="@style/WidgetButton"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/widgetBtnDot"
+            style="@style/WidgetButtonTextColor"
+            android:text="." />
+
+        <Button
+            android:id="@+id/widgetBtnEquals"
+            style="@style/WidgetButtonFullColor"
+            android:text="=" />
+
+    </GridLayout>
+
+</LinearLayout>

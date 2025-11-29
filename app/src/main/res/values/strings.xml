@@ -22,6 +22,7 @@
     <string name="select_a_unit">Select a unit</string>
 
     <string name="api_error">Service error, sorry for the inconvenience</string>
+    <string name="widget_description">Basic Calculator Widget</string>
 
     <string name="hours">Hours</string>
     <string name="minutes">Minutes</string>

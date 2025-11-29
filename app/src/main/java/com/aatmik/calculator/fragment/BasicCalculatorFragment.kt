@@ -3,6 +3,13 @@ package com.aatmik.calculator.fragment
 import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -26,8 +33,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aatmik.calculator.R
+import com.aatmik.calculator.activity.ContainerActivity
 import com.aatmik.calculator.adapter.HistoryAdapter
 import com.aatmik.calculator.adapter.HistoryBottomSheetAdapter
+import com.aatmik.calculator.databinding.BottomSheetLayoutBinding
 import com.aatmik.calculator.databinding.FragmentBasicCalculatorBinding
 import com.aatmik.calculator.model.CalculationHistory
 import com.aatmik.calculator.util.AdConfig
@@ -41,6 +50,9 @@ import com.aatmik.calculator.util.CalculationUtil
 import com.aatmik.calculator.util.HistoryManager
 import com.aatmik.calculator.util.NetworkUtil
 import com.aatmik.calculator.util.PrefUtil
+import com.aatmik.calculator.util.SubscriptionManager
+import com.aatmik.calculator.util.ThemeManager
+import com.aatmik.calculator.util.UpdateManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.math.BigDecimal
 import java.math.MathContext
@@ -122,7 +134,7 @@ class BasicCalculatorFragment : Fragment() {
         setupButtons()
         historyView()
         restoreMemoryState()
-        setupSwipeGesture()
+       // setupSwipeGesture()
     }
 
     // Setup swipe gesture with large detection area
@@ -133,7 +145,7 @@ class BasicCalculatorFragment : Fragment() {
         var isTracking = false
 
         // Set up gesture on the entire upper constraint layout area
-        val upperArea = binding.btHistory.parent as View
+        val upperArea = binding.HistoryView.parent as View
 
         upperArea.setOnTouchListener { v, event ->
             when (event.action) {
@@ -214,7 +226,16 @@ class BasicCalculatorFragment : Fragment() {
         recyclerView.adapter = historyAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        binding.btHistory.setOnClickListener {
+        val arrowView = binding.swipeToExplore.findViewById<ImageView>(R.id.arrowSwipe) // Give the ImageView an id
+        ObjectAnimator.ofFloat(arrowView, "translationX", 0f, 10f, 0f).apply {
+            duration = 1000
+//            repeatCount = ObjectAnimator.INFINITE
+            repeatCount = 9
+            repeatMode = ObjectAnimator.RESTART
+            start()
+        }
+
+        binding.historyButton.setOnClickListener {
             ButtonUtil.vibratePhone(requireContext())
             if (isHistoryVisible) {
                 hideHistoryPanel()
@@ -222,6 +243,240 @@ class BasicCalculatorFragment : Fragment() {
                 showHistoryHalfScreen()
             }
         }
+
+        binding.menuButton.setOnClickListener {
+            ButtonUtil.vibratePhone(requireContext())
+            showBottomSheet()
+        }
+
+        binding.swipeToExplore.setOnClickListener {
+            ButtonUtil.vibratePhone(requireContext())
+            // Navigate back or show all calculators
+            (requireActivity() as? ContainerActivity)?.navigateToPage(
+                ContainerActivity.PAGE_ALL_CALCULATORS,
+                true
+            )
+        }
+    }
+
+    private fun showBottomSheet() {
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        val bottomSheetBinding = BottomSheetLayoutBinding.inflate(layoutInflater)
+
+        // Make theme button visible
+        bottomSheetBinding.btnTheme.visibility = View.VISIBLE
+
+        // Show premium status on text
+        if (SubscriptionManager.isPremium()) {
+            // Change text to show user is already premium
+            bottomSheetBinding.removeAdsText.text = "Premium Active ✓"
+        }
+
+        bottomSheetBinding.rateApp.setOnClickListener {
+            rateApp()
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetBinding.btnShareApp.setOnClickListener {
+            shareApp()
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetBinding.btnRemoveAds.setOnClickListener {
+            removeAds()
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetBinding.btnGetUpdate.setOnClickListener {
+            // Check for updates manually when user clicks update button
+            UpdateManager.checkForUpdatesManually(requireActivity())
+            AnalyticsManager.log("update_checked")
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetBinding.btnTheme.setOnClickListener {
+            bottomSheetDialog.dismiss()
+            showThemeSelector()
+        }
+
+        bottomSheetBinding.btnCustomerSupport.setOnClickListener {
+            openCustomerSupport()
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetDialog.setContentView(bottomSheetBinding.root)
+        bottomSheetDialog.show()
+
+        AnalyticsManager.log("menu_opened")
+    }
+
+    private fun rateApp() {
+        val appPackageName = "com.aatmik.calculator"
+        startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName&showRating=true")
+            )
+        )
+        AnalyticsManager.log("rate_app_clicked")
+    }
+
+    private fun removeAds() {
+        if (SubscriptionManager.isPremium()) {
+            Toast.makeText(requireContext(), "You're already a Premium user! 🎉", Toast.LENGTH_SHORT).show()
+            AnalyticsManager.log("premium_already_active")
+            return
+        }
+
+        // Show premium dialog
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Go Premium")
+            .setMessage("Remove all ads and unlock all features for just ₹200/year!\n\n✓ No Banner Ads\n✓ No Interstitial Ads\n✓ All Features Unlocked\n✓ Works on all your devices")
+            .setPositiveButton("Subscribe ₹200/year") { _, _ ->
+                SubscriptionManager.startSubscriptionPurchase(requireActivity()) { error ->
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+
+        AnalyticsManager.log("remove_ads_clicked")
+    }
+
+    private fun shareApp() {
+        val appPackageName = "com.aatmik.calculator"
+        val appName = "Calculator App"
+        val playStoreLink = "https://play.google.com/store/apps/details?id=$appPackageName"
+
+        val shareMessage = """
+        Hey! Check out this amazing calculator app I've been using.
+        
+        $appName - All-in-one calculator with multiple features including basic calculations, unit conversions, financial calculators, and much more!
+        
+        Download it here: $playStoreLink
+    """.trimIndent()
+
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, "Check out $appName")
+            putExtra(Intent.EXTRA_TEXT, shareMessage)
+        }
+
+        try {
+            startActivity(Intent.createChooser(shareIntent, "Share via"))
+            AnalyticsManager.logAppShared("system_share")
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "Unable to share", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun openCustomerSupport() {
+        val supportEmail = "aatmikarm@gmail.com"
+        val subject = "Calculator App Support Request"
+        val body = """
+        Dear Support Team,
+        
+        I need assistance with the Calculator App.
+        
+        Device Information:
+        - App Version: ${getAppVersion()}
+        - Android Version: ${Build.VERSION.RELEASE}
+        - Device Model: ${Build.MODEL}
+        - Device Manufacturer: ${Build.MANUFACTURER}
+        
+        Issue Description:
+        [Please describe your issue here]
+        
+        Best regards,
+        [Your name]
+    """.trimIndent()
+
+        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(supportEmail))
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, body)
+        }
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send Email"))
+            AnalyticsManager.log("customer_support_opened")
+        } catch (ex: ActivityNotFoundException) {
+            Toast.makeText(
+                requireContext(),
+                "No email app found. Please send an email to: $supportEmail",
+                Toast.LENGTH_LONG
+            ).show()
+
+            // Copy email to clipboard as fallback
+            val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("Support Email", supportEmail)
+            clipboard.setPrimaryClip(clip)
+
+            Toast.makeText(requireContext(), "Email address copied to clipboard", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getAppVersion(): String {
+        return try {
+            val packageInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
+            packageInfo.versionName ?: "Unknown"
+        } catch (e: PackageManager.NameNotFoundException) {
+            "Unknown"
+        }
+    }
+
+    private fun showThemeSelector() {
+        val options = arrayOf(
+            "Light Mode",
+            "Dark Mode",
+            "Follow System",
+            "Default (Orange)",
+            "Red Theme",
+            "Green Theme",
+            "Blue Theme",
+            "Purple Theme",
+            "Pink Theme"
+        )
+
+        val currentTheme = ThemeManager.getSavedTheme(requireContext())
+        val currentSelection = when (currentTheme) {
+            ThemeManager.THEME_LIGHT -> 0
+            ThemeManager.THEME_DARK -> 1
+            ThemeManager.THEME_SYSTEM -> 2
+            ThemeManager.THEME_DEFAULT -> 3
+            ThemeManager.THEME_RED -> 4
+            ThemeManager.THEME_GREEN -> 5
+            ThemeManager.THEME_BLUE -> 6
+            ThemeManager.THEME_PURPLE -> 7
+            ThemeManager.THEME_PINK -> 8
+            else -> 3
+        }
+
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Choose Theme")
+            .setSingleChoiceItems(options, currentSelection) { dialog, which ->
+                val selectedTheme = when (which) {
+                    0 -> ThemeManager.THEME_LIGHT
+                    1 -> ThemeManager.THEME_DARK
+                    2 -> ThemeManager.THEME_SYSTEM
+                    3 -> ThemeManager.THEME_DEFAULT
+                    4 -> ThemeManager.THEME_RED
+                    5 -> ThemeManager.THEME_GREEN
+                    6 -> ThemeManager.THEME_BLUE
+                    7 -> ThemeManager.THEME_PURPLE
+                    8 -> ThemeManager.THEME_PINK
+                    else -> ThemeManager.THEME_DEFAULT
+                }
+
+                val themeName = options[which]
+                ThemeManager.saveTheme(requireContext(), selectedTheme)
+                AnalyticsManager.logThemeChanged(themeName)
+                requireActivity().recreate() // Restart activity to apply new theme
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     // Show history at half screen

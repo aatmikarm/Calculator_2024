@@ -242,4 +242,37 @@
         <item name="android:lineSpacingExtra">2dp</item>
     </style>
 
+    <style name="WidgetButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/widget_button_bg</item>
+        <item name="android:textColor">#333333</item>
+    </style>
+
+    <style name="WidgetButtonTextColor">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/widget_button_bg</item>
+        <item name="android:textColor">#ff6300</item>
+    </style>
+
+    <style name="WidgetButtonFullColor">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/widget_button_full_color_bg</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
 </resources>
