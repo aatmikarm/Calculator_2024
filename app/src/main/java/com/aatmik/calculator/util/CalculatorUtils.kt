@@ -26,7 +26,7 @@ object CalculatorUtils {
 
     private fun createCalculatorList(): ArrayList<Calculator> {
         return arrayListOf(
-            Calculator("Basic", R.drawable.calculator_new),
+            Calculator("Calculator", R.drawable.calculator_dark_logo),
             Calculator("Convertor", R.drawable.convert),
             Calculator("Currency Converter", R.drawable.dollor),
             Calculator("Percentage", R.drawable.percentage),

@@ -630,7 +630,7 @@ class AllCalculatorsFragment : Fragment() {
 
     private fun handleCalculatorSelection(calculatorName: String) {
         val intent = when (calculatorName) {
-            "Basic" -> Intent(requireContext(), CalculatorActivity::class.java).apply {
+            "Calculator" -> Intent(requireContext(), CalculatorActivity::class.java).apply {
                 putExtra("calculatorName", calculatorName)
             }
             "Convertor" -> Intent(requireContext(), CalculatorActivity::class.java).apply {

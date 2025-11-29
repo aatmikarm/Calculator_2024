@@ -239,7 +239,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
-                android:src="@drawable/calculator_new" />
+                android:src="@drawable/calculator_dark_logo" />
 
             <TextView
                 android:layout_width="wrap_content"
