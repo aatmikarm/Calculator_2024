@@ -2,6 +2,8 @@
 package com.aatmik.calculator.util
 
 import android.content.Context
+import android.content.SharedPreferences
+import com.aatmik.calculator.model.CalculationHistoryItem
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -12,42 +14,164 @@ object HistoryManager {
 
     private val gson = Gson()
 
-    fun saveCalculation(context: Context, expression: String, result: String) {
-        val history = getHistory(context).toMutableList()
-        history.add(0, com.aatmik.calculator.model.CalculationHistoryItem(expression, result))
+    /**
+     * Get SharedPreferences instance
+     */
+    private fun getPrefs(context: Context): SharedPreferences {
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+    }
 
-        // Keep only last 100 calculations
+    /**
+     * Save a new calculation to history
+     * @param context Application context
+     * @param expression The calculation expression (e.g., "1500+2500")
+     * @param result The calculation result (e.g., "4000")
+     * @param note Optional note for this calculation (e.g., "Rent + utilities")
+     */
+    fun saveCalculation(context: Context, expression: String, result: String, note: String = "") {
+        val history = getHistory(context).toMutableList()
+
+        // Create new history item with timestamp
+        val calculation = CalculationHistoryItem(
+            expression = expression,
+            result = result,
+            note = note.ifEmpty { null },  // ✅ Store null if empty
+            timestamp = System.currentTimeMillis()
+        )
+
+        // Add to beginning of list (most recent first)
+        history.add(0, calculation)
+
+        // Keep only last MAX_HISTORY_SIZE calculations
         if (history.size > MAX_HISTORY_SIZE) {
             history.removeAt(history.size - 1)
         }
 
-        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putString(KEY_HISTORY, gson.toJson(history)).apply()
+        // Save to SharedPreferences
+        val json = gson.toJson(history)
+        getPrefs(context).edit().putString(KEY_HISTORY, json).apply()
     }
 
-    fun getHistory(context: Context): List<com.aatmik.calculator.model.CalculationHistoryItem> {
-        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        val json = prefs.getString(KEY_HISTORY, null) ?: return emptyList()
+    /**
+     * Get all calculation history
+     * @param context Application context
+     * @return List of calculation history items (most recent first)
+     */
+    fun getHistory(context: Context): List<CalculationHistoryItem> {
+        val json = getPrefs(context).getString(KEY_HISTORY, null) ?: return emptyList()
 
         return try {
-            val type = object : TypeToken<List<com.aatmik.calculator.model.CalculationHistoryItem>>() {}.type
-            gson.fromJson(json, type)
+            val type = object : TypeToken<List<CalculationHistoryItem>>() {}.type
+            gson.fromJson<List<CalculationHistoryItem>>(json, type) ?: emptyList()
         } catch (e: Exception) {
+            // If there's an error parsing (e.g., schema changed), return empty list
             emptyList()
         }
     }
 
-    fun clearHistory(context: Context) {
-        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        prefs.edit().remove(KEY_HISTORY).apply()
+    /**
+     * Update note for existing calculation
+     * @param context Application context
+     * @param position Position in the history list
+     * @param newNote New note text (can be empty to remove note)
+     */
+    fun updateNote(context: Context, position: Int, newNote: String) {
+        val history = getHistory(context).toMutableList()
+
+        if (position in history.indices) {
+            // Update the note for this item
+            val item = history[position]
+            history[position] = item.copy(note = newNote.ifEmpty { null })  // ✅ Store null if empty
+
+            // Save updated history
+            val json = gson.toJson(history)
+            getPrefs(context).edit().putString(KEY_HISTORY, json).apply()
+        }
     }
 
+    /**
+     * Delete a specific history item
+     * @param context Application context
+     * @param position Position in the history list to delete
+     */
     fun deleteHistoryItem(context: Context, position: Int) {
         val history = getHistory(context).toMutableList()
+
         if (position in history.indices) {
             history.removeAt(position)
-            val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-            prefs.edit().putString(KEY_HISTORY, gson.toJson(history)).apply()
+
+            // Save updated history
+            val json = gson.toJson(history)
+            getPrefs(context).edit().putString(KEY_HISTORY, json).apply()
+        }
+    }
+
+    /**
+     * Clear all calculation history
+     * @param context Application context
+     */
+    fun clearHistory(context: Context) {
+        getPrefs(context).edit().remove(KEY_HISTORY).apply()
+    }
+
+    /**
+     * Get total count of history items
+     * @param context Application context
+     * @return Number of items in history
+     */
+    fun getHistoryCount(context: Context): Int {
+        return getHistory(context).size
+    }
+
+    /**
+     * Search history by expression or note
+     * @param context Application context
+     * @param query Search query
+     * @return Filtered list of matching history items
+     */
+    fun searchHistory(context: Context, query: String): List<CalculationHistoryItem> {
+        if (query.isBlank()) return getHistory(context)
+
+        val lowercaseQuery = query.lowercase()
+        return getHistory(context).filter { item ->
+            item.expression.lowercase().contains(lowercaseQuery) ||
+                    item.result.lowercase().contains(lowercaseQuery) ||
+                    (item.note?.lowercase()?.contains(lowercaseQuery) == true)  // ✅ Safe call
+        }
+    }
+
+    /**
+     * Get history items with notes only
+     * @param context Application context
+     * @return List of history items that have notes
+     */
+    fun getHistoryWithNotes(context: Context): List<CalculationHistoryItem> {
+        return getHistory(context).filter { it.hasNote() }
+    }
+
+    /**
+     * Export history as text
+     * @param context Application context
+     * @return Formatted string of all history items
+     */
+    fun exportHistory(context: Context): String {
+        val history = getHistory(context)
+        if (history.isEmpty()) return "No calculation history"
+
+        return buildString {
+            appendLine("=== CALCULATION HISTORY ===")
+            appendLine()
+
+            history.forEachIndexed { index, item ->
+                appendLine("${index + 1}. ${item.expression} = ${item.result}")
+                if (item.hasNote()) {
+                    appendLine("   Note: ${item.note ?: ""}")  // ✅ Safe call with default
+                }
+                appendLine("   ${item.getFormattedDateTime()}")
+                appendLine()
+            }
+
+            appendLine("Total calculations: ${history.size}")
         }
     }
 }

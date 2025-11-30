@@ -7,4 +7,5 @@ import kotlinx.parcelize.Parcelize
 data class CalculationHistory(
     val expression: String,
     val result: String,
+    val note: String = ""
 ) : Parcelable

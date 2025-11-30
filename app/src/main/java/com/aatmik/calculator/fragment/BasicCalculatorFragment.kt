@@ -150,6 +150,10 @@ class BasicCalculatorFragment : Fragment() {
         // Disable system keyboard
         binding.tvSecondaryBC.showSoftInputOnFocus = false
 
+        // Make both fields copyable ✅ ADD THESE TWO LINES
+        binding.tvSecondaryBC.setTextIsSelectable(true)
+        binding.tvPrimaryBC.setTextIsSelectable(true)
+
         binding.tvSecondaryBC.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 calculateLiveResult()
@@ -1187,7 +1191,9 @@ class BasicCalculatorFragment : Fragment() {
             isPowerMode = false
             baseValue = null
 
+            // Just save directly without dialog
             HistoryManager.saveCalculation(requireContext(), historyExpression, smartFormatResult(result))
+
             addNewCalculationHistory(historyExpression, smartFormatResult(result))
             AnalyticsManager.logCalculationPerformed("Basic Calculator", "power")
         } else {
@@ -1207,7 +1213,9 @@ class BasicCalculatorFragment : Fragment() {
                         addedBC = false
                         clearError()
 
+                        // Just save directly without dialog
                         HistoryManager.saveCalculation(requireContext(), input, formattedResult)
+
                         addNewCalculationHistory(input, formattedResult)
                         AnalyticsManager.logCalculationPerformed("Basic Calculator", "calculate")
                     }
