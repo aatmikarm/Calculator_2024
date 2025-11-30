@@ -55,7 +55,7 @@ class HistoryBottomSheetAdapter(
                 // Reuse button
                 btnReuse.setOnClickListener {
                     ButtonUtil.vibratePhone(itemView.context)
-                    onReuse(item.result)
+                    onReuse(item.expression)
                     AnalyticsManager.log("history_reused")
                 }
 
