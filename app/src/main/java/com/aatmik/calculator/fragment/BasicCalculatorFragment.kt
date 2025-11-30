@@ -14,13 +14,14 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.view.WindowMetrics
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
@@ -28,6 +29,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,22 +41,19 @@ import com.aatmik.calculator.adapter.HistoryBottomSheetAdapter
 import com.aatmik.calculator.databinding.BottomSheetLayoutBinding
 import com.aatmik.calculator.databinding.FragmentBasicCalculatorBinding
 import com.aatmik.calculator.model.CalculationHistory
-import com.aatmik.calculator.util.AdConfig
 import com.aatmik.calculator.util.AnalyticsManager
 import com.aatmik.calculator.util.ButtonUtil
 import com.aatmik.calculator.util.ButtonUtil.addNumberValueToText
 import com.aatmik.calculator.util.ButtonUtil.addOperatorValueToText
-import com.aatmik.calculator.util.ButtonUtil.invalidInputToast
 import com.aatmik.calculator.util.ButtonUtil.vibratePhone
 import com.aatmik.calculator.util.CalculationUtil
 import com.aatmik.calculator.util.HistoryManager
-import com.aatmik.calculator.util.NetworkUtil
 import com.aatmik.calculator.util.PrefUtil
 import com.aatmik.calculator.util.SubscriptionManager
 import com.aatmik.calculator.util.ThemeManager
 import com.aatmik.calculator.util.UpdateManager
+import com.aatmik.calculator.util.VoiceCalculatorManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 import kotlin.math.*
@@ -70,8 +69,6 @@ class BasicCalculatorFragment : Fragment() {
     private var historyPanel: LinearLayout? = null
     private var isHistoryVisible = false
     private var isHistoryExpanded = false
-    private var initialY = 0f
-    private var currentY = 0f
 
     // Advanced calculator states
     private var isPowerMode = false
@@ -93,11 +90,24 @@ class BasicCalculatorFragment : Fragment() {
     // Precision handling
     private val mathContext = MathContext(34, RoundingMode.HALF_UP)
 
+    // Voice input
+    private var voiceCalculatorManager: VoiceCalculatorManager? = null
+    private var currentVoiceState = VoiceCalculatorManager.VoiceState.IDLE
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            voiceCalculatorManager?.startListening()
+        } else {
+            Toast.makeText(requireContext(), "Microphone permission required", Toast.LENGTH_LONG).show()
+        }
+    }
+
     companion object {
         var addedBC = false
     }
 
-    // Validation result enum
     enum class ValidationResult(val message: String) {
         VALID("Valid"),
         EMPTY("Empty expression"),
@@ -107,13 +117,11 @@ class BasicCalculatorFragment : Fragment() {
         INVALID_CHARS("Invalid characters")
     }
 
-    // Calculation result sealed class
     sealed class CalculationResult {
         data class Success(val value: Double) : CalculationResult()
         data class Error(val message: String) : CalculationResult()
     }
 
-    // Error types
     enum class ErrorType {
         CALCULATION, SYNTAX, OVERFLOW, DOMAIN
     }
@@ -134,102 +142,57 @@ class BasicCalculatorFragment : Fragment() {
         setupButtons()
         historyView()
         restoreMemoryState()
-       // setupSwipeGesture()
+        setupVoiceInput()
+        setupEditableInput()
     }
 
-    // Setup swipe gesture with large detection area
-    @SuppressLint("ClickableViewAccessibility")
-    private fun setupSwipeGesture() {
-        var startY = 0f
-        var startX = 0f
-        var isTracking = false
-
-        // Set up gesture on the entire upper constraint layout area
-        val upperArea = binding.HistoryView.parent as View
-
-        upperArea.setOnTouchListener { v, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    startY = event.rawY
-                    startX = event.rawX
-                    isTracking = true
-                    false  // Don't consume, let children handle clicks
-                }
-
-                MotionEvent.ACTION_MOVE -> {
-                    if (isTracking && !isHistoryVisible) {
-                        val deltaY = event.rawY - startY
-                        val deltaX = kotlin.math.abs(event.rawX - startX)
-
-                        // Vertical swipe down with minimal horizontal movement
-                        if (deltaY > 80 && deltaX < 100) {
-                            showHistoryHalfScreen()
-                            isTracking = false
-                            true
-                        } else {
-                            false
-                        }
-                    } else {
-                        false
-                    }
-                }
-
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    isTracking = false
-                    false
-                }
-
-                else -> false
+    private fun setupEditableInput() {
+        binding.tvSecondaryBC.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                calculateLiveResult()
             }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    private fun calculateLiveResult() {
+        val expression = binding.tvSecondaryBC.text.toString()
+
+        if (expression.isEmpty()) {
+            binding.tvPrimaryBC.text = ""
+            return
         }
 
-        // ALSO add gesture to display area for maximum coverage
-        binding.linearLayout2.setOnTouchListener { v, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    startY = event.rawY
-                    startX = event.rawX
-                    false
-                }
+        val validation = validateExpressionRealTime(expression)
 
-                MotionEvent.ACTION_MOVE -> {
-                    if (!isHistoryVisible) {
-                        val deltaY = event.rawY - startY
-                        val deltaX = kotlin.math.abs(event.rawX - startX)
-
-                        if (deltaY > 60 && deltaX < 100) {
-                            showHistoryHalfScreen()
-                            true
-                        } else {
-                            false
-                        }
-                    } else {
-                        false
-                    }
-                }
-
-                else -> false
+        if (validation == ValidationResult.VALID) {
+            val result = safeEvaluate(expression)
+            if (result is CalculationResult.Success) {
+                val formatted = smartFormatResult(result.value)
+                binding.tvPrimaryBC.text = formatWithCommas(formatted)
+            } else {
+                binding.tvPrimaryBC.text = ""
             }
+        } else {
+            binding.tvPrimaryBC.text = ""
         }
     }
 
-    // Update history button
     private fun historyView() {
         recyclerView = binding.rvHistory
         historyAdapter = HistoryAdapter(calculationHistory) { historyItem ->
-            addToExpressionHistory(binding.tvPrimaryBC.text.toString())
-            binding.tvPrimaryBC.text = historyItem.result
-            validateAndUpdateUI()
+            addToExpressionHistory(binding.tvSecondaryBC.text.toString())
+            binding.tvSecondaryBC.setText(historyItem.expression)
             AnalyticsManager.log("calculation_history_used")
         }
 
         recyclerView.adapter = historyAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        val arrowView = binding.swipeToExplore.findViewById<ImageView>(R.id.arrowSwipe) // Give the ImageView an id
+        val arrowView = binding.swipeToExplore.findViewById<ImageView>(R.id.arrowSwipe)
         ObjectAnimator.ofFloat(arrowView, "translationX", 0f, 10f, 0f).apply {
             duration = 1000
-//            repeatCount = ObjectAnimator.INFINITE
             repeatCount = 9
             repeatMode = ObjectAnimator.RESTART
             start()
@@ -251,7 +214,6 @@ class BasicCalculatorFragment : Fragment() {
 
         binding.swipeToExplore.setOnClickListener {
             ButtonUtil.vibratePhone(requireContext())
-            // Navigate back or show all calculators
             (requireActivity() as? ContainerActivity)?.navigateToPage(
                 ContainerActivity.PAGE_ALL_CALCULATORS,
                 true
@@ -263,12 +225,9 @@ class BasicCalculatorFragment : Fragment() {
         val bottomSheetDialog = BottomSheetDialog(requireContext())
         val bottomSheetBinding = BottomSheetLayoutBinding.inflate(layoutInflater)
 
-        // Make theme button visible
         bottomSheetBinding.btnTheme.visibility = View.VISIBLE
 
-        // Show premium status on text
         if (SubscriptionManager.isPremium()) {
-            // Change text to show user is already premium
             bottomSheetBinding.removeAdsText.text = "Premium Active ✓"
         }
 
@@ -288,7 +247,6 @@ class BasicCalculatorFragment : Fragment() {
         }
 
         bottomSheetBinding.btnGetUpdate.setOnClickListener {
-            // Check for updates manually when user clicks update button
             UpdateManager.checkForUpdatesManually(requireActivity())
             AnalyticsManager.log("update_checked")
             bottomSheetDialog.dismiss()
@@ -328,7 +286,6 @@ class BasicCalculatorFragment : Fragment() {
             return
         }
 
-        // Show premium dialog
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Go Premium")
             .setMessage("Remove all ads and unlock all features for just ₹200/year!\n\n✓ No Banner Ads\n✓ No Interstitial Ads\n✓ All Features Unlocked\n✓ Works on all your devices")
@@ -408,7 +365,6 @@ class BasicCalculatorFragment : Fragment() {
                 Toast.LENGTH_LONG
             ).show()
 
-            // Copy email to clipboard as fallback
             val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("Support Email", supportEmail)
             clipboard.setPrimaryClip(clip)
@@ -472,14 +428,13 @@ class BasicCalculatorFragment : Fragment() {
                 val themeName = options[which]
                 ThemeManager.saveTheme(requireContext(), selectedTheme)
                 AnalyticsManager.logThemeChanged(themeName)
-                requireActivity().recreate() // Restart activity to apply new theme
+                requireActivity().recreate()
                 dialog.dismiss()
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
 
-    // Show history at half screen
     private fun showHistoryHalfScreen() {
         if (isHistoryVisible) return
 
@@ -494,10 +449,8 @@ class BasicCalculatorFragment : Fragment() {
         val btnCloseHistory = historyView.findViewById<ImageView>(R.id.btnCloseHistory)
         val overlay = historyView.findViewById<FrameLayout>(R.id.historyOverlay)
 
-        // Get history data
         val historyList = HistoryManager.getHistory(requireContext())
 
-        // Show/hide empty state
         if (historyList.isEmpty()) {
             emptyStateLayout.visibility = View.VISIBLE
             rvHistoryList.visibility = View.GONE
@@ -506,7 +459,6 @@ class BasicCalculatorFragment : Fragment() {
             rvHistoryList.visibility = View.VISIBLE
         }
 
-        // Setup adapter
         val adapter = HistoryBottomSheetAdapter(
             historyList,
             onReuse = { result ->
@@ -523,7 +475,6 @@ class BasicCalculatorFragment : Fragment() {
         rvHistoryList.adapter = adapter
         rvHistoryList.layoutManager = LinearLayoutManager(requireContext())
 
-        // Button listeners
         btnClearHistory.setOnClickListener {
             ButtonUtil.vibratePhone(requireContext())
             showClearAllConfirmationDialog {
@@ -536,18 +487,14 @@ class BasicCalculatorFragment : Fragment() {
             hideHistoryPanel()
         }
 
-        // Click overlay to close
         overlay.setOnClickListener {
             hideHistoryPanel()
         }
 
-        // Prevent clicks from passing through
-        historyPanel.setOnClickListener { /* Consume click */ }
+        historyPanel.setOnClickListener { }
 
-        // Setup swipe gesture on handle area
         setupPanelSwipeGesture(swipeHandleArea, historyPanel)
 
-        // Add to parent and animate
         historyPanel.translationY = -historyPanel.height.toFloat()
         parentView.addView(historyView)
         historyOverlayView = historyView
@@ -555,14 +502,9 @@ class BasicCalculatorFragment : Fragment() {
         isHistoryVisible = true
         isHistoryExpanded = false
 
-        // Make overlay transparent initially
         overlay.alpha = 0f
 
-        // Slide down animation
         historyPanel.post {
-            val screenHeight = parentView.height
-            val halfScreenPosition = screenHeight * 0.5f
-
             historyPanel.animate()
                 .translationY(0f)
                 .setDuration(350)
@@ -578,7 +520,6 @@ class BasicCalculatorFragment : Fragment() {
         AnalyticsManager.log("history_half_screen_opened")
     }
 
-    // Setup swipe gesture on panel
     @SuppressLint("ClickableViewAccessibility")
     private fun setupPanelSwipeGesture(handleArea: View, panel: LinearLayout) {
         var startY = 0f
@@ -595,7 +536,6 @@ class BasicCalculatorFragment : Fragment() {
                     val deltaY = event.rawY - startY
                     val newTranslationY = startTranslationY + deltaY
 
-                    // Only allow upward movement (negative translation)
                     if (newTranslationY <= 0) {
                         panel.translationY = newTranslationY
                     }
@@ -606,16 +546,13 @@ class BasicCalculatorFragment : Fragment() {
                     val threshold = 100f
 
                     if (deltaY < -threshold) {
-                        // Swiped up - keep at current position or snap
                         panel.animate()
                             .translationY(0f)
                             .setDuration(200)
                             .start()
                     } else if (deltaY > threshold) {
-                        // Swiped down - close panel
                         hideHistoryPanel()
                     } else {
-                        // Small movement - snap back
                         panel.animate()
                             .translationY(0f)
                             .setDuration(200)
@@ -628,7 +565,6 @@ class BasicCalculatorFragment : Fragment() {
         }
     }
 
-    // Hide history panel
     private fun hideHistoryPanel() {
         if (!isHistoryVisible || historyOverlayView == null) return
 
@@ -637,7 +573,6 @@ class BasicCalculatorFragment : Fragment() {
         val overlay = view.findViewById<FrameLayout>(R.id.historyOverlay)
         val parentView = view.parent as? ViewGroup
 
-        // Slide up animation
         panel.animate()
             .translationY(-panel.height.toFloat())
             .setDuration(300)
@@ -659,14 +594,12 @@ class BasicCalculatorFragment : Fragment() {
         AnalyticsManager.log("history_panel_closed")
     }
 
-    // Animate result population
     private fun animateResultPopulation(result: String) {
         ButtonUtil.vibratePhone(requireContext())
 
-        binding.tvPrimaryBC.text = result
+        binding.tvSecondaryBC.setText(result)
 
-        // Scale animation
-        binding.tvPrimaryBC.apply {
+        binding.tvSecondaryBC.apply {
             scaleX = 0.7f
             scaleY = 0.7f
             alpha = 0.5f
@@ -686,11 +619,9 @@ class BasicCalculatorFragment : Fragment() {
                 .start()
         }
 
-        validateAndUpdateUI()
         AnalyticsManager.log("history_result_populated", "result" to result)
     }
 
-    // Delete confirmation
     private fun showDeleteConfirmationDialog(position: Int, onDeleted: () -> Unit) {
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Delete Calculation")
@@ -705,7 +636,6 @@ class BasicCalculatorFragment : Fragment() {
             .show()
     }
 
-    // Clear all confirmation
     private fun showClearAllConfirmationDialog(onCleared: () -> Unit) {
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Clear All History")
@@ -720,7 +650,6 @@ class BasicCalculatorFragment : Fragment() {
             .show()
     }
 
-    // Refresh history in overlay
     private fun refreshHistoryInOverlay(recyclerView: RecyclerView, emptyState: LinearLayout) {
         val historyList = HistoryManager.getHistory(requireContext())
 
@@ -734,7 +663,6 @@ class BasicCalculatorFragment : Fragment() {
         }
     }
 
-    // Handle back press
     override fun onResume() {
         super.onResume()
 
@@ -748,7 +676,136 @@ class BasicCalculatorFragment : Fragment() {
         }
     }
 
-    // Clean up
+    private fun setupVoiceInput() {
+        voiceCalculatorManager = VoiceCalculatorManager(
+            context = requireContext(),
+            onStateChanged = { state ->
+                currentVoiceState = state
+                updateVoiceButtonUI(state)
+            },
+            onResultReceived = { expression, spokenText ->
+                binding.tvSecondaryBC.setText(expression)
+            },
+            onError = { error ->
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+                updateVoiceButtonUI(VoiceCalculatorManager.VoiceState.IDLE)
+            }
+        )
+
+        binding.voiceInputButton.setOnClickListener {
+            vibratePhone(requireContext())
+
+            when (currentVoiceState) {
+                VoiceCalculatorManager.VoiceState.IDLE -> {
+                    if (ContextCompat.checkSelfPermission(requireContext(),
+                            android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                        voiceCalculatorManager?.startListening()
+                    } else {
+                        requestPermissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+                    }
+                }
+                VoiceCalculatorManager.VoiceState.LISTENING -> {
+                    voiceCalculatorManager?.stopListening()
+                }
+                else -> {}
+            }
+        }
+
+        binding.voiceInfoButton.setOnClickListener {
+            vibratePhone(requireContext())
+            showVoiceInputGuide()
+        }
+    }
+
+    private fun showVoiceInputGuide() {
+        val dialogView = layoutInflater.inflate(android.R.layout.simple_list_item_1, null)
+
+        val message = """
+        🎤 VOICE INPUT GUIDE
+        
+        Tap the "Speak" button and say your calculation naturally!
+        
+        ━━━━━━━━━━━━━━━━━━━━━━
+        
+        📊 NUMBERS
+        • Say: "ten", "twenty five", "one hundred"
+        • Examples:
+          - "twenty five" → 25
+          - "one hundred fifty" → 150
+          - "three point five" → 3.5
+        
+        ━━━━━━━━━━━━━━━━━━━━━━
+        
+        ➕ OPERATORS
+        • Addition: "plus", "add"
+        • Subtraction: "minus", "subtract"
+        • Multiplication: "times", "multiply"
+        • Division: "divide", "divided by"
+        • Percentage: "percent"
+        • Decimal: "point", "dot"
+        
+        ━━━━━━━━━━━━━━━━━━━━━━
+        
+        💬 EXAMPLE PHRASES
+        
+        ✓ "twenty five plus fifty five"
+          → 25+55 = 80
+        
+        ✓ "one hundred divided by four"
+          → 100/4 = 25
+        
+        ✓ "three point five times two"
+          → 3.5*2 = 7
+        
+        ✓ "fifty percent of two hundred"
+          → 50%*200 = 100
+        
+        ━━━━━━━━━━━━━━━━━━━━━━
+        
+        💡 TIPS
+        • Speak clearly and at normal speed
+        • The result will appear automatically
+        • You can edit the expression if needed
+        • Works with all basic calculations
+        
+        ━━━━━━━━━━━━━━━━━━━━━━
+        
+        Need help? Just say your math problem naturally and let the app do the rest! 🚀
+    """.trimIndent()
+
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Voice Input Guide")
+            .setMessage(message)
+            .setPositiveButton("Got it!") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setNeutralButton("Try Now") { dialog, _ ->
+                dialog.dismiss()
+                // Auto-trigger voice input
+                binding.voiceInputButton.performClick()
+            }
+            .create()
+            .show()
+
+        AnalyticsManager.log("voice_guide_opened")
+    }
+
+    private fun updateVoiceButtonUI(state: VoiceCalculatorManager.VoiceState) {
+        binding.apply {
+            when (state) {
+                VoiceCalculatorManager.VoiceState.IDLE -> {
+                    voiceStatusText.text = "Speak"
+                }
+                VoiceCalculatorManager.VoiceState.LISTENING -> {
+                    voiceStatusText.text = "Listening..."
+                }
+                VoiceCalculatorManager.VoiceState.PROCESSING -> {
+                    voiceStatusText.text = "Processing..."
+                }
+            }
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         if (isHistoryVisible) {
@@ -758,11 +815,12 @@ class BasicCalculatorFragment : Fragment() {
             isHistoryVisible = false
         }
         inputRunnable?.let { inputHandler.removeCallbacks(it) }
+        voiceCalculatorManager?.cleanup()
+        voiceCalculatorManager = null
     }
 
     private fun setupUI() {
         toggleBarLogic()
-        // Clear any error states on start
         clearError()
     }
 
@@ -782,22 +840,21 @@ class BasicCalculatorFragment : Fragment() {
 
     private fun setupBasicButtons() {
         binding.apply {
-            // Number buttons
-            addNumberValueToText(requireContext(), bt0BC, tvPrimaryBC, 0)
-            addNumberValueToText(requireContext(), bt1BC, tvPrimaryBC, 0)
-            addNumberValueToText(requireContext(), bt2BC, tvPrimaryBC, 0)
-            addNumberValueToText(requireContext(), bt3BC, tvPrimaryBC, 0)
-            addNumberValueToText(requireContext(), bt4BC, tvPrimaryBC, 0)
-            addNumberValueToText(requireContext(), bt5BC, tvPrimaryBC, 0)
-            addNumberValueToText(requireContext(), bt6BC, tvPrimaryBC, 0)
-            addNumberValueToText(requireContext(), bt7BC, tvPrimaryBC, 0)
-            addNumberValueToText(requireContext(), bt8BC, tvPrimaryBC, 0)
-            addNumberValueToText(requireContext(), bt9BC, tvPrimaryBC, 0)
+            // Number buttons - NOW ADD TO SECONDARY
+            addNumberValueToText(requireContext(), bt0BC, tvSecondaryBC, 0)
+            addNumberValueToText(requireContext(), bt1BC, tvSecondaryBC, 0)
+            addNumberValueToText(requireContext(), bt2BC, tvSecondaryBC, 0)
+            addNumberValueToText(requireContext(), bt3BC, tvSecondaryBC, 0)
+            addNumberValueToText(requireContext(), bt4BC, tvSecondaryBC, 0)
+            addNumberValueToText(requireContext(), bt5BC, tvSecondaryBC, 0)
+            addNumberValueToText(requireContext(), bt6BC, tvSecondaryBC, 0)
+            addNumberValueToText(requireContext(), bt7BC, tvSecondaryBC, 0)
+            addNumberValueToText(requireContext(), bt8BC, tvSecondaryBC, 0)
+            addNumberValueToText(requireContext(), bt9BC, tvSecondaryBC, 0)
 
-            // Smart bracket button - toggles between ( and ) based on context
             btBracketOpenBC.setOnClickListener {
                 vibratePhone(requireContext())
-                val currentText = tvPrimaryBC.text.toString()
+                val currentText = tvSecondaryBC.text.toString()
                 val openCount = currentText.count { it == '(' }
                 val closeCount = currentText.count { it == ')' }
 
@@ -810,62 +867,54 @@ class BasicCalculatorFragment : Fragment() {
                 }
 
                 addToExpressionHistory(currentText)
-                tvPrimaryBC.text = currentText + bracketToAdd
-                validateAndUpdateUI()
+                tvSecondaryBC.setText(currentText + bracketToAdd)
             }
 
-            // Percentage button
             btPercentageBC.setOnClickListener {
                 vibratePhone(requireContext())
                 handlePercentage()
             }
 
-            // Operator buttons
-            addOperatorValueToText(requireContext(), btAdditionBC, tvPrimaryBC, "+", 0)
-            addOperatorValueToText(requireContext(), btSubtractionBC, tvPrimaryBC, "-", 0)
-            addOperatorValueToText(requireContext(), btMultiplicationBC, tvPrimaryBC, "*", 0)
-            addOperatorValueToText(requireContext(), btDivisionBC, tvPrimaryBC, "/", 0)
+            // Operator buttons - NOW ADD TO SECONDARY
+            addOperatorValueToText(requireContext(), btAdditionBC, tvSecondaryBC, "+", 0)
+            addOperatorValueToText(requireContext(), btSubtractionBC, tvSecondaryBC, "-", 0)
+            addOperatorValueToText(requireContext(), btMultiplicationBC, tvSecondaryBC, "*", 0)
+            addOperatorValueToText(requireContext(), btDivisionBC, tvSecondaryBC, "/", 0)
 
-            // Enhanced decimal point logic
             btDotBC.setOnClickListener {
                 vibratePhone(requireContext())
-                val currentText = tvPrimaryBC.text.toString()
+                val currentText = tvSecondaryBC.text.toString()
                 val lastNumber = getLastNumber(currentText)
                 if (!lastNumber.contains(".")) {
                     addToExpressionHistory(currentText)
-                    tvPrimaryBC.text = currentText + "."
-                    validateAndUpdateUI()
+                    tvSecondaryBC.setText(currentText + ".")
                 }
             }
 
-            // Clear button
             btACBC.setOnClickListener {
                 vibratePhone(requireContext())
-                addToExpressionHistory(tvPrimaryBC.text.toString())
+                addToExpressionHistory(tvSecondaryBC.text.toString())
+                tvSecondaryBC.text.clear()
                 tvPrimaryBC.text = ""
-                tvSecondaryBC.text = ""
                 addedBC = false
                 clearError()
                 resetCalculatorState()
                 AnalyticsManager.log("calculator_cleared")
             }
 
-            // Delete button
             btDeleteBC.setOnClickListener {
                 vibratePhone(requireContext())
-                val currentText = tvPrimaryBC.text.toString()
+                val currentText = tvSecondaryBC.text.toString()
                 if (currentText.isNotEmpty()) {
                     addToExpressionHistory(currentText)
                     val newText = currentText.subSequence(0, currentText.length - 1).toString()
-                    tvPrimaryBC.text = newText
-                    validateAndUpdateUI()
+                    tvSecondaryBC.setText(newText)
                     if (containsOperator(newText)) {
                         addedBC = false
                     }
                 }
             }
 
-            // Enhanced equals button
             btEqualBC.setOnClickListener {
                 vibratePhone(requireContext())
                 handleEqualsPress()
@@ -873,9 +922,8 @@ class BasicCalculatorFragment : Fragment() {
         }
     }
 
-    // Add this new method for percentage handling
     private fun handlePercentage() {
-        val currentText = binding.tvPrimaryBC.text.toString()
+        val currentText = binding.tvSecondaryBC.text.toString()
 
         if (currentText.isEmpty()) {
             showError("No value to convert to percentage", ErrorType.SYNTAX)
@@ -883,7 +931,6 @@ class BasicCalculatorFragment : Fragment() {
         }
 
         try {
-            // Get the last number in the expression
             val lastNumber = getLastNumber(currentText)
 
             if (lastNumber.isEmpty()) {
@@ -896,20 +943,12 @@ class BasicCalculatorFragment : Fragment() {
                 return
             }
 
-            // Calculate percentage (divide by 100)
             val percentValue = number / 100.0
-
-            // Replace the last number with the percentage value
             val textBeforeNumber = currentText.dropLast(lastNumber.length)
             val formattedPercent = smartFormatResult(percentValue)
 
             addToExpressionHistory(currentText)
-            binding.tvPrimaryBC.text = textBeforeNumber + formattedPercent
-
-            // Show what happened
-            binding.tvSecondaryBC.text = "$lastNumber% = $formattedPercent"
-
-            validateAndUpdateUI()
+            binding.tvSecondaryBC.setText(textBeforeNumber + formattedPercent)
 
             AnalyticsManager.log("percentage_calculated", "value" to lastNumber)
 
@@ -1028,7 +1067,6 @@ class BasicCalculatorFragment : Fragment() {
                     memoryValue += current
                     showMemoryIndicator(memoryValue != 0.0)
                     saveMemoryState()
-
                     AnalyticsManager.log("memory_operation", "operation" to "add")
                 }
             }
@@ -1040,17 +1078,14 @@ class BasicCalculatorFragment : Fragment() {
                     memoryValue -= current
                     showMemoryIndicator(memoryValue != 0.0)
                     saveMemoryState()
-
                     AnalyticsManager.log("memory_operation", "operation" to "subtract")
                 }
             }
 
             btMemoryRecall.setOnClickListener {
                 vibratePhone(requireContext())
-                addToExpressionHistory(tvPrimaryBC.text.toString())
-                tvPrimaryBC.text = smartFormatResult(memoryValue)
-                validateAndUpdateUI()
-
+                addToExpressionHistory(tvSecondaryBC.text.toString())
+                tvSecondaryBC.setText(smartFormatResult(memoryValue))
                 AnalyticsManager.log("memory_operation", "operation" to "recall")
             }
 
@@ -1059,7 +1094,6 @@ class BasicCalculatorFragment : Fragment() {
                 memoryValue = 0.0
                 showMemoryIndicator(false)
                 saveMemoryState()
-
                 AnalyticsManager.log("memory_operation", "operation" to "clear")
             }
         }
@@ -1071,8 +1105,7 @@ class BasicCalculatorFragment : Fragment() {
                 vibratePhone(requireContext())
                 val undoText = undo()
                 if (undoText != null) {
-                    tvPrimaryBC.text = undoText
-                    validateAndUpdateUI()
+                    tvSecondaryBC.setText(undoText)
                 }
             }
 
@@ -1080,8 +1113,7 @@ class BasicCalculatorFragment : Fragment() {
                 vibratePhone(requireContext())
                 val redoText = redo()
                 if (redoText != null) {
-                    tvPrimaryBC.text = redoText
-                    validateAndUpdateUI()
+                    tvSecondaryBC.setText(redoText)
                 }
             }
         }
@@ -1096,20 +1128,20 @@ class BasicCalculatorFragment : Fragment() {
     }
 
     private fun handlePowerCalculation() {
-        val exponentInput = binding.tvPrimaryBC.text.toString().split("^").lastOrNull()?.toDoubleOrNull()
+        val exponentInput = binding.tvSecondaryBC.text.toString().split("^").lastOrNull()?.toDoubleOrNull()
 
         if (exponentInput != null && baseValue != null) {
             val base = baseValue!!
             val result = base.pow(exponentInput)
             val historyExpression = "${base}^$exponentInput"
 
-            binding.tvPrimaryBC.text = smartFormatResult(result)
-            binding.tvSecondaryBC.text = "$historyExpression = ${smartFormatResult(result)}"
+            binding.tvSecondaryBC.setText(historyExpression)
+            binding.tvPrimaryBC.text = formatWithCommas(smartFormatResult(result))
 
-            // Reset power mode
             isPowerMode = false
             baseValue = null
 
+            HistoryManager.saveCalculation(requireContext(), historyExpression, smartFormatResult(result))
             addNewCalculationHistory(historyExpression, smartFormatResult(result))
             AnalyticsManager.logCalculationPerformed("Basic Calculator", "power")
         } else {
@@ -1119,21 +1151,17 @@ class BasicCalculatorFragment : Fragment() {
 
     private fun handleRegularCalculation() {
         try {
-            val input = binding.tvPrimaryBC.text.toString()
+            val input = binding.tvSecondaryBC.text.toString()
             if (input.isNotEmpty()) {
                 val result = safeEvaluate(input)
 
                 when (result) {
                     is CalculationResult.Success -> {
                         val formattedResult = smartFormatResult(result.value)
-                        binding.tvPrimaryBC.text = formattedResult
-                        binding.tvSecondaryBC.text = "$input = $formattedResult"
                         addedBC = false
                         clearError()
 
-                        // Save to persistent history
                         HistoryManager.saveCalculation(requireContext(), input, formattedResult)
-
                         addNewCalculationHistory(input, formattedResult)
                         AnalyticsManager.logCalculationPerformed("Basic Calculator", "calculate")
                     }
@@ -1148,7 +1176,7 @@ class BasicCalculatorFragment : Fragment() {
     }
 
     private fun onScientificFunctionClicked(function: String) {
-        val currentInput = parseNumber(binding.tvPrimaryBC.text.toString())
+        val currentInput = parseNumber(binding.tvSecondaryBC.text.toString())
 
         if (currentInput == null && function !in listOf("pi", "e")) {
             showError("Invalid input for function", ErrorType.SYNTAX)
@@ -1167,12 +1195,13 @@ class BasicCalculatorFragment : Fragment() {
             return
         }
 
-        addToExpressionHistory(binding.tvPrimaryBC.text.toString())
-        binding.tvPrimaryBC.text = smartFormatResult(result)
+        addToExpressionHistory(binding.tvSecondaryBC.text.toString())
 
         val inputStr = currentInput?.toString() ?: ""
         val functionStr = getFunctionDisplayString(function, inputStr)
-        binding.tvSecondaryBC.text = "$functionStr = ${smartFormatResult(result)}"
+
+        binding.tvSecondaryBC.setText(functionStr)
+        binding.tvPrimaryBC.text = formatWithCommas(smartFormatResult(result))
 
         AnalyticsManager.logCalculationPerformed("Basic Calculator", "scientific_$function")
     }
@@ -1254,11 +1283,11 @@ class BasicCalculatorFragment : Fragment() {
     }
 
     private fun handlePowerOperation() {
-        val currentInput = parseNumber(binding.tvPrimaryBC.text.toString())
+        val currentInput = parseNumber(binding.tvSecondaryBC.text.toString())
 
         if (currentInput != null) {
             baseValue = currentInput
-            binding.tvPrimaryBC.text = "$currentInput^"
+            binding.tvSecondaryBC.setText("$currentInput^")
             isPowerMode = true
         } else {
             showError("Invalid input for power operation", ErrorType.SYNTAX)
@@ -1292,7 +1321,6 @@ class BasicCalculatorFragment : Fragment() {
 
         binding.btDeg.text = if (isInDegreesMode) "deg" else "rad"
 
-        // In radian mode, disable second mode
         if (!isInDegreesMode) {
             disableSecondButton()
         } else {
@@ -1303,14 +1331,13 @@ class BasicCalculatorFragment : Fragment() {
     }
 
     private fun enableScientificNotation() {
-        val current = binding.tvPrimaryBC.text.toString()
+        val current = binding.tvSecondaryBC.text.toString()
         if (!current.contains("E") && current.isNotEmpty() && parseNumber(current) != null) {
             addToExpressionHistory(current)
-            binding.tvPrimaryBC.text = "${current}E"
+            binding.tvSecondaryBC.setText("${current}E")
         }
     }
 
-    // Validation methods
     private fun validateExpressionRealTime(expression: String): ValidationResult {
         return when {
             expression.isEmpty() -> ValidationResult.EMPTY
@@ -1407,16 +1434,34 @@ class BasicCalculatorFragment : Fragment() {
             result.isNaN() -> "Error"
             result == 0.0 -> "0"
             abs(result) < 1e-10 -> "0"
-            abs(result) >= 1e15 -> String.format("%.6E", result)
+            abs(result) >= 1e9 -> String.format("%.6E", result)
             result == result.toInt().toDouble() -> result.toInt().toString()
             else -> {
                 val formatted = String.format("%.12f", result).trimEnd('0').trimEnd('.')
-                if (formatted.length > 15) String.format("%.6E", result) else formatted
+                //if (formatted.length > 20) String.format("%.6E", result) else formatted
+                formatted
             }
         }
     }
 
-    // Memory management
+    private fun formatWithCommas(number: String): String {
+        if (number.isEmpty() || number == "0" || number == "Error") return number
+
+        // Handle special cases
+        if (number == "∞" || number == "-∞") return number
+
+        val parts = number.split(".")
+        val intPart = parts[0].replace("-", "")
+        val isNegative = number.startsWith("-")
+
+        // Add commas to integer part
+        val formatted = intPart.reversed().chunked(3).joinToString(",").reversed()
+
+        // Reconstruct with decimal if exists
+        val result = if (parts.size > 1) "$formatted.${parts[1]}" else formatted
+        return if (isNegative) "-$result" else result
+    }
+
     private fun showMemoryIndicator(hasMemory: Boolean) {
         binding.memoryIndicator.visibility = if (hasMemory) View.VISIBLE else View.GONE
     }
@@ -1430,7 +1475,6 @@ class BasicCalculatorFragment : Fragment() {
         showMemoryIndicator(memoryValue != 0.0)
     }
 
-    // History management
     private fun addToExpressionHistory(expression: String) {
         if (expression.isNotEmpty() && (expressionHistory.isEmpty() || expressionHistory.last() != expression)) {
             if (historyIndex < expressionHistory.size - 1) {
@@ -1461,7 +1505,6 @@ class BasicCalculatorFragment : Fragment() {
         } else null
     }
 
-    // Error handling
     private fun showError(message: String, type: ErrorType = ErrorType.CALCULATION) {
         binding.tvPrimaryBC.apply {
             text = when (type) {
@@ -1490,31 +1533,6 @@ class BasicCalculatorFragment : Fragment() {
         binding.tvPrimaryBC.setTextColor(typedValue.data)
     }
 
-    // Real-time validation
-    private fun validateAndUpdateUI() {
-        inputRunnable?.let { inputHandler.removeCallbacks(it) }
-
-        inputRunnable = Runnable {
-            val expression = binding.tvPrimaryBC.text.toString()
-            val validation = validateExpressionRealTime(expression)
-            updateUIBasedOnValidation(validation)
-        }
-
-        inputHandler.postDelayed(inputRunnable!!, 300)
-    }
-
-    private fun updateUIBasedOnValidation(validation: ValidationResult) {
-        if (validation != ValidationResult.VALID && validation != ValidationResult.EMPTY) {
-            binding.tvErrorBC.apply {
-                text = validation.message
-                visibility = View.VISIBLE
-            }
-        } else {
-            binding.tvErrorBC.visibility = View.GONE
-        }
-    }
-
-    // Utility functions
     private fun disableSecondButton() {
         binding.btSecond.isEnabled = false
         binding.btSecond.alpha = 0.5f
@@ -1529,10 +1547,8 @@ class BasicCalculatorFragment : Fragment() {
         isPowerMode = false
         baseValue = null
         isSecondMode = false
-        // Keep memory and angle mode states
     }
 
-    // Animation logic
     private fun toggleBarLogic() {
         binding.toggleBar.setOnClickListener {
             if (isPanelVisible) {
@@ -1577,20 +1593,14 @@ class BasicCalculatorFragment : Fragment() {
         })
     }
 
-    // Lifecycle methods
     override fun onStart() {
         super.onStart()
         binding.apply {
-            val primaryText = PrefUtil.getPrimaryTextBC(requireContext()) ?: ""
             val secondaryText = PrefUtil.getSecondaryTextBC(requireContext()) ?: ""
 
-            // Validate before restoring
-            tvPrimaryBC.text = if (primaryText.isNotEmpty() && validateExpressionRealTime(primaryText) == ValidationResult.VALID) {
-                primaryText
-            } else {
-                ""
+            if (secondaryText.isNotEmpty() && validateExpressionRealTime(secondaryText) == ValidationResult.VALID) {
+                tvSecondaryBC.setText(secondaryText)
             }
-            tvSecondaryBC.text = secondaryText
         }
         restoreMemoryState()
     }
@@ -1598,7 +1608,6 @@ class BasicCalculatorFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         binding.apply {
-            PrefUtil.setPrimaryTextBC(requireContext(), tvPrimaryBC.text.toString())
             PrefUtil.setSecondaryTextBC(requireContext(), tvSecondaryBC.text.toString())
         }
         saveMemoryState()

@@ -90,4 +90,6 @@
     <color name="friendship_poor">#9E9E9E</color>
 
     <color name="star_gold">#FFD700</color>
+
+    <color name="voice_listening_color">#4CAF50</color>
 </resources>

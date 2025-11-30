@@ -187,18 +187,24 @@
                     android:visibility="gone"
                     tools:text="Invalid expression" />
 
-                <TextView
+
+
+                <EditText
                     android:id="@+id/tvSecondaryBC"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="12dp"
-                    android:fontFamily="sans-serif-light"
+                    android:fontFamily="sans-serif"
                     android:gravity="end"
-                    android:maxLines="2"
+                    android:hint=""
+                    android:maxLines="3"
                     android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="16sp"
-                    tools:text="5+10-3" />
+                    android:textSize="28sp"
+                    android:background="@null"
+                    android:inputType="none"
+                    android:textIsSelectable="true"
+                    android:cursorVisible="true" />
 
                 <TextView
                     android:id="@+id/tvPrimaryBC"
@@ -207,14 +213,13 @@
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="6dp"
                     android:layout_marginBottom="12dp"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="sans-serif-light"
                     android:gravity="end"
-                    android:hint="0"
+                    android:textStyle="bold"
+                    android:hint=""
                     android:maxLines="2"
                     android:textColor="?attr/colorPrimary"
-                    android:textSize="42sp"
-                    android:textStyle="bold"
-                    tools:text="12" />
+                    android:textSize="42sp" />
 
             </LinearLayout>
 
@@ -625,7 +630,8 @@
                 android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"
                     android:layout_height="28dp"
                     android:backgroundTint="?attr/colorPrimary"
                     ads:cardCornerRadius="12dp">
@@ -637,6 +643,65 @@
                         android:layout_gravity="center"
                         android:background="@drawable/arrow_up"
                         android:backgroundTint="?attr/colorOnPrimary" />
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Voice Input Button -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/voiceInputButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="2dp"
+                    android:backgroundTint="?attr/colorPrimary"
+                    android:elevation="10dp"
+                    ads:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="12dp">
+
+                        <ImageView
+                            android:id="@+id/voiceIcon"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_mic"
+                            ads:tint="?attr/colorOnPrimary" />
+
+                        <TextView
+                            android:id="@+id/voiceStatusText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:text="Speak"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- ADD THIS INFO BUTTON -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/voiceInfoButton"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="4dp"
+                    android:backgroundTint="?attr/colorPrimary"
+                    android:elevation="10dp"
+                    ads:cardCornerRadius="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="i"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
                 </androidx.cardview.widget.CardView>
 
