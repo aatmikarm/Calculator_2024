@@ -164,10 +164,18 @@ class BasicCalculatorFragment : Fragment() {
             return
         }
 
-        val validation = validateExpressionRealTime(expression)
+        // SMART FIX: Remove trailing operator for live calculation
+        val cleanExpression = expression.trimEnd('+', '-', '*', '/', '^')
+
+        if (cleanExpression.isEmpty()) {
+            binding.tvPrimaryBC.text = ""
+            return
+        }
+
+        val validation = validateExpressionRealTime(cleanExpression)  // ✅ VALIDATE CLEAN
 
         if (validation == ValidationResult.VALID) {
-            val result = safeEvaluate(expression)
+            val result = safeEvaluate(cleanExpression)  // ✅ EVALUATE CLEAN
             if (result is CalculationResult.Success) {
                 val formatted = smartFormatResult(result.value)
                 binding.tvPrimaryBC.text = formatWithCommas(formatted)
