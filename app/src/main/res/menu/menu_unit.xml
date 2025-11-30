@@ -9,10 +9,6 @@
         android:icon="@drawable/ic_area"
         android:title="@string/area" />
     <item
-        android:id="@+id/currency"
-        android:icon="@drawable/ic_currency"
-        android:title="@string/currency" />
-    <item
         android:id="@+id/data"
         android:icon="@drawable/ic_data"
         android:title="@string/data" />

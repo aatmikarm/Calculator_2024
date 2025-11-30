@@ -30,7 +30,7 @@ import java.net.URL
 class ConverterFragment : Fragment() {
 
     enum class Unit {
-        Other, Currency, Temperature
+        Other, Temperature
     }
 
     private var unitId = Unit.Other
@@ -59,7 +59,6 @@ class ConverterFragment : Fragment() {
         0.00064516
     )
 
-    private val currencyValues = doubleArrayOf()
 
     private val dataValues = doubleArrayOf(
         0.125,
@@ -202,10 +201,6 @@ class ConverterFragment : Fragment() {
     private var fromCoefficient = 0.0
     private var toCoefficient = 0.0
 
-    private val apiKey = "f9d334b1e6287a2c6258"
-    private var fromCurrency = ""
-    private var toCurrency = ""
-    private var conversionRate = 0.0
 
     private var animStateSaver = false
     private lateinit var binding: FragmentConverterBinding
@@ -316,13 +311,6 @@ class ConverterFragment : Fragment() {
                         unitId = Unit.Other
                         btUnitSelect.text = getString(R.string.area)
                         spinnerSetup(R.array.area, areaValues, R.array.area_abb)
-                        true
-                    }
-
-                    R.id.currency -> {
-                        unitId = Unit.Currency
-                        btUnitSelect.text = getString(R.string.currency)
-                        spinnerSetup(R.array.currency, currencyValues, R.array.currency_abb)
                         true
                     }
 
@@ -490,7 +478,7 @@ class ConverterFragment : Fragment() {
                     selectedText.text = abbreviationArray[position]
 
                     when (unitId) {
-                        Unit.Currency -> fromCurrency = abbreviationArray[position]
+                       // Unit.Currency -> fromCurrency = abbreviationArray[position]
                         else -> fromCoefficient = values[position]
                     }
                     convert()
@@ -519,7 +507,7 @@ class ConverterFragment : Fragment() {
                     selectedText.text = abbreviationArray[position]
 
                     when (unitId) {
-                        Unit.Currency -> toCurrency = abbreviationArray[position]
+                        //Unit.Currency -> toCurrency = abbreviationArray[position]
                         else -> toCoefficient = values[position]
                     }
                     convert()
@@ -547,34 +535,6 @@ class ConverterFragment : Fragment() {
 
                         resultStr = result.toFloat().toString()
                         tvOutput.text = CalculationUtil.trimResult(resultStr)
-                    }
-
-                    Unit.Currency -> {
-                        val api =
-                            "https://free.currconv.com/api/v7/convert?q=${fromCurrency}_$toCurrency&compact=ultra&apiKey=$apiKey"
-
-                        GlobalScope.launch(Dispatchers.IO) {
-                            try {
-                                val apiResult = URL(api).readText()
-                                val jsonObject = JSONObject(apiResult)
-                                conversionRate =
-                                    jsonObject.getString("${fromCurrency}_$toCurrency").toDouble()
-
-                                withContext(Dispatchers.Main) {
-                                    result = inputValue * conversionRate
-                                    resultStr = result.toFloat().toString()
-                                    tvOutput.text = CalculationUtil.trimResult(resultStr)
-                                }
-                            } catch (e: Exception) {
-                                Handler(Looper.getMainLooper()).post {
-                                    Toast.makeText(
-                                        requireContext(),
-                                        getString(R.string.api_error),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        }
                     }
 
                     Unit.Temperature -> {
