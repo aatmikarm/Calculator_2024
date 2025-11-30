@@ -147,6 +147,9 @@ class BasicCalculatorFragment : Fragment() {
     }
 
     private fun setupEditableInput() {
+        // Disable system keyboard
+        binding.tvSecondaryBC.showSoftInputOnFocus = false
+
         binding.tvSecondaryBC.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 calculateLiveResult()
@@ -848,34 +851,42 @@ class BasicCalculatorFragment : Fragment() {
 
     private fun setupBasicButtons() {
         binding.apply {
-            // Number buttons - NOW ADD TO SECONDARY
-            addNumberValueToText(requireContext(), bt0BC, tvSecondaryBC, 0)
-            addNumberValueToText(requireContext(), bt1BC, tvSecondaryBC, 0)
-            addNumberValueToText(requireContext(), bt2BC, tvSecondaryBC, 0)
-            addNumberValueToText(requireContext(), bt3BC, tvSecondaryBC, 0)
-            addNumberValueToText(requireContext(), bt4BC, tvSecondaryBC, 0)
-            addNumberValueToText(requireContext(), bt5BC, tvSecondaryBC, 0)
-            addNumberValueToText(requireContext(), bt6BC, tvSecondaryBC, 0)
-            addNumberValueToText(requireContext(), bt7BC, tvSecondaryBC, 0)
-            addNumberValueToText(requireContext(), bt8BC, tvSecondaryBC, 0)
-            addNumberValueToText(requireContext(), bt9BC, tvSecondaryBC, 0)
+            // Number buttons - INSERT AT CURSOR
+            bt0BC.setOnClickListener { insertAtCursor("0") }
+            bt1BC.setOnClickListener { insertAtCursor("1") }
+            bt2BC.setOnClickListener { insertAtCursor("2") }
+            bt3BC.setOnClickListener { insertAtCursor("3") }
+            bt4BC.setOnClickListener { insertAtCursor("4") }
+            bt5BC.setOnClickListener { insertAtCursor("5") }
+            bt6BC.setOnClickListener { insertAtCursor("6") }
+            bt7BC.setOnClickListener { insertAtCursor("7") }
+            bt8BC.setOnClickListener { insertAtCursor("8") }
+            bt9BC.setOnClickListener { insertAtCursor("9") }
 
             btBracketOpenBC.setOnClickListener {
                 vibratePhone(requireContext())
                 val currentText = tvSecondaryBC.text.toString()
+                val cursorPosition = tvSecondaryBC.selectionStart
                 val openCount = currentText.count { it == '(' }
                 val closeCount = currentText.count { it == ')' }
 
                 val bracketToAdd = if (openCount > closeCount &&
                     currentText.isNotEmpty() &&
-                    currentText.last() !in listOf('(', '+', '-', '*', '/')) {
+                    cursorPosition > 0 &&
+                    currentText[cursorPosition - 1] !in listOf('(', '+', '-', '*', '/')) {
                     ")"
                 } else {
                     "("
                 }
 
                 addToExpressionHistory(currentText)
-                tvSecondaryBC.setText(currentText + bracketToAdd)
+
+                val newText = currentText.substring(0, cursorPosition) +
+                        bracketToAdd +
+                        currentText.substring(cursorPosition)
+
+                tvSecondaryBC.setText(newText)
+                tvSecondaryBC.setSelection(cursorPosition + 1)
             }
 
             btPercentageBC.setOnClickListener {
@@ -883,19 +894,18 @@ class BasicCalculatorFragment : Fragment() {
                 handlePercentage()
             }
 
-            // Operator buttons - NOW ADD TO SECONDARY
-            addOperatorValueToText(requireContext(), btAdditionBC, tvSecondaryBC, "+", 0)
-            addOperatorValueToText(requireContext(), btSubtractionBC, tvSecondaryBC, "-", 0)
-            addOperatorValueToText(requireContext(), btMultiplicationBC, tvSecondaryBC, "*", 0)
-            addOperatorValueToText(requireContext(), btDivisionBC, tvSecondaryBC, "/", 0)
+            // Operator buttons - INSERT AT CURSOR
+            btAdditionBC.setOnClickListener { insertAtCursor("+") }
+            btSubtractionBC.setOnClickListener { insertAtCursor("-") }
+            btMultiplicationBC.setOnClickListener { insertAtCursor("*") }
+            btDivisionBC.setOnClickListener { insertAtCursor("/") }
 
             btDotBC.setOnClickListener {
                 vibratePhone(requireContext())
                 val currentText = tvSecondaryBC.text.toString()
                 val lastNumber = getLastNumber(currentText)
                 if (!lastNumber.contains(".")) {
-                    addToExpressionHistory(currentText)
-                    tvSecondaryBC.setText(currentText + ".")
+                    insertAtCursor(".")
                 }
             }
 
@@ -913,10 +923,20 @@ class BasicCalculatorFragment : Fragment() {
             btDeleteBC.setOnClickListener {
                 vibratePhone(requireContext())
                 val currentText = tvSecondaryBC.text.toString()
-                if (currentText.isNotEmpty()) {
+                val cursorPosition = binding.tvSecondaryBC.selectionStart
+
+                if (currentText.isNotEmpty() && cursorPosition > 0) {
                     addToExpressionHistory(currentText)
-                    val newText = currentText.subSequence(0, currentText.length - 1).toString()
+
+                    // Delete character BEFORE cursor
+                    val newText = currentText.substring(0, cursorPosition - 1) +
+                            currentText.substring(cursorPosition)
+
                     tvSecondaryBC.setText(newText)
+
+                    // Put cursor back at same position (minus 1)
+                    tvSecondaryBC.setSelection(cursorPosition - 1)
+
                     if (containsOperator(newText)) {
                         addedBC = false
                     }
@@ -928,6 +948,24 @@ class BasicCalculatorFragment : Fragment() {
                 handleEqualsPress()
             }
         }
+    }
+
+    // Add this helper function to your class
+    private fun insertAtCursor(text: String) {
+        vibratePhone(requireContext())
+
+        val cursorPosition = binding.tvSecondaryBC.selectionStart
+        val currentText = binding.tvSecondaryBC.text.toString()
+
+        addToExpressionHistory(currentText)
+
+        // Insert at cursor position
+        val newText = currentText.substring(0, cursorPosition) +
+                text +
+                currentText.substring(cursorPosition)
+
+        binding.tvSecondaryBC.setText(newText)
+        binding.tvSecondaryBC.setSelection(cursorPosition + text.length)
     }
 
     private fun handlePercentage() {
