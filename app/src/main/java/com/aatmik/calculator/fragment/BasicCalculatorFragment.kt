@@ -303,8 +303,8 @@ class BasicCalculatorFragment : Fragment() {
 
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Go Premium")
-            .setMessage("Remove all ads and unlock all features for just ₹200/year!\n\n✓ No Banner Ads\n✓ No Interstitial Ads\n✓ All Features Unlocked\n✓ Works on all your devices")
-            .setPositiveButton("Subscribe ₹200/year") { _, _ ->
+            .setMessage("Remove all ads and unlock all features!\n\n✓ No Banner Ads\n✓ No Interstitial Ads\n✓ All Features Unlocked\n✓ Works on all your devices")
+            .setPositiveButton("Subscribe") { _, _ ->
                 SubscriptionManager.startSubscriptionPurchase(requireActivity()) { error ->
                     Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
                 }
