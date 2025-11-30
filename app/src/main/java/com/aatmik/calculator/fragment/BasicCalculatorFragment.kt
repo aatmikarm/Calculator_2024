@@ -27,6 +27,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
@@ -83,6 +84,8 @@ class BasicCalculatorFragment : Fragment() {
     // Undo/Redo functionality
     private val expressionHistory = mutableListOf<String>()
     private var historyIndex = -1
+
+    private var isResultMode = false
 
     // Input validation
     private val inputHandler = Handler(Looper.getMainLooper())
@@ -153,21 +156,54 @@ class BasicCalculatorFragment : Fragment() {
 
     }
 
+    // Replace setupEditableInput() method:
     private fun setupEditableInput() {
         // Disable system keyboard
         binding.tvSecondaryBC.showSoftInputOnFocus = false
 
-        // Make both fields copyable ✅ ADD THESE TWO LINES
+        // Make both fields copyable
         binding.tvSecondaryBC.setTextIsSelectable(true)
         binding.tvPrimaryBC.setTextIsSelectable(true)
 
         binding.tvSecondaryBC.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
+                // When user types, switch to input mode
+                if (!isResultMode) {
+                    switchToInputMode()
+                }
                 calculateLiveResult()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+    }
+
+    private fun switchToInputMode() {
+        binding.tvSecondaryBC.animate()
+            .textSize(45f)
+            .alpha(1f)
+            .setDuration(150)
+            .start()
+
+        binding.tvPrimaryBC.animate()
+            .textSize(35f)
+            .alpha(0.7f)
+            .setDuration(150)
+            .start()
+    }
+
+    private fun switchToResultMode() {
+        binding.tvSecondaryBC.animate()
+            .textSize(35f)
+            .alpha(0.7f)
+            .setDuration(200)
+            .start()
+
+        binding.tvPrimaryBC.animate()
+            .textSize(45f)
+            .alpha(1f)
+            .setDuration(200)
+            .start()
     }
 
     private fun calculateLiveResult() {
@@ -979,6 +1015,8 @@ class BasicCalculatorFragment : Fragment() {
                 addToExpressionHistory(tvSecondaryBC.text.toString())
                 tvSecondaryBC.text.clear()
                 tvPrimaryBC.text = ""
+                binding.tvSecondaryBC.textSize = 45f  // Reset to input mode
+                binding.tvPrimaryBC.textSize = 35f
                 addedBC = false
                 clearError()
                 resetCalculatorState()
@@ -1015,22 +1053,71 @@ class BasicCalculatorFragment : Fragment() {
         }
     }
 
-    // Add this helper function to your class
     private fun insertAtCursor(text: String) {
         vibratePhone(requireContext())
+
+        if (addedBC && text in listOf("+", "-", "*", "/")) {
+            val result = binding.tvPrimaryBC.text.toString().replace(",", "")
+            binding.tvSecondaryBC.setText(result)
+            binding.tvSecondaryBC.append(text)
+            binding.tvSecondaryBC.setSelection(binding.tvSecondaryBC.text.length)
+            binding.tvPrimaryBC.text = ""
+            binding.tvSecondaryBC.textSize = 45f  // Make input bigger
+            binding.tvPrimaryBC.textSize = 35f     // Make result smaller
+            addedBC = false
+            isResultMode = false
+            return
+        }
+
+        if (addedBC && text !in listOf("+", "-", "*", "/", ".", "(", ")")) {
+            binding.tvSecondaryBC.setText(text)
+            binding.tvSecondaryBC.setSelection(text.length)
+            binding.tvPrimaryBC.text = ""
+            binding.tvSecondaryBC.textSize = 45f  // Make input bigger
+            binding.tvPrimaryBC.textSize = 35f     // Make result smaller
+            addedBC = false
+            isResultMode = false
+            return
+        }
 
         val cursorPosition = binding.tvSecondaryBC.selectionStart
         val currentText = binding.tvSecondaryBC.text.toString()
 
         addToExpressionHistory(currentText)
 
-        // Insert at cursor position
         val newText = currentText.substring(0, cursorPosition) +
                 text +
                 currentText.substring(cursorPosition)
 
-        binding.tvSecondaryBC.setText(newText)
-        binding.tvSecondaryBC.setSelection(cursorPosition + text.length)
+        binding.tvSecondaryBC.apply {
+            setText(newText)
+            setSelection(cursorPosition + text.length)
+        }
+
+        if (isResultMode) {
+            binding.tvSecondaryBC.textSize = 45f  // Make input bigger
+            binding.tvPrimaryBC.textSize = 35f     // Make result smaller
+            isResultMode = false
+        }
+    }
+
+    // Add this extension function at the bottom of the file (outside the class):
+    fun TextView.animate(): android.view.ViewPropertyAnimator {
+        return this.animate()
+    }
+
+    private fun android.view.ViewPropertyAnimator.textSize(size: Float): android.view.ViewPropertyAnimator {
+        return this.withStartAction {
+            (this@textSize as? TextView)?.let { textView ->
+                android.animation.ValueAnimator.ofFloat(textView.textSize / textView.resources.displayMetrics.scaledDensity, size).apply {
+                    duration = 200
+                    addUpdateListener { animator ->
+                        textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, animator.animatedValue as Float)
+                    }
+                    start()
+                }
+            }
+        }
     }
 
     private fun handlePercentage() {
@@ -1246,21 +1333,33 @@ class BasicCalculatorFragment : Fragment() {
             val result = base.pow(exponentInput)
             val historyExpression = "${base}^$exponentInput"
 
-            binding.tvSecondaryBC.setText(historyExpression)
+            isResultMode = true
+
+            binding.tvSecondaryBC.apply {
+                setText(historyExpression)
+                setSelection(text.length)
+            }
+
             binding.tvPrimaryBC.text = formatWithCommas(smartFormatResult(result))
+
+            binding.tvSecondaryBC.textSize = 35f  // Make input smaller
+            binding.tvPrimaryBC.textSize = 45f     // Make result bigger
+            // Animate size swap
+            switchToResultMode()
 
             isPowerMode = false
             baseValue = null
 
-            // Just save directly without dialog
             HistoryManager.saveCalculation(requireContext(), historyExpression, smartFormatResult(result))
-
             addNewCalculationHistory(historyExpression, smartFormatResult(result))
             AnalyticsManager.logCalculationPerformed("Basic Calculator", "power")
+
+            addedBC = true
         } else {
             showError("Invalid power operation", ErrorType.SYNTAX)
         }
     }
+
 
     private fun handleRegularCalculation() {
         try {
@@ -1271,12 +1370,24 @@ class BasicCalculatorFragment : Fragment() {
                 when (result) {
                     is CalculationResult.Success -> {
                         val formattedResult = smartFormatResult(result.value)
-                        addedBC = false
+                        addedBC = true
+                        isResultMode = true
                         clearError()
 
-                        // Just save directly without dialog
-                        HistoryManager.saveCalculation(requireContext(), input, formattedResult)
+                        binding.tvSecondaryBC.apply {
+                            setText(input)
+                            setSelection(text.length)
+                        }
 
+                        binding.tvPrimaryBC.text = formatWithCommas(formattedResult)
+
+                        // Animate size swap
+                        switchToResultMode()
+
+                        binding.tvSecondaryBC.textSize = 35f  // Make input smaller
+                        binding.tvPrimaryBC.textSize = 45f     // Make result bigger
+
+                        HistoryManager.saveCalculation(requireContext(), input, formattedResult)
                         addNewCalculationHistory(input, formattedResult)
                         AnalyticsManager.logCalculationPerformed("Basic Calculator", "calculate")
                     }
