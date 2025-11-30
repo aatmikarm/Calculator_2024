@@ -59,6 +59,29 @@ object PrefUtil {
             .apply()
     }
 
+    /*** Feature discovery consts ***/
+    private const val KEY_FEATURE_DISCOVERY_COMPLETED = "feature_discovery_completed"
+
+
+    /*** Feature discovery prefs ***/
+    fun isFeatureDiscoveryCompleted(context: Context): Boolean {
+        return context
+            .getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+            .getBoolean(KEY_FEATURE_DISCOVERY_COMPLETED, false)
+    }
+
+    fun setFeatureDiscoveryCompleted(context: Context, completed: Boolean) {
+        context
+            .getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_FEATURE_DISCOVERY_COMPLETED, completed)
+            .apply()
+    }
+
+    fun resetFeatureDiscovery(context: Context) {
+        setFeatureDiscoveryCompleted(context, false)
+    }
+
     fun getCalculationHistory(context: Context): List<String> {
         val json = context
             .getSharedPreferences(context.packageName, Context.MODE_PRIVATE)

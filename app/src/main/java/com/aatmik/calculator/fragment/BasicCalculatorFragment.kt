@@ -47,6 +47,7 @@ import com.aatmik.calculator.util.ButtonUtil.addNumberValueToText
 import com.aatmik.calculator.util.ButtonUtil.addOperatorValueToText
 import com.aatmik.calculator.util.ButtonUtil.vibratePhone
 import com.aatmik.calculator.util.CalculationUtil
+import com.aatmik.calculator.util.FeatureDiscoveryManager
 import com.aatmik.calculator.util.HistoryManager
 import com.aatmik.calculator.util.PrefUtil
 import com.aatmik.calculator.util.SubscriptionManager
@@ -144,6 +145,12 @@ class BasicCalculatorFragment : Fragment() {
         restoreMemoryState()
         setupVoiceInput()
         setupEditableInput()
+
+        // Show feature discovery on first launch (after a small delay)
+        binding.root.postDelayed({
+            showFeatureDiscovery()
+        }, 500) // 500ms delay to let everything load
+
     }
 
     private fun setupEditableInput() {
@@ -313,6 +320,60 @@ class BasicCalculatorFragment : Fragment() {
             .show()
 
         AnalyticsManager.log("remove_ads_clicked")
+    }
+
+    private fun showFeatureDiscovery() {
+        // Check if should show (first time only)
+        if (!FeatureDiscoveryManager.shouldShow(requireContext())) {
+            return
+        }
+
+        // Wait for views to be laid out
+        binding.root.post {
+            FeatureDiscoveryManager(
+                requireContext(),
+                requireActivity().findViewById(android.R.id.content)
+            )
+                .addStep(
+                    targetView = binding.menuButton,
+                    title = "Menu",
+                    description = "Change Themes, Customer Support, Get App Updates and more!",
+                    radiusDp = 50
+                )
+                .addStep(
+                    targetView = binding.historyButton,
+                    title = "History",
+                    description = "See all your calculations at one place, Reuse, Share, & Add a Note if you want 📝",
+                    radiusDp = 80
+                )
+                .addStep(
+                    targetView = binding.swipeToExplore,
+                    title = "Explore More",
+                    description = "Swipe to Explore 100+ calculators!",
+                    radiusDp = 120
+                )
+                .addStep(
+                    targetView = binding.voiceInputButton,
+                    title = "Voice Input",
+                    description = "Click Speak and Say 1 + 2 and see the Magic ✨",
+                    radiusDp = 80
+                )
+                .addStep(
+                    targetView = binding.toggleArrow,
+                    title = "Scientific Mode",
+                    description = "Use Advanced Functions like sin, cos, tan, e, deg, root, power, log, pi, memory!",
+                    radiusDp = 70
+                )
+                .onComplete {
+                    // Optional: Show a welcome toast
+                    Toast.makeText(
+                        requireContext(),
+                        "You're all set! Start calculating! 🎉",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                .start()
+        }
     }
 
     private fun shareApp() {
