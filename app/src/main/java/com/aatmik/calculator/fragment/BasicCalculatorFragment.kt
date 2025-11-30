@@ -710,6 +710,7 @@ class BasicCalculatorFragment : Fragment() {
         ButtonUtil.vibratePhone(requireContext())
 
         binding.tvSecondaryBC.setText(result)
+        binding.tvSecondaryBC.setSelection(result.length)
 
         binding.tvSecondaryBC.apply {
             scaleX = 0.7f
