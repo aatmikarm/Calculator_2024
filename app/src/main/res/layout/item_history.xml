@@ -71,6 +71,16 @@
             android:gravity="end"
             android:layout_marginBottom="8dp" />
 
+        <!-- ✅ Tags Display -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginBottom="8dp"
+            app:chipSpacing="6dp"
+            app:singleLine="false" />
+
         <!-- ✅ Note Display -->
         <TextView
             android:id="@+id/tvNote"

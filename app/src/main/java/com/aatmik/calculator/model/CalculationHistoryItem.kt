@@ -5,6 +5,7 @@ data class CalculationHistoryItem(
     val expression: String,
     val result: String,
     val note: String? = null,
+    val tags: List<String>? = null, // Nullable for backward compatibility
     val timestamp: Long = System.currentTimeMillis()
 ) {
     /**
@@ -37,7 +38,14 @@ data class CalculationHistoryItem(
      * Check if this item has a note
      */
     fun hasNote(): Boolean {
-        return !note.isNullOrEmpty()  // ✅ Null-safe check
+        return !note.isNullOrEmpty()
+    }
+
+    /**
+     * Check if this item has tags
+     */
+    fun hasTags(): Boolean {
+        return tags != null && tags.isNotEmpty()
     }
 
     /**

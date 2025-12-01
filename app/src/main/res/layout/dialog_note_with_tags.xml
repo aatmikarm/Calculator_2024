@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Tags"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="?android:attr/textColorPrimary"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Tag chips container -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupTags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:chipSpacing="8dp"
+        app:singleLine="false" />
+
+    <!-- Add custom tag button -->
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipAddTag"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="+ Add Custom Tag"
+        android:textColor="?attr/colorPrimary"
+        app:chipIcon="@android:drawable/ic_input_add"
+        app:chipIconTint="?attr/colorPrimary"
+        app:chipBackgroundColor="@android:color/transparent"
+        app:chipStrokeColor="?attr/colorPrimary"
+        app:chipStrokeWidth="1dp" />
+
+    <!-- Note input section -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Note"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="?android:attr/textColorPrimary"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/etNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Add a note (e.g., 'Monthly expenses', 'Tip calculation')"
+        android:inputType="textCapSentences|textMultiLine"
+        android:maxLines="5"
+        android:minHeight="80dp"
+        android:gravity="top|start"
+        android:padding="12dp"
+        android:background="@drawable/note_background" />
+
+</LinearLayout>

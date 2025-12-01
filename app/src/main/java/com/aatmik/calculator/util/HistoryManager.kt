@@ -27,15 +27,17 @@ object HistoryManager {
      * @param expression The calculation expression (e.g., "1500+2500")
      * @param result The calculation result (e.g., "4000")
      * @param note Optional note for this calculation (e.g., "Rent + utilities")
+     * @param tags List of tag IDs for this calculation
      */
-    fun saveCalculation(context: Context, expression: String, result: String, note: String = "") {
+    fun saveCalculation(context: Context, expression: String, result: String, note: String = "", tags: List<String>? = null) {
         val history = getHistory(context).toMutableList()
 
         // Create new history item with timestamp
         val calculation = CalculationHistoryItem(
             expression = expression,
             result = result,
-            note = note.ifEmpty { null },  // ✅ Store null if empty
+            note = note.ifEmpty { null },
+            tags = tags,
             timestamp = System.currentTimeMillis()
         )
 
@@ -64,8 +66,36 @@ object HistoryManager {
             val type = object : TypeToken<List<CalculationHistoryItem>>() {}.type
             gson.fromJson<List<CalculationHistoryItem>>(json, type) ?: emptyList()
         } catch (e: Exception) {
-            // If there's an error parsing (e.g., schema changed), return empty list
             emptyList()
+        }
+    }
+
+    /**
+     * Update note and tags for existing calculation
+     * @param context Application context
+     * @param position Position in the history list
+     * @param newNote New note text (can be empty to remove note)
+     * @param newTags New list of tag IDs
+     */
+    fun updateNoteAndTags(context: Context, position: Int, newNote: String, newTags: List<String>) {
+        val history = getHistory(context).toMutableList()
+
+        android.util.Log.d("HistoryManager", "Updating position $position with tags: $newTags")
+
+        if (position in history.indices) {
+            val item = history[position]
+            val updatedItem = item.copy(
+                note = newNote.ifEmpty { null },
+                tags = if (newTags.isEmpty()) null else newTags  // Save as null if empty, otherwise as list
+            )
+            history[position] = updatedItem
+
+            android.util.Log.d("HistoryManager", "Updated item tags: ${updatedItem.tags}")
+
+            // Save updated history
+            val json = gson.toJson(history)
+            android.util.Log.d("HistoryManager", "Saving JSON: $json")
+            getPrefs(context).edit().putString(KEY_HISTORY, json).apply()
         }
     }
 
@@ -79,9 +109,27 @@ object HistoryManager {
         val history = getHistory(context).toMutableList()
 
         if (position in history.indices) {
-            // Update the note for this item
             val item = history[position]
-            history[position] = item.copy(note = newNote.ifEmpty { null })  // ✅ Store null if empty
+            history[position] = item.copy(note = newNote.ifEmpty { null })
+
+            // Save updated history
+            val json = gson.toJson(history)
+            getPrefs(context).edit().putString(KEY_HISTORY, json).apply()
+        }
+    }
+
+    /**
+     * Update tags for existing calculation
+     * @param context Application context
+     * @param position Position in the history list
+     * @param newTags New list of tag IDs
+     */
+    fun updateTags(context: Context, position: Int, newTags: List<String>) {
+        val history = getHistory(context).toMutableList()
+
+        if (position in history.indices) {
+            val item = history[position]
+            history[position] = item.copy(tags = newTags)
 
             // Save updated history
             val json = gson.toJson(history)
@@ -136,7 +184,7 @@ object HistoryManager {
         return getHistory(context).filter { item ->
             item.expression.lowercase().contains(lowercaseQuery) ||
                     item.result.lowercase().contains(lowercaseQuery) ||
-                    (item.note?.lowercase()?.contains(lowercaseQuery) == true)  // ✅ Safe call
+                    (item.note?.lowercase()?.contains(lowercaseQuery) == true)
         }
     }
 
@@ -147,6 +195,16 @@ object HistoryManager {
      */
     fun getHistoryWithNotes(context: Context): List<CalculationHistoryItem> {
         return getHistory(context).filter { it.hasNote() }
+    }
+
+    /**
+     * Get history items with specific tag
+     * @param context Application context
+     * @param tagId Tag ID to filter by
+     * @return List of history items with this tag
+     */
+    fun getHistoryByTag(context: Context, tagId: String): List<CalculationHistoryItem> {
+        return getHistory(context).filter { it.tags?.contains(tagId) == true }
     }
 
     /**
@@ -165,7 +223,15 @@ object HistoryManager {
             history.forEachIndexed { index, item ->
                 appendLine("${index + 1}. ${item.expression} = ${item.result}")
                 if (item.hasNote()) {
-                    appendLine("   Note: ${item.note ?: ""}")  // ✅ Safe call with default
+                    appendLine("   Note: ${item.note ?: ""}")
+                }
+                if (item.hasTags()) {
+                    val tagNames = item.tags?.mapNotNull { tagId ->
+                        TagManager.getTagById(context, tagId)?.name
+                    } ?: emptyList()
+                    if (tagNames.isNotEmpty()) {
+                        appendLine("   Tags: ${tagNames.joinToString(", ")}")
+                    }
                 }
                 appendLine("   ${item.getFormattedDateTime()}")
                 appendLine()
