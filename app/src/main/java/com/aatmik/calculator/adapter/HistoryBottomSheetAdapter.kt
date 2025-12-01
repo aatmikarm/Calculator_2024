@@ -224,6 +224,13 @@ class HistoryBottomSheetAdapter(
                     android.util.Log.d("HistoryAdapter", "Saving tags: $selectedTagIds")
                     HistoryManager.updateNoteAndTags(context, position, newNote, selectedTagIds.toList())
 
+                    // Refresh the adapter's data from storage
+                    val updatedHistory = HistoryManager.getHistory(context)
+                    updateHistory(updatedHistory)
+
+                    // Notify the adapter that this specific item changed
+                    notifyItemChanged(position)
+
                     // Update UI immediately
                     binding.apply {
                         // Update tags
@@ -258,6 +265,13 @@ class HistoryBottomSheetAdapter(
                 .setNegativeButton("Cancel", null)
                 .setNeutralButton("Clear All") { _, _ ->
                     HistoryManager.updateNoteAndTags(context, position, "", emptyList())
+
+                    // Refresh the adapter's data from storage
+                    val updatedHistory = HistoryManager.getHistory(context)
+                    updateHistory(updatedHistory)
+
+                    // Notify the adapter that this specific item changed
+                    notifyItemChanged(position)
 
                     binding.apply {
                         chipGroupTags.visibility = View.GONE
