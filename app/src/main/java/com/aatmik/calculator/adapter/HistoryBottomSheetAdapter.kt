@@ -340,7 +340,7 @@ class HistoryBottomSheetAdapter(
                 appendLine("Date: ${item.getFormattedDate()}")
                 appendLine("Time: ${item.getFormattedTime()}")
                 appendLine()
-                appendLine("Calculated with All In One Calculator 2025")
+                appendLine("Calculated with All In One Calculator")
             }
 
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
