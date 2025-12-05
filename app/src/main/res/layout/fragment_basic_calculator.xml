@@ -14,11 +14,11 @@
         <LinearLayout
             android:id="@+id/HistoryView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:gravity="top"
+            android:paddingHorizontal="10dp"
             android:orientation="vertical"
-            android:paddingHorizontal="4dp"
-            android:paddingVertical="8dp"
+            android:layout_marginTop="10dp"
             ads:layout_constraintEnd_toEndOf="parent"
             ads:layout_constraintStart_toStartOf="parent"
             ads:layout_constraintTop_toTopOf="parent">
@@ -57,7 +57,6 @@
                     android:id="@+id/menuButton"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:layout_marginStart="5dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
                     android:src="@drawable/menu" />
@@ -67,8 +66,7 @@
                     android:id="@+id/historyButton"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="5dp"
                     android:backgroundTint="?attr/colorPrimary"
                     android:elevation="10dp"
                     ads:cardCornerRadius="12dp">
@@ -104,6 +102,7 @@
                 <View
                     android:layout_width="0dp"
                     android:layout_height="1dp"
+                    android:layout_marginHorizontal="5dp"
                     android:layout_weight="1" />
 
                 <!-- Swipe to Explore Button -->
@@ -111,8 +110,7 @@
                     android:id="@+id/swipeToExplore"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="2dp"
                     android:backgroundTint="?attr/colorPrimary"
                     android:elevation="10dp"
                     ads:cardCornerRadius="10dp">
