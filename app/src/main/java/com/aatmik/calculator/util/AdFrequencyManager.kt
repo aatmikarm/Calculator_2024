@@ -9,8 +9,14 @@ class AdFrequencyManager {
         private const val PREFS_NAME = "ad_frequency_prefs"
         private const val KEY_CALCULATOR_USAGE_COUNT = "calculator_usage_count"
         private const val KEY_LAST_AD_SHOWN_SESSION = "last_ad_shown_session"
-        private const val USAGE_THRESHOLD = 1 // Show ad after every 3 or x no of calculator usages
-        private const val AD_COOLDOWN_SECONDS = 30 // Configurable cooldown period in seconds
+        private const val KEY_BASIC_CALC_CALCULATION_COUNT = "basic_calc_calculation_count"
+        private const val KEY_BASIC_CALC_LAST_AD_TIME = "basic_calc_last_ad_time"
+
+        private const val USAGE_THRESHOLD = 3
+        private const val AD_COOLDOWN_SECONDS = 30
+
+        private const val BASIC_CALC_CALCULATION_THRESHOLD = 5
+        private const val BASIC_CALC_MIN_TIME_BETWEEN_ADS_SECONDS = 120
 
         /**
          * Track calculator usage - call this when a calculator is actually used
@@ -51,6 +57,42 @@ class AdFrequencyManager {
 
             Log.d("AdFrequency", "Threshold not reached ($currentCount < $USAGE_THRESHOLD). Ad not shown.")
             return false
+        }
+
+        fun trackBasicCalculatorCalculation(context: Context) {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val currentCount = prefs.getInt(KEY_BASIC_CALC_CALCULATION_COUNT, 0)
+            val newCount = currentCount + 1
+            prefs.edit().putInt(KEY_BASIC_CALC_CALCULATION_COUNT, newCount).apply()
+            Log.d("AdFrequency", "Basic calculator calculation performed. Count: $newCount")
+        }
+
+        fun shouldShowBasicCalculatorInterstitial(context: Context): Boolean {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+            val calculationCount = prefs.getInt(KEY_BASIC_CALC_CALCULATION_COUNT, 0)
+            if (calculationCount < BASIC_CALC_CALCULATION_THRESHOLD) {
+                Log.d("AdFrequency", "Basic calc: Not enough calculations ($calculationCount < $BASIC_CALC_CALCULATION_THRESHOLD)")
+                return false
+            }
+
+            val lastAdTime = prefs.getLong(KEY_BASIC_CALC_LAST_AD_TIME, 0)
+            val currentTime = System.currentTimeMillis()
+            val timeSinceLastAd = (currentTime - lastAdTime) / 1000
+
+            if (lastAdTime > 0 && timeSinceLastAd < BASIC_CALC_MIN_TIME_BETWEEN_ADS_SECONDS) {
+                val remaining = BASIC_CALC_MIN_TIME_BETWEEN_ADS_SECONDS - timeSinceLastAd
+                Log.d("AdFrequency", "Basic calc: Too soon since last ad. Wait ${remaining}s more")
+                return false
+            }
+
+            prefs.edit()
+                .putInt(KEY_BASIC_CALC_CALCULATION_COUNT, 0)
+                .putLong(KEY_BASIC_CALC_LAST_AD_TIME, currentTime)
+                .apply()
+
+            Log.d("AdFrequency", "Basic calc: Showing interstitial ad after $calculationCount calculations")
+            return true
         }
 
         /**

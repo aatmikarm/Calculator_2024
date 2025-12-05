@@ -42,6 +42,8 @@ import com.aatmik.calculator.adapter.HistoryBottomSheetAdapter
 import com.aatmik.calculator.databinding.BottomSheetLayoutBinding
 import com.aatmik.calculator.databinding.FragmentBasicCalculatorBinding
 import com.aatmik.calculator.model.CalculationHistory
+import com.aatmik.calculator.util.AdConfig
+import com.aatmik.calculator.util.AdFrequencyManager
 import com.aatmik.calculator.util.AnalyticsManager
 import com.aatmik.calculator.util.ButtonUtil
 import com.aatmik.calculator.util.ButtonUtil.addNumberValueToText
@@ -55,6 +57,10 @@ import com.aatmik.calculator.util.SubscriptionManager
 import com.aatmik.calculator.util.ThemeManager
 import com.aatmik.calculator.util.UpdateManager
 import com.aatmik.calculator.util.VoiceCalculatorManager
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.math.MathContext
 import java.math.RoundingMode
@@ -97,6 +103,8 @@ class BasicCalculatorFragment : Fragment() {
     // Voice input
     private var voiceCalculatorManager: VoiceCalculatorManager? = null
     private var currentVoiceState = VoiceCalculatorManager.VoiceState.IDLE
+
+    private var interstitialAd: InterstitialAd? = null
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -148,6 +156,7 @@ class BasicCalculatorFragment : Fragment() {
         restoreMemoryState()
         setupVoiceInput()
         setupEditableInput()
+        preloadInterstitialAd()
 
         // Show feature discovery on first launch (after a small delay)
         binding.root.postDelayed({
@@ -176,6 +185,57 @@ class BasicCalculatorFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+    }
+
+    private fun preloadInterstitialAd() {
+        if (!AdConfig.areAdsEnabled()) {
+            return
+        }
+
+        if (AdConfig.getInterstitialAdId().isEmpty()) {
+            return
+        }
+
+        val adRequest = AdRequest.Builder().build()
+
+        InterstitialAd.load(
+            requireContext(),
+            AdConfig.getInterstitialAdId(),
+            adRequest,
+            object : InterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.e("BasicCalcInterstitial", "Failed to load: ${adError.message}")
+                    interstitialAd = null
+                }
+
+                override fun onAdLoaded(ad: InterstitialAd) {
+                    Log.d("BasicCalcInterstitial", "Interstitial ad loaded")
+                    interstitialAd = ad
+                }
+            }
+        )
+    }
+
+
+
+    private fun showInterstitialIfNeeded() {
+        if (!AdConfig.areAdsEnabled()) {
+            return
+        }
+
+        if (!AdFrequencyManager.shouldShowBasicCalculatorInterstitial(requireContext())) {
+            return
+        }
+
+        interstitialAd?.let { ad ->
+            ad.show(requireActivity())
+            Log.d("BasicCalcInterstitial", "Showing interstitial ad")
+            AnalyticsManager.log("interstitial_shown", "location" to "basic_calculator")
+            preloadInterstitialAd()
+        } ?: run {
+            Log.d("BasicCalcInterstitial", "Ad not loaded yet")
+            preloadInterstitialAd()
+        }
     }
 
     private fun switchToInputMode() {
@@ -930,6 +990,7 @@ class BasicCalculatorFragment : Fragment() {
         inputRunnable?.let { inputHandler.removeCallbacks(it) }
         voiceCalculatorManager?.cleanup()
         voiceCalculatorManager = null
+        interstitialAd = null
     }
 
     private fun setupUI() {
@@ -1391,6 +1452,9 @@ class BasicCalculatorFragment : Fragment() {
                         HistoryManager.saveCalculation(requireContext(), input, formattedResult)
                         addNewCalculationHistory(input, formattedResult)
                         AnalyticsManager.logCalculationPerformed("Basic Calculator", "calculate")
+
+                        AdFrequencyManager.trackBasicCalculatorCalculation(requireContext())
+                        showInterstitialIfNeeded()
                     }
                     is CalculationResult.Error -> {
                         showError(result.message, ErrorType.CALCULATION)
