@@ -2,7 +2,7 @@ package com.aatmik.calculator.util
 
 object AdConfig {
     // Toggle between true (test ads) and false (production ads)
-    private const val USE_TEST_ADS = true
+    private const val USE_TEST_ADS = false
     // **NEW: This will be controlled by subscription status**
     private var DISABLE_ALL_ADS = false // Can be changed at runtime based on subscription
 

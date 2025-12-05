@@ -389,7 +389,7 @@ class AllCalculatorsFragment : Fragment() {
     }
 
     private fun openCustomerSupport() {
-        val supportEmail = "aatmikarm@gmail.com"
+        val supportEmail = "allinonecalculatorapp@gmail.com"
         val subject = "Calculator App Support Request"
         val body = """
         Dear Support Team,
