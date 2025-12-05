@@ -12,7 +12,7 @@ class AdFrequencyManager {
         private const val KEY_BASIC_CALC_CALCULATION_COUNT = "basic_calc_calculation_count"
         private const val KEY_BASIC_CALC_LAST_AD_TIME = "basic_calc_last_ad_time"
 
-        private const val USAGE_THRESHOLD = 3
+        private const val USAGE_THRESHOLD = 1
         private const val AD_COOLDOWN_SECONDS = 30
 
         private const val BASIC_CALC_CALCULATION_THRESHOLD = 5
