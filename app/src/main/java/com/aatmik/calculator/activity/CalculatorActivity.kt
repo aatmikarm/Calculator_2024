@@ -83,6 +83,7 @@ import com.aatmik.calculator.util.NetworkUtil
 import com.aatmik.calculator.util.RatingManager
 import com.aatmik.calculator.util.ThemeManager
 import com.example.yourapp.MathEquationSolverFragment
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -97,6 +98,7 @@ class CalculatorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCalculatorBinding
     private lateinit var adRequest: AdRequest
     private var interstitialAd: InterstitialAd? = null
+    private var adView: AdView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.initializeTheme(this)
@@ -237,9 +239,17 @@ class CalculatorActivity : AppCompatActivity() {
 
     private fun loadFragment(fragment: Fragment) {
         runOnUiThread {
-            val transaction = supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.calculatorFragmentContainer, fragment)
-            transaction.commit()
+            if (!isFinishing && !isDestroyed) {
+                try {
+                    val transaction = supportFragmentManager.beginTransaction()
+                    transaction.replace(R.id.calculatorFragmentContainer, fragment)
+                    transaction.commitAllowingStateLoss()
+                } catch (e: IllegalStateException) {
+                    Log.e("CalculatorActivity", "Failed to load fragment: ${e.message}")
+                }
+            } else {
+                Log.d("CalculatorActivity", "Skipping fragment load - activity finishing or destroyed")
+            }
         }
     }
 
@@ -348,8 +358,6 @@ class CalculatorActivity : AppCompatActivity() {
         showInterstitialAdIfNeeded()
     }
 
-    private var adView: AdView? = null
-
     // Get the ad size with screen width.
     private val adSize: AdSize
         get() {
@@ -367,28 +375,57 @@ class CalculatorActivity : AppCompatActivity() {
         }
 
     private fun loadBanner() {
+        Log.d("BannerAd", "Starting banner load in CalculatorActivity")
         // Check if ads are enabled (will be false if user is premium)
         if (!AdConfig.areAdsEnabled()) {
-            Log.d("BannerAd", "User is premium - No ads!")
+            Log.d("BannerAd", "Ads disabled (premium user)")
             binding.adViewContainer.visibility = View.GONE
             return
         }
 
         if (AdConfig.getBannerAdId().isEmpty()) {
+            Log.d("BannerAd", "Banner ad ID is empty")
             binding.adViewContainer.visibility = View.GONE
             return
         }
+
+        Log.d("BannerAd", "Loading ad with ID: ${AdConfig.getBannerAdId()}")
 
         val adView = AdView(this)
         adView.adUnitId = AdConfig.getBannerAdId()
         adView.setAdSize(adSize)
         this.adView = adView
 
+        binding.adViewContainer.visibility = View.VISIBLE
         binding.adViewContainer.removeAllViews()
         binding.adViewContainer.addView(adView)
 
+        adView.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                super.onAdLoaded()
+                Log.d("BannerAd", "Banner ad loaded successfully")
+                binding.adViewContainer.visibility = View.VISIBLE
+            }
+
+            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                super.onAdFailedToLoad(loadAdError)
+                Log.e("BannerAd", "Failed: ${loadAdError.message}")
+                binding.adViewContainer.visibility = View.GONE
+            }
+        }
+
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        adView?.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        adView?.pause()
     }
 
     override fun onDestroy() {

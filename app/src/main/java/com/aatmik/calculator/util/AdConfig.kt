@@ -4,7 +4,7 @@ object AdConfig {
     // Toggle between true (test ads) and false (production ads)
     private const val USE_TEST_ADS = true
     // **NEW: This will be controlled by subscription status**
-    private var DISABLE_ALL_ADS = true // Can be changed at runtime based on subscription
+    private var DISABLE_ALL_ADS = false // Can be changed at runtime based on subscription
 
     // Production Ad IDs
     private const val PROD_BANNER_AD_ID = "ca-app-pub-5678552217308395/1592290092"

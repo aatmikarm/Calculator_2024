@@ -17,9 +17,11 @@ import com.aatmik.calculator.util.AdConfig
 import com.aatmik.calculator.util.AnalyticsManager
 import com.aatmik.calculator.util.NetworkUtil
 import com.aatmik.calculator.util.ThemeManager
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.LoadAdError
 
 class ContainerActivity : AppCompatActivity() {
 
@@ -111,41 +113,69 @@ class ContainerActivity : AppCompatActivity() {
         })
     }
 
-    /**
-     * Load banner ad in parent activity - will persist across all fragments
-     */
     private fun loadBannerAd() {
-        // Check network availability
+        Log.d("BannerAd", "Starting banner ad load")
+
         if (!NetworkUtil.isNetworkAvailable(this)) {
-            Log.d("BannerAd", "No internet connection available.")
+            Log.d("BannerAd", "No internet connection available")
             binding.adViewContainer.visibility = View.GONE
             return
         }
 
-        // Check if ads are enabled (will be false if user is premium)
         if (!AdConfig.areAdsEnabled()) {
-            Log.d("BannerAd", "User is premium - No ads!")
+            Log.d("BannerAd", "Ads disabled (premium user)")
             binding.adViewContainer.visibility = View.GONE
             return
         }
 
         if (AdConfig.getBannerAdId().isEmpty()) {
+            Log.d("BannerAd", "Banner ad ID is empty")
             binding.adViewContainer.visibility = View.GONE
             return
         }
+
+        Log.d("BannerAd", "Loading ad with ID: ${AdConfig.getBannerAdId()}")
+        Log.d("BannerAd", "Test mode: ${AdConfig.isUsingTestAds()}")
 
         val adView = AdView(this)
         adView.adUnitId = AdConfig.getBannerAdId()
         adView.setAdSize(getAdSize())
         this.adView = adView
 
+        binding.adViewContainer.visibility = View.VISIBLE
         binding.adViewContainer.removeAllViews()
         binding.adViewContainer.addView(adView)
 
+        adView.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                super.onAdLoaded()
+                Log.d("BannerAd", "Banner ad loaded successfully")
+                binding.adViewContainer.visibility = View.VISIBLE
+                AnalyticsManager.log("banner_ad_loaded", "location" to "container")
+            }
+
+            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                super.onAdFailedToLoad(loadAdError)
+                Log.e("BannerAd", "Failed: ${loadAdError.message} (code: ${loadAdError.code})")
+                binding.adViewContainer.visibility = View.GONE
+
+                binding.root.postDelayed({
+                    Log.d("BannerAd", "Retrying banner load")
+                    loadBannerAd()
+                }, 5000)
+
+                AnalyticsManager.log("banner_ad_failed", "error" to loadAdError.message)
+            }
+
+            override fun onAdClicked() {
+                super.onAdClicked()
+                Log.d("BannerAd", "Banner ad clicked")
+                AnalyticsManager.log("banner_ad_clicked")
+            }
+        }
+
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
-
-        Log.d("BannerAd", "Banner ad loaded in ContainerActivity")
     }
 
     /**
@@ -170,6 +200,16 @@ class ContainerActivity : AppCompatActivity() {
      */
     fun navigateToPage(page: Int, smooth: Boolean = true) {
         binding.viewPager.setCurrentItem(page, smooth)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        adView?.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        adView?.pause()
     }
 
     override fun onDestroy() {
