@@ -28,8 +28,12 @@ class ContainerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityContainerBinding
     private lateinit var pagerAdapter: CalculatorPagerAdapter
     private var adView: AdView? = null
+    private var adRetryCount = 0
+    private val maxAdRetries = 3
+    private var isAdLoading = false
 
     companion object {
+        private const val TAG = "ContainerActivity"
         const val PAGE_BASIC_CALCULATOR = 0
         const val PAGE_ALL_CALCULATORS = 1
     }
@@ -114,68 +118,133 @@ class ContainerActivity : AppCompatActivity() {
     }
 
     private fun loadBannerAd() {
-        Log.d("BannerAd", "Starting banner ad load")
+        Log.d(TAG, "Starting banner ad load (attempt ${adRetryCount + 1}/$maxAdRetries)")
+
+        // Prevent multiple simultaneous loads
+        if (isAdLoading) {
+            Log.d(TAG, "Ad already loading, skipping")
+            return
+        }
 
         if (!NetworkUtil.isNetworkAvailable(this)) {
-            Log.d("BannerAd", "No internet connection available")
+            Log.d(TAG, "No internet connection available")
             binding.adViewContainer.visibility = View.GONE
+
+            // Retry after network might be available
+            scheduleAdRetry(30000) // Retry after 30 seconds for network issues
             return
         }
 
         if (!AdConfig.areAdsEnabled()) {
-            Log.d("BannerAd", "Ads disabled (premium user)")
+            Log.d(TAG, "Ads disabled (premium user)")
             binding.adViewContainer.visibility = View.GONE
             return
         }
 
         if (AdConfig.getBannerAdId().isEmpty()) {
-            Log.d("BannerAd", "Banner ad ID is empty")
+            Log.d(TAG, "Banner ad ID is empty")
             binding.adViewContainer.visibility = View.GONE
             return
         }
 
-        Log.d("BannerAd", "Loading ad with ID: ${AdConfig.getBannerAdId()}")
-        Log.d("BannerAd", "Test mode: ${AdConfig.isUsingTestAds()}")
+        Log.d(TAG, "Loading ad with ID: ${AdConfig.getBannerAdId()}")
+        Log.d(TAG, "Test mode: ${AdConfig.isUsingTestAds()}")
 
-        val adView = AdView(this)
-        adView.adUnitId = AdConfig.getBannerAdId()
-        adView.setAdSize(getAdSize())
-        this.adView = adView
+        isAdLoading = true
 
-        binding.adViewContainer.visibility = View.VISIBLE
-        binding.adViewContainer.removeAllViews()
-        binding.adViewContainer.addView(adView)
+        // Create AdView only once or reuse existing
+        if (adView == null) {
+            val newAdView = AdView(this)
+            newAdView.adUnitId = AdConfig.getBannerAdId()
+            newAdView.setAdSize(getAdSize())
+            this.adView = newAdView
 
-        adView.adListener = object : AdListener() {
+            binding.adViewContainer.removeAllViews()
+            binding.adViewContainer.addView(newAdView)
+        }
+
+        adView?.adListener = object : AdListener() {
             override fun onAdLoaded() {
                 super.onAdLoaded()
-                Log.d("BannerAd", "Banner ad loaded successfully")
+                Log.d(TAG, "Banner ad loaded successfully")
                 binding.adViewContainer.visibility = View.VISIBLE
-                AnalyticsManager.log("banner_ad_loaded", "location" to "container")
+                isAdLoading = false
+                adRetryCount = 0 // Reset retry count on success
+                AnalyticsManager.log("banner_ad_loaded",
+                    "location" to "container",
+                    "attempt" to "${adRetryCount + 1}")
             }
 
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                 super.onAdFailedToLoad(loadAdError)
-                Log.e("BannerAd", "Failed: ${loadAdError.message} (code: ${loadAdError.code})")
-                binding.adViewContainer.visibility = View.GONE
+                Log.e(TAG, "Failed: ${loadAdError.message} (code: ${loadAdError.code})")
+                isAdLoading = false
 
-                binding.root.postDelayed({
-                    Log.d("BannerAd", "Retrying banner load")
-                    loadBannerAd()
-                }, 5000)
+                AnalyticsManager.log("banner_ad_failed",
+                    "error" to loadAdError.message,
+                    "code" to loadAdError.code.toString(),
+                    "attempt" to "${adRetryCount + 1}")
 
-                AnalyticsManager.log("banner_ad_failed", "error" to loadAdError.message)
+                // Smart retry logic based on error code
+                when (loadAdError.code) {
+                    AdRequest.ERROR_CODE_NETWORK_ERROR -> {
+                        // Network issue - retry with longer delay
+                        scheduleAdRetry(15000) // 15 seconds
+                    }
+                    AdRequest.ERROR_CODE_NO_FILL -> {
+                        // No ad inventory - retry with longer delay
+                        scheduleAdRetry(60000) // 60 seconds - no point retrying immediately
+                    }
+                    AdRequest.ERROR_CODE_INTERNAL_ERROR -> {
+                        // Internal error - retry with medium delay
+                        scheduleAdRetry(10000) // 10 seconds
+                    }
+                    else -> {
+                        // Other errors - standard retry
+                        scheduleAdRetry(8000) // 8 seconds
+                    }
+                }
             }
 
             override fun onAdClicked() {
                 super.onAdClicked()
-                Log.d("BannerAd", "Banner ad clicked")
+                Log.d(TAG, "Banner ad clicked")
                 AnalyticsManager.log("banner_ad_clicked")
+            }
+
+            override fun onAdOpened() {
+                super.onAdOpened()
+                Log.d(TAG, "Banner ad opened")
+            }
+
+            override fun onAdClosed() {
+                super.onAdClosed()
+                Log.d(TAG, "Banner ad closed")
             }
         }
 
+        // Show container while loading to reserve space (prevents layout jump)
+        binding.adViewContainer.visibility = View.VISIBLE
+
         val adRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
+        adView?.loadAd(adRequest)
+    }
+
+    private fun scheduleAdRetry(delayMillis: Long) {
+        if (adRetryCount >= maxAdRetries) {
+            Log.d(TAG, "Max retries reached ($maxAdRetries), giving up")
+            binding.adViewContainer.visibility = View.GONE
+            return
+        }
+
+        adRetryCount++
+        Log.d(TAG, "Scheduling retry in ${delayMillis}ms (attempt ${adRetryCount + 1}/$maxAdRetries)")
+
+        binding.root.postDelayed({
+            if (!isDestroyed && !isFinishing) {
+                loadBannerAd()
+            }
+        }, delayMillis)
     }
 
     /**
@@ -205,6 +274,16 @@ class ContainerActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         adView?.resume()
+
+        // If ad failed to load and we haven't exceeded retries, try again on resume
+        if (adView != null && binding.adViewContainer.visibility == View.GONE && adRetryCount < maxAdRetries) {
+            Log.d(TAG, "Activity resumed, retrying ad load")
+            binding.root.postDelayed({
+                if (!isDestroyed && !isFinishing) {
+                    loadBannerAd()
+                }
+            }, 2000) // Small delay to let activity fully resume
+        }
     }
 
     override fun onPause() {
@@ -215,5 +294,6 @@ class ContainerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         adView?.destroy()
+        adView = null
     }
 }

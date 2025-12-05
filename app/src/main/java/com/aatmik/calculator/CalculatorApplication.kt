@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.aatmik.calculator.util.AdFrequencyManager
 import com.aatmik.calculator.util.AnalyticsManager
 import com.aatmik.calculator.util.SubscriptionManager
 import com.google.firebase.FirebaseApp
@@ -55,6 +56,7 @@ class CalculatorApplication : Application(), Application.ActivityLifecycleCallba
                 sessionStartTime = System.currentTimeMillis()
                 Log.d(TAG, "App entered foreground - Session started")
                 AnalyticsManager.log("app_opened")
+                AdFrequencyManager.resetBasicCalculatorCount(applicationContext)
             }
         }
 

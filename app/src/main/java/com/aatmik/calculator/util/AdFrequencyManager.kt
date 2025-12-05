@@ -15,7 +15,7 @@ class AdFrequencyManager {
         private const val USAGE_THRESHOLD = 1
         private const val AD_COOLDOWN_SECONDS = 30
 
-        private const val BASIC_CALC_CALCULATION_THRESHOLD = 5
+        private const val BASIC_CALC_CALCULATION_THRESHOLD = 10
         private const val BASIC_CALC_MIN_TIME_BETWEEN_ADS_SECONDS = 120
 
         /**
@@ -93,6 +93,12 @@ class AdFrequencyManager {
 
             Log.d("AdFrequency", "Basic calc: Showing interstitial ad after $calculationCount calculations")
             return true
+        }
+
+        fun resetBasicCalculatorCount(context: Context) {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            prefs.edit().putInt(KEY_BASIC_CALC_CALCULATION_COUNT, 0).apply()
+            Log.d("AdFrequency", "Basic calculator count reset on new app session")
         }
 
         /**
