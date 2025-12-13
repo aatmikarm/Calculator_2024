@@ -274,8 +274,8 @@ class BasicCalculatorFragment : Fragment() {
             return
         }
 
-        // SMART FIX: Remove trailing operator for live calculation
-        val cleanExpression = expression.trimEnd('+', '-', '*', '/', '^')
+        // FIX: Add × and ÷ to trimEnd
+        val cleanExpression = expression.trimEnd('+', '-', '*', '/', '^', '×', '÷')
 
         if (cleanExpression.isEmpty()) {
             binding.tvPrimaryBC.text = ""
@@ -1036,7 +1036,7 @@ class BasicCalculatorFragment : Fragment() {
                 val bracketToAdd = if (openCount > closeCount &&
                     currentText.isNotEmpty() &&
                     cursorPosition > 0 &&
-                    currentText[cursorPosition - 1] !in listOf('(', '+', '-', '*', '/')) {
+                    currentText[cursorPosition - 1] !in listOf('(', '+', '-', '*', '/', '×', '÷')) {
                     ")"
                 } else {
                     "("
@@ -1060,8 +1060,8 @@ class BasicCalculatorFragment : Fragment() {
             // Operator buttons - INSERT AT CURSOR
             btAdditionBC.setOnClickListener { insertAtCursor("+") }
             btSubtractionBC.setOnClickListener { insertAtCursor("-") }
-            btMultiplicationBC.setOnClickListener { insertAtCursor("*") }
-            btDivisionBC.setOnClickListener { insertAtCursor("/") }
+            btMultiplicationBC.setOnClickListener { insertAtCursor("×") }
+            btDivisionBC.setOnClickListener { insertAtCursor("÷") }
 
             btDotBC.setOnClickListener {
                 vibratePhone(requireContext())
@@ -1114,11 +1114,10 @@ class BasicCalculatorFragment : Fragment() {
             }
         }
     }
-
     private fun insertAtCursor(text: String) {
         vibratePhone(requireContext())
 
-        if (addedBC && text in listOf("+", "-", "*", "/")) {
+        if (addedBC && text in listOf("+", "-", "*", "/", "×", "÷")) {  // ✅ FIXED
             val result = binding.tvPrimaryBC.text.toString().replace(",", "")
             binding.tvSecondaryBC.setText(result)
             binding.tvSecondaryBC.append(text)
@@ -1131,7 +1130,7 @@ class BasicCalculatorFragment : Fragment() {
             return
         }
 
-        if (addedBC && text !in listOf("+", "-", "*", "/", ".", "(", ")")) {
+        if (addedBC && text !in listOf("+", "-", "*", "/", "×", "÷", ".", "(", ")")) {  // ✅ FIXED
             binding.tvSecondaryBC.setText(text)
             binding.tvSecondaryBC.setSelection(text.length)
             binding.tvPrimaryBC.text = ""
@@ -1641,7 +1640,7 @@ class BasicCalculatorFragment : Fragment() {
     }
 
     private fun hasConsecutiveOperators(expr: String): Boolean {
-        return Regex("[+\\-*/]{2,}").containsMatchIn(expr)
+        return Regex("[+\\-*/×÷]{2,}").containsMatchIn(expr)
     }
 
     private fun hasUnbalancedParentheses(expr: String): Boolean {
@@ -1656,20 +1655,22 @@ class BasicCalculatorFragment : Fragment() {
     }
 
     private fun endsWithOperator(expr: String): Boolean {
-        return expr.isNotEmpty() && expr.last() in listOf('+', '-', '*', '/', '^')
+        return expr.isNotEmpty() && expr.last() in listOf('+', '-', '*', '/', '^', '×', '÷')
     }
 
     private fun hasInvalidCharacters(expr: String): Boolean {
-        val validChars = "0123456789+-*/().^E°π"
+        val validChars = "0123456789+-*/×÷().^E°π"
         return expr.any { it !in validChars }
     }
 
     private fun containsOperator(text: String): Boolean {
-        return text.contains("+") || text.contains("-") || text.contains("*") || text.contains("/")
+        return text.contains("+") || text.contains("-") ||
+                text.contains("*") || text.contains("/") ||
+                text.contains("×") || text.contains("÷")
     }
 
     private fun getLastNumber(expression: String): String {
-        return expression.split(Regex("[+\\-*/()]")).lastOrNull() ?: ""
+        return expression.split(Regex("[+\\-*/×÷()]")).lastOrNull() ?: ""
     }
 
     private fun parseNumber(text: String): Double? {

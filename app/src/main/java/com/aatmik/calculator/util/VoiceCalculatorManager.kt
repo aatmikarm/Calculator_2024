@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.widget.Toast
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import java.util.Locale
 
@@ -40,19 +40,78 @@ class VoiceCalculatorManager(
         "eighty" to "80", "ninety" to "90", "hundred" to "100", "thousand" to "1000"
     )
 
-    // Operator word mappings
+    // Operator word mappings - COMPREHENSIVE
     private val operatorWords = mapOf(
-        "plus" to "+", "add" to "+", "and" to "+",
-        "minus" to "-", "subtract" to "-", "less" to "-",
-        "multiply" to "*", "times" to "*", "multiplied by" to "*",
-        "divide" to "/", "divided by" to "/",
-        "percent" to "%", "percentage" to "%",
-        "point" to ".", "dot" to ".",
-        "open bracket" to "(", "close bracket" to ")",
-        "open parenthesis" to "(", "close parenthesis" to ")",
-        "bracket open" to "(", "bracket close" to ")",
-        "equals" to "=", "equal" to "=", "calculate" to "="
+        // ADDITION
+        "plus" to "+",
+        "add" to "+",
+        "and" to "+",
+        "added to" to "+",
+        "sum" to "+",
+        "total" to "+",
+
+        // SUBTRACTION
+        "minus" to "-",
+        "subtract" to "-",
+        "less" to "-",
+        "take away" to "-",
+        "difference" to "-",
+        "remove" to "-",
+
+        // MULTIPLICATION - USE × (not *)
+        "multiply" to "×",
+        "times" to "×",
+        "multiplied by" to "×",
+        "into" to "×",
+        "product" to "×",
+        "by" to "×",
+        "of" to "×",
+        "multiply by" to "×",
+        "cross" to "×",
+        "x" to "×",
+        "*" to "×",
+
+        // DIVISION - USE ÷ (not /)
+        "divide" to "÷",
+        "divided by" to "÷",
+        "divide by" to "÷",
+        "over" to "÷",
+        "slash" to "÷",
+        "upon" to "÷",
+        "per" to "÷",
+        "/" to "÷",
+
+        // PERCENTAGE
+        "percent" to "%",
+        "percentage" to "%",
+        "mod" to "%",
+
+        // DECIMAL
+        "point" to ".",
+        "dot" to ".",
+        "decimal" to ".",
+
+        // BRACKETS
+        "open bracket" to "(",
+        "close bracket" to ")",
+        "open parenthesis" to "(",
+        "close parenthesis" to ")",
+        "bracket open" to "(",
+        "bracket close" to ")",
+        "left bracket" to "(",
+        "right bracket" to ")",
+
+        // EQUALS
+        "equals" to "=",
+        "equal" to "=",
+        "is" to "=",
+        "calculate" to "="
     )
+
+    companion object {
+        private const val TAG = "VoiceCalc"
+        const val REQUEST_RECORD_AUDIO_PERMISSION = 200
+    }
 
     fun startListening() {
         if (!checkPermission()) {
@@ -84,6 +143,7 @@ class VoiceCalculatorManager(
         onStateChanged(VoiceState.LISTENING)
         speechRecognizer?.startListening(intent)
 
+        Log.d(TAG, "Started listening")
         AnalyticsManager.log("voice_input_started")
     }
 
@@ -94,11 +154,11 @@ class VoiceCalculatorManager(
         speechRecognizer?.stopListening()
         onStateChanged(VoiceState.PROCESSING)
 
-        // Process the final result
         if (recognizedParts.isNotEmpty()) {
             processAndSendResult()
         }
 
+        Log.d(TAG, "Stopped listening")
         AnalyticsManager.log("voice_input_stopped", "parts_count" to recognizedParts.size.toString())
     }
 
@@ -106,34 +166,22 @@ class VoiceCalculatorManager(
         val fullText = recognizedParts.joinToString(" ")
         val expression = convertToMathExpression(fullText)
 
+        Log.d(TAG, "Raw speech: $fullText")
+        Log.d(TAG, "Converted expression: $expression")
+
         if (expression.isNotEmpty()) {
             onResultReceived(expression, fullText)
-        } else {
-            //onError("Could not understand the calculation")
         }
 
         recognizedParts.clear()
     }
 
     private fun createRecognitionListener() = object : RecognitionListener {
-        override fun onReadyForSpeech(params: Bundle?) {
-            // Speech recognizer is ready
-        }
-
-        override fun onBeginningOfSpeech() {
-            // User started speaking
-        }
-
-        override fun onRmsChanged(rmsdB: Float) {
-            // Sound level changed - can be used for visual feedback
-        }
-
-        override fun onBufferReceived(buffer: ByteArray?) {
-            // Audio buffer received
-        }
-
+        override fun onReadyForSpeech(params: Bundle?) {}
+        override fun onBeginningOfSpeech() {}
+        override fun onRmsChanged(rmsdB: Float) {}
+        override fun onBufferReceived(buffer: ByteArray?) {}
         override fun onEndOfSpeech() {
-            // User stopped speaking
             onStateChanged(VoiceState.PROCESSING)
         }
 
@@ -153,20 +201,19 @@ class VoiceCalculatorManager(
                 else -> "Recognition error"
             }
 
+            Log.e(TAG, "Speech error: $errorMessage (code: $error)")
+
             onStateChanged(VoiceState.IDLE)
 
-            // Only show error if we got an actual error, not just silence
             if (error != SpeechRecognizer.ERROR_NO_MATCH && error != SpeechRecognizer.ERROR_SPEECH_TIMEOUT) {
                 onError(errorMessage)
             } else if (recognizedParts.isNotEmpty()) {
-                // If we have partial results, process them
                 processAndSendResult()
             } else {
                 onError("No speech detected. Please try again.")
             }
 
             cleanup()
-
             AnalyticsManager.log("voice_input_error", "error_code" to error.toString())
         }
 
@@ -174,10 +221,10 @@ class VoiceCalculatorManager(
             results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.let { matches ->
                 if (matches.isNotEmpty()) {
                     recognizedParts.add(matches[0])
+                    Log.d(TAG, "Speech recognized: ${matches[0]}")
                 }
             }
 
-            // Process the result when speech ends
             processAndSendResult()
             isListening = false
             onStateChanged(VoiceState.IDLE)
@@ -187,40 +234,43 @@ class VoiceCalculatorManager(
         override fun onPartialResults(partialResults: Bundle?) {
             partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.let { matches ->
                 if (matches.isNotEmpty()) {
-                    // Update UI with partial result
                     val partialText = matches[0]
                     val partialExpression = convertToMathExpression(partialText)
-
-                    // Send partial update (you can handle this differently if needed)
+                    Log.d(TAG, "Partial: $partialText -> $partialExpression")
                     onResultReceived(partialExpression, partialText)
                 }
             }
         }
 
-        override fun onEvent(eventType: Int, params: Bundle?) {
-            // Future events
-        }
+        override fun onEvent(eventType: Int, params: Bundle?) {}
     }
 
     private fun convertToMathExpression(spokenText: String): String {
         var text = spokenText.lowercase(Locale.getDefault())
+        Log.d(TAG, "Step 1 (lowercase): $text")
 
         // Replace operator phrases first (longer phrases before shorter ones)
         operatorWords.entries.sortedByDescending { it.key.length }.forEach { (word, symbol) ->
-            text = text.replace(word, " $symbol ")
+            if (text.contains(word)) {
+                text = text.replace(word, " $symbol ")
+                Log.d(TAG, "Replaced '$word' with '$symbol': $text")
+            }
         }
 
         // Replace number words
         numberWords.forEach { (word, number) ->
             text = text.replace("\\b$word\\b".toRegex(), number)
         }
+        Log.d(TAG, "Step 2 (numbers replaced): $text")
 
-        // Handle compound numbers (e.g., "twenty five" -> "25")
+        // Handle compound numbers
         text = handleCompoundNumbers(text)
+        Log.d(TAG, "Step 3 (compound numbers): $text")
 
         // Remove extra spaces and clean up
         text = text.replace(Regex("\\s+"), "")
-            .replace("=", "") // Remove equals if present
+            .replace("=", "")
+        Log.d(TAG, "Step 4 (final): $text")
 
         return text
     }
@@ -228,14 +278,12 @@ class VoiceCalculatorManager(
     private fun handleCompoundNumbers(text: String): String {
         var result = text
 
-        // Handle patterns like "twenty five" -> "25"
         val compoundPattern = Regex("(\\d+)\\s+(\\d+)")
         while (compoundPattern.containsMatchIn(result)) {
             result = compoundPattern.replace(result) { matchResult ->
                 val first = matchResult.groupValues[1].toIntOrNull() ?: 0
                 val second = matchResult.groupValues[2].toIntOrNull() ?: 0
 
-                // If first number is a multiple of 10 (20, 30, etc.) and second is less than 10
                 if (first % 10 == 0 && second < 10) {
                     (first + second).toString()
                 } else {
@@ -259,12 +307,30 @@ class VoiceCalculatorManager(
             speechRecognizer?.destroy()
             speechRecognizer = null
         } catch (e: Exception) {
-            // Ignore cleanup errors
+            Log.e(TAG, "Cleanup error: ${e.message}")
         }
         isListening = false
     }
-
-    companion object {
-        const val REQUEST_RECORD_AUDIO_PERMISSION = 200
-    }
 }
+//```
+//
+//## Key Logs Added:
+//
+//1. **Speech recognized**: Shows what Google heard
+//2. **Raw speech**: Original spoken text
+//3. **Converted expression**: Final math expression
+//4. **Step-by-step conversion**: Shows each transformation
+//5. **Operator replacements**: Shows when × and ÷ are inserted
+//
+//## How to Test:
+//
+//1. Say "five times three"
+//2. Check Logcat for `VoiceCalc` tag
+//3. You'll see:
+//```
+//Speech recognized: five times three
+//Step 1 (lowercase): five times three
+//Replaced 'times' with '×': five × three
+//Step 2 (numbers replaced): 5 × 3
+//Step 4 (final): 5×3
+//Converted expression: 5×3
