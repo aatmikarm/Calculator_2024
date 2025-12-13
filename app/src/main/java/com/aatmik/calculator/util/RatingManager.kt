@@ -24,6 +24,7 @@ class RatingManager {
             // Check if user has already rated or chosen never to show again
             if (prefs.getBoolean(KEY_RATING_SHOWN, false) ||
                 prefs.getBoolean(KEY_NEVER_SHOW_AGAIN, false)) {
+                android.util.Log.d("RatingManager", "Dialog blocked - already shown or never show")
                 return
             }
 
@@ -40,10 +41,15 @@ class RatingManager {
                     .putStringSet(KEY_USED_CALCULATORS, newUsedCalculators)
                     .apply()
 
+                android.util.Log.d("RatingManager", "Calculator tracked: $calculatorName | Count: ${newUsedCalculators.size}/$USAGE_THRESHOLD")
+
                 // Check if we've reached the threshold
                 if (newUsedCalculators.size >= USAGE_THRESHOLD) {
+                    android.util.Log.d("RatingManager", "Threshold reached! Showing rating dialog")
                     showRatingDialog(context)
                 }
+            } else {
+                android.util.Log.d("RatingManager", "Calculator already tracked: $calculatorName")
             }
         }
 

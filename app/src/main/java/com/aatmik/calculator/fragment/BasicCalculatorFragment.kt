@@ -53,6 +53,7 @@ import com.aatmik.calculator.util.CalculationUtil
 import com.aatmik.calculator.util.FeatureDiscoveryManager
 import com.aatmik.calculator.util.HistoryManager
 import com.aatmik.calculator.util.PrefUtil
+import com.aatmik.calculator.util.RatingManager
 import com.aatmik.calculator.util.SubscriptionManager
 import com.aatmik.calculator.util.ThemeManager
 import com.aatmik.calculator.util.UpdateManager
@@ -162,6 +163,8 @@ class BasicCalculatorFragment : Fragment() {
         binding.root.postDelayed({
             showFeatureDiscovery()
         }, 500) // 500ms delay to let everything load
+
+        RatingManager.trackCalculatorUsage(requireContext(), "Basic Calculator ${System.currentTimeMillis()}")
 
     }
 
