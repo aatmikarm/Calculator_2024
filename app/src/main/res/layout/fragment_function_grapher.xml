@@ -112,13 +112,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:text="Function (e.g., x^2, sin(x), 2*x+1)"
+                        android:text="Function (e.g., x*x, sin(x), 2*x+1)"
                         android:textSize="15sp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginBottom="16dp"
                         android:background="@drawable/edit_text_background"
                         android:padding="4dp">
 
@@ -127,13 +127,108 @@
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
                             android:background="@android:color/transparent"
-                            android:hint="y = x^2"
+                            android:hint="y = x*x"
                             android:inputType="text"
                             android:paddingStart="12dp"
                             android:paddingEnd="12dp"
                             android:textSize="18sp" />
 
                     </LinearLayout>
+
+                    <!-- ✅ NEW: Quick Examples Section -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="⚡ Quick Examples (Tap to Try)"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipParabola"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:text="📊 x*x"
+                                android:textSize="13sp"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipSine"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:text="🌊 sin(x)"
+                                android:textSize="13sp"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipCubic"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:text="📈 x*x*x"
+                                android:textSize="13sp"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipAbsolute"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:text="📐 abs(x)"
+                                android:textSize="13sp"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipSqrt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:text="√ sqrt(x)"
+                                android:textSize="13sp"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipHyperbola"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:text="💫 1/x"
+                                android:textSize="13sp"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipCosine"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:text="🌊 cos(x)"
+                                android:textSize="13sp"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipLinear"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📏 2*x+3"
+                                android:textSize="13sp"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+                        </LinearLayout>
+
+                    </HorizontalScrollView>
 
                     <!-- Range Inputs -->
                     <TextView
@@ -424,7 +519,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:text="💡 Examples &amp; Tips"
+                        android:text="💡 More Examples"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -432,7 +527,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:lineSpacingExtra="6dp"
-                        android:text="Examples:\n• Linear: 2*x + 1\n• Quadratic: x^2 - 4*x + 3\n• Cubic: x^3 - 2*x\n• Sine: sin(x)\n• Cosine: cos(x)\n• Exponential: exp(x) or 2^x\n• Logarithm: ln(x) or log(x)\n• Absolute: abs(x)\n• Square Root: sqrt(x)\n• Rational: 1/x\n\nTips:\n✓ Use * for multiplication\n✓ Use ^ for powers\n✓ Use parentheses () for grouping\n✓ Leave range blank for default (-10 to 10)"
+                        android:text="Advanced Functions:\n• Exponential: exp(x)\n• Logarithm: ln(x)\n• Tangent: tan(x)\n• Combined: x*x - 4*x + 3\n• Circle: sqrt(25 - x*x)\n\nTips:\n✓ Use * for multiplication\n✓ Tap examples above to try them\n✓ Zoom in/out to explore details\n✓ Leave range blank for default (-10 to 10)"
                         android:textSize="14sp" />
 
                 </LinearLayout>

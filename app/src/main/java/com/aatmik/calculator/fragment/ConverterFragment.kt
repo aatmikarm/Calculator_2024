@@ -446,6 +446,10 @@ class ConverterFragment : Fragment() {
             )
             fabForward.isEnabled = true
 
+            //  Clear previous listeners to avoid stale callbacks
+            spFrom.onItemSelectedListener = null
+            spTo.onItemSelectedListener = null
+
             ArrayAdapter.createFromResource(
                 requireContext(),
                 textArrayResId,
@@ -466,6 +470,11 @@ class ConverterFragment : Fragment() {
                     position: Int,
                     id: Long,
                 ) {
+                    //  ADD: Bounds check to prevent crash
+                    if (position >= abbreviationArray.size || position >= values.size) {
+                        return
+                    }
+
                     tvInputUnit.text = abbreviationArray[position]
                     tvInputUnit.startAnimation(
                         AnimationUtils.loadAnimation(
@@ -474,11 +483,12 @@ class ConverterFragment : Fragment() {
                         )
                     )
 
-                    val selectedText = parent?.getChildAt(0) as TextView
-                    selectedText.text = abbreviationArray[position]
+                    //  ADD: Safe cast with null check
+                    val selectedText = parent?.getChildAt(0) as? TextView
+                    selectedText?.text = abbreviationArray[position]
 
                     when (unitId) {
-                       // Unit.Currency -> fromCurrency = abbreviationArray[position]
+                        // Unit.Currency -> fromCurrency = abbreviationArray[position]
                         else -> fromCoefficient = values[position]
                     }
                     convert()
@@ -495,6 +505,11 @@ class ConverterFragment : Fragment() {
                     position: Int,
                     id: Long,
                 ) {
+                    //  ADD: Bounds check to prevent crash
+                    if (position >= abbreviationArray.size || position >= values.size) {
+                        return
+                    }
+
                     tvOutputUnit.text = abbreviationArray[position]
                     tvOutputUnit.startAnimation(
                         AnimationUtils.loadAnimation(
@@ -503,8 +518,9 @@ class ConverterFragment : Fragment() {
                         )
                     )
 
-                    val selectedText = parent?.getChildAt(0) as TextView
-                    selectedText.text = abbreviationArray[position]
+                    //  ADD: Safe cast with null check
+                    val selectedText = parent?.getChildAt(0) as? TextView
+                    selectedText?.text = abbreviationArray[position]
 
                     when (unitId) {
                         //Unit.Currency -> toCurrency = abbreviationArray[position]
@@ -516,9 +532,12 @@ class ConverterFragment : Fragment() {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                 }
             })
+
+            //  ADD: Reset spinners to safe positions when switching unit types
+            // This prevents stale selections from causing crashes
+            spFrom.setSelection(0, false)
+            spTo.setSelection(if (abbreviationArray.size > 1) 1 else 0, false)
         }
-
-
     }
 
     private fun convert() {

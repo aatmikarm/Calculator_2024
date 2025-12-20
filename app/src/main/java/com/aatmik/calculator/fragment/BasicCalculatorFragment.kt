@@ -295,10 +295,10 @@ class BasicCalculatorFragment : Fragment() {
             return
         }
 
-        val validation = validateExpressionRealTime(cleanExpression)  // ✅ VALIDATE CLEAN
+        val validation = validateExpressionRealTime(cleanExpression)  //  VALIDATE CLEAN
 
         if (validation == ValidationResult.VALID) {
-            val result = safeEvaluate(cleanExpression)  // ✅ EVALUATE CLEAN
+            val result = safeEvaluate(cleanExpression)  //  EVALUATE CLEAN
             if (result is CalculationResult.Success) {
                 val formatted = smartFormatResult(result.value)
                 binding.tvPrimaryBC.text = formatWithCommas(formatted)
@@ -1150,7 +1150,7 @@ class BasicCalculatorFragment : Fragment() {
     private fun insertAtCursor(text: String) {
         vibratePhone(requireContext())
 
-        if (addedBC && text in listOf("+", "-", "*", "/", "×", "÷")) {  // ✅ FIXED
+        if (addedBC && text in listOf("+", "-", "*", "/", "×", "÷")) {  //  FIXED
             val result = binding.tvPrimaryBC.text.toString().replace(",", "")
             binding.tvSecondaryBC.setText(result)
             binding.tvSecondaryBC.append(text)
@@ -1163,7 +1163,7 @@ class BasicCalculatorFragment : Fragment() {
             return
         }
 
-        if (addedBC && text !in listOf("+", "-", "*", "/", "×", "÷", ".", "(", ")")) {  // ✅ FIXED
+        if (addedBC && text !in listOf("+", "-", "*", "/", "×", "÷", ".", "(", ")")) {  //  FIXED
             binding.tvSecondaryBC.setText(text)
             binding.tvSecondaryBC.setSelection(text.length)
             binding.tvPrimaryBC.text = ""
@@ -1831,6 +1831,9 @@ class BasicCalculatorFragment : Fragment() {
     }
 
     private fun showError(message: String, type: ErrorType = ErrorType.CALCULATION) {
+        //  ADD: Check if fragment is still attached
+        if (!isAdded || view == null) return
+
         binding.tvPrimaryBC.apply {
             text = when (type) {
                 ErrorType.CALCULATION -> "Error"
@@ -1846,12 +1849,18 @@ class BasicCalculatorFragment : Fragment() {
             visibility = View.VISIBLE
         }
 
+        //  FIXED: Check fragment state before calling clearError
         Handler(Looper.getMainLooper()).postDelayed({
-            clearError()
+            if (isAdded && view != null) {  //  Add safety check
+                clearError()
+            }
         }, 3000)
     }
 
     private fun clearError() {
+        //  ADD: Additional safety check
+        if (!isAdded || view == null) return
+
         binding.tvErrorBC.visibility = View.GONE
         val typedValue = android.util.TypedValue()
         requireContext().theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)

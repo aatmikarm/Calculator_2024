@@ -89,6 +89,47 @@ class FunctionGrapherFragment : Fragment() {
             btnReset.setOnClickListener {
                 resetView()
             }
+
+            //  NEW: Example chip click listeners
+            chipParabola.setOnClickListener {
+                etEquation.setText("x*x")
+                plotGraph()
+            }
+
+            chipSine.setOnClickListener {
+                etEquation.setText("sin(x)")
+                plotGraph()
+            }
+
+            chipCubic.setOnClickListener {
+                etEquation.setText("x*x*x")
+                plotGraph()
+            }
+
+            chipAbsolute.setOnClickListener {
+                etEquation.setText("abs(x)")
+                plotGraph()
+            }
+
+            chipSqrt.setOnClickListener {
+                etEquation.setText("sqrt(x)")
+                plotGraph()
+            }
+
+            chipHyperbola.setOnClickListener {
+                etEquation.setText("1/x")
+                plotGraph()
+            }
+
+            chipCosine.setOnClickListener {
+                etEquation.setText("cos(x)")
+                plotGraph()
+            }
+
+            chipLinear.setOnClickListener {
+                etEquation.setText("2*x+3")
+                plotGraph()
+            }
         }
     }
 
@@ -120,31 +161,47 @@ class FunctionGrapherFragment : Fragment() {
             Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
-
     private fun drawGraph(equation: String) {
         val width = 800
         val height = 800
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
 
-        // Background
-        canvas.drawColor(Color.WHITE)
+        //  IMPROVED: Do heavy bitmap work off main thread
+        Thread {
+            try {
+                val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                val canvas = Canvas(bitmap)
 
-        val paint = Paint().apply {
-            isAntiAlias = true
-            strokeWidth = 3f
-        }
+                // Background
+                canvas.drawColor(Color.WHITE)
 
-        // Draw grid
-        drawGrid(canvas, width, height, paint)
+                val paint = Paint().apply {
+                    isAntiAlias = true
+                    strokeWidth = 3f
+                }
 
-        // Draw axes
-        drawAxes(canvas, width, height, paint)
+                // Draw grid
+                drawGrid(canvas, width, height, paint)
 
-        // Plot function
-        plotFunction(canvas, width, height, equation, paint)
+                // Draw axes
+                drawAxes(canvas, width, height, paint)
 
-        binding.graphCanvas.setImageBitmap(bitmap)
+                // Plot function
+                plotFunction(canvas, width, height, equation, paint)
+
+                //  Update UI on main thread
+                activity?.runOnUiThread {
+                    if (isAdded && view != null) {
+                        binding.graphCanvas.setImageBitmap(bitmap)
+                    }
+                }
+            } catch (e: Exception) {
+                activity?.runOnUiThread {
+                    if (isAdded && context != null) {
+                        Toast.makeText(context, "Error drawing graph: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }.start()
     }
 
     private fun drawGrid(canvas: Canvas, width: Int, height: Int, paint: Paint) {
@@ -166,8 +223,10 @@ class FunctionGrapherFragment : Fragment() {
             canvas.drawLine(0f, y, width.toFloat(), y, paint)
         }
     }
-
     private fun drawAxes(canvas: Canvas, width: Int, height: Int, paint: Paint) {
+        //  ADD: Check if fragment is still attached before drawing
+        if (!isAdded || context == null) return
+
         paint.color = Color.BLACK
         paint.strokeWidth = 3f
 
@@ -190,19 +249,40 @@ class FunctionGrapherFragment : Fragment() {
         paint.textSize = 24f
         paint.textAlign = Paint.Align.CENTER
 
+        //  FIXED: Limit the number of labels to prevent ANR
+        val maxLabels = 20
+        val xStep = max(1, ((xMax - xMin) / maxLabels).toInt())
+        val yStep = max(1, ((yMax - yMin) / maxLabels).toInt())
+
         // X-axis labels
-        for (i in xMin.toInt()..xMax.toInt()) {
+        var labelCount = 0
+        for (i in xMin.toInt()..xMax.toInt() step xStep) {
+            if (labelCount++ > maxLabels) break  //  Safety limit
             if (i != 0) {
                 val x = ((i - xMin) * scaleX).toFloat()
-                canvas.drawText(i.toString(), x, yZero + 30, paint)
+                if (x in 0f..width.toFloat()) {  //  Only draw visible labels
+                    try {
+                        canvas.drawText(i.toString(), x, yZero + 30, paint)
+                    } catch (e: Exception) {
+                        // Skip if drawing fails
+                    }
+                }
             }
         }
 
         // Y-axis labels
-        for (i in yMin.toInt()..yMax.toInt()) {
+        labelCount = 0
+        for (i in yMin.toInt()..yMax.toInt() step yStep) {
+            if (labelCount++ > maxLabels) break  //  Safety limit
             if (i != 0) {
                 val y = (height - (i - yMin) * scaleY).toFloat()
-                canvas.drawText(i.toString(), xZero - 30, y + 8, paint)
+                if (y in 0f..height.toFloat()) {  //  Only draw visible labels
+                    try {
+                        canvas.drawText(i.toString(), xZero - 30, y + 8, paint)
+                    } catch (e: Exception) {
+                        // Skip if drawing fails
+                    }
+                }
             }
         }
     }
@@ -449,6 +529,9 @@ class FunctionGrapherFragment : Fragment() {
     }
 
     private fun zoom(factor: Double) {
+        //  ADD: Check if attached
+        if (!isAdded || context == null) return
+
         val xCenter = (xMax + xMin) / 2
         val yCenter = (yMax + yMin) / 2
         val xRange = (xMax - xMin) * factor

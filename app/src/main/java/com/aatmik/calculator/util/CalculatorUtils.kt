@@ -72,7 +72,7 @@ object CalculatorUtils {
             Calculator("Beam Calculator", R.drawable.shapes_new),
             Calculator("Column Buckling", R.drawable.bodies),
             Calculator("Voltage Divider", R.drawable.electric),
-            Calculator("Function Grapher", R.drawable.equation_xy),
+            Calculator("Function Grapher", R.drawable.algebra),
             Calculator("Statistical Graph Generator", R.drawable.statistical),
             Calculator("Coordinate Geometry", R.drawable.geometry),
             Calculator("Free Fall", R.drawable.length),
