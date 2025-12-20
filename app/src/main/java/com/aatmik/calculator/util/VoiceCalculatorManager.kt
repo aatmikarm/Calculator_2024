@@ -114,6 +114,13 @@ class VoiceCalculatorManager(
     }
 
     fun startListening() {
+        // **NEW: Check if voice input is enabled in Remote Config**
+        if (!FirebaseConfigManager.isVoiceInputEnabled()) {
+            onError("Voice input is currently disabled")
+            Log.d(TAG, "Voice input blocked - disabled in Remote Config")
+            return
+        }
+
         if (!checkPermission()) {
             onError("Microphone permission required")
             return

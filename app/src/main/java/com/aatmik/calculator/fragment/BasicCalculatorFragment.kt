@@ -51,6 +51,7 @@ import com.aatmik.calculator.util.ButtonUtil.addOperatorValueToText
 import com.aatmik.calculator.util.ButtonUtil.vibratePhone
 import com.aatmik.calculator.util.CalculationUtil
 import com.aatmik.calculator.util.FeatureDiscoveryManager
+import com.aatmik.calculator.util.FirebaseConfigManager
 import com.aatmik.calculator.util.HistoryManager
 import com.aatmik.calculator.util.PrefUtil
 import com.aatmik.calculator.util.RatingManager
@@ -149,6 +150,9 @@ class BasicCalculatorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // TEMPORARY: Reset feature discovery for testing - REMOVE THIS LATER
+        //PrefUtil.resetFeatureDiscovery(requireContext())
+
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         setupUI()
@@ -223,6 +227,12 @@ class BasicCalculatorFragment : Fragment() {
 
     private fun showInterstitialIfNeeded() {
         if (!AdConfig.areAdsEnabled()) {
+            return
+        }
+
+        // **ADD THIS: Check Remote Config**
+        if (!FirebaseConfigManager.shouldShowInterstitialAds()) {
+            Log.d("BasicCalcInterstitial", "Interstitial ads disabled via Remote Config")
             return
         }
 
@@ -429,49 +439,56 @@ class BasicCalculatorFragment : Fragment() {
 
         // Wait for views to be laid out
         binding.root.post {
-            FeatureDiscoveryManager(
+            val manager = FeatureDiscoveryManager(
                 requireContext(),
                 requireActivity().findViewById(android.R.id.content)
             )
-                .addStep(
-                    targetView = binding.menuButton,
-                    title = "Menu",
-                    description = "Change Themes, Customer Support, Get App Updates and more!",
-                    radiusDp = 50
-                )
-                .addStep(
-                    targetView = binding.historyButton,
-                    title = "History",
-                    description = "See all your calculations at one place, Reuse, Share, & Add a Note if you want 📝",
-                    radiusDp = 80
-                )
-                .addStep(
-                    targetView = binding.swipeToExplore,
-                    title = "Explore More",
-                    description = "Swipe to Explore 100+ calculators!",
-                    radiusDp = 120
-                )
-                .addStep(
+            manager.addStep(
+                targetView = binding.menuButton,
+                title = "Menu",
+                description = "Change Themes, Customer Support, Get App Updates and more!",
+                radiusDp = 50
+            )
+            manager.addStep(
+                targetView = binding.historyButton,
+                title = "History",
+                description = "See all your calculations at one place, Reuse, Share, & Add a Note if you want",
+                radiusDp = 80
+            )
+            manager.addStep(
+                targetView = binding.swipeToExplore,
+                title = "Explore More",
+                description = "Swipe to Explore 100+ calculators!",
+                radiusDp = 120
+            )
+
+            // Only add voice input step if it's visible
+            val voiceButtonVisibility = binding.voiceInputButton.visibility
+            Log.d("FeatureDiscovery", "Voice button visibility: $voiceButtonVisibility (VISIBLE=0, INVISIBLE=4, GONE=8)")
+
+            if (binding.voiceInputButton.visibility == View.VISIBLE) {
+                manager.addStep(
                     targetView = binding.voiceInputButton,
                     title = "Voice Input",
-                    description = "Click Speak and Say 1 + 2 and see the Magic ✨",
+                    description = "Click Speak and Say 1 + 2 and see the Magic",
                     radiusDp = 80
                 )
-                .addStep(
-                    targetView = binding.toggleArrow,
-                    title = "Scientific Mode",
-                    description = "Use Advanced Functions like sin, cos, tan, e, deg, root, power, log, pi, memory!",
-                    radiusDp = 70
-                )
+            }
+            manager.addStep(
+                targetView = binding.toggleArrow,
+                title = "Scientific Mode",
+                description = "Use Advanced Functions like sin, cos, tan, e, deg, root, power, log, pi, memory!",
+                radiusDp = 70
+            )
                 .onComplete {
-                    // Optional: Show a welcome toast
+                    // Show a welcome toast
                     Toast.makeText(
                         requireContext(),
                         "You're all set! Start calculating! 🎉",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-                .start()
+            manager.start()
         }
     }
 
@@ -853,6 +870,19 @@ class BasicCalculatorFragment : Fragment() {
     }
 
     private fun setupVoiceInput() {
+        // **CHECK: If voice input is enabled in Remote Config**
+        if (!FirebaseConfigManager.isVoiceInputEnabled()) {
+            // Hide the entire voice input CardView and info button
+            binding.voiceInputButton.visibility = View.GONE
+            binding.voiceInfoButton.visibility = View.GONE
+            Log.d("BasicCalculator", "Voice input disabled via Remote Config")
+            return
+        }
+
+        // Voice input is enabled, show buttons
+        binding.voiceInputButton.visibility = View.VISIBLE
+        binding.voiceInfoButton.visibility = View.VISIBLE
+
         voiceCalculatorManager = VoiceCalculatorManager(
             context = requireContext(),
             onStateChanged = { state ->

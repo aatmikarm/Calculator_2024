@@ -16,8 +16,8 @@ android {
         applicationId = "com.aatmik.calculator"
         minSdk = 25
         targetSdk = 35
-        versionCode = 14
-        versionName = "14.0"
+        versionCode = 15
+        versionName = "15.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -131,6 +131,9 @@ dependencies {
 
     // viewpager 2
     implementation("androidx.viewpager2:viewpager2:1.1.0")
+
+    // firebase config / remote config
+    implementation("com.google.firebase:firebase-config-ktx:22.1.2")
 
 
 }

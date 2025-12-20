@@ -15,6 +15,7 @@ import com.aatmik.calculator.adapter.CalculatorPagerAdapter
 import com.aatmik.calculator.databinding.ActivityContainerBinding
 import com.aatmik.calculator.util.AdConfig
 import com.aatmik.calculator.util.AnalyticsManager
+import com.aatmik.calculator.util.FirebaseConfigManager
 import com.aatmik.calculator.util.NetworkUtil
 import com.aatmik.calculator.util.ThemeManager
 import com.google.android.gms.ads.AdListener
@@ -137,6 +138,13 @@ class ContainerActivity : AppCompatActivity() {
 
         if (!AdConfig.areAdsEnabled()) {
             Log.d(TAG, "Ads disabled (premium user)")
+            binding.adViewContainer.visibility = View.GONE
+            return
+        }
+
+        // Check Remote Config
+        if (!FirebaseConfigManager.shouldShowBannerAds()) {
+            Log.d("BannerAd", "Banner ads disabled via Remote Config")
             binding.adViewContainer.visibility = View.GONE
             return
         }

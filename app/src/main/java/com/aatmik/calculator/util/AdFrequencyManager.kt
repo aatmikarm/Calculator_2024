@@ -12,9 +12,6 @@ class AdFrequencyManager {
         private const val KEY_BASIC_CALC_CALCULATION_COUNT = "basic_calc_calculation_count"
         private const val KEY_BASIC_CALC_LAST_AD_TIME = "basic_calc_last_ad_time"
 
-        private const val USAGE_THRESHOLD = 1
-        private const val AD_COOLDOWN_SECONDS = 30
-
         private const val BASIC_CALC_CALCULATION_THRESHOLD = 10
         private const val BASIC_CALC_MIN_TIME_BETWEEN_ADS_SECONDS = 120
 
@@ -47,15 +44,18 @@ class AdFrequencyManager {
             // Get current usage count
             val currentCount = prefs.getInt(KEY_CALCULATOR_USAGE_COUNT, 0)
 
+            // **NEW: Get threshold from Remote Config**
+            val threshold = FirebaseConfigManager.getInterstitialFrequency()
+
             // Check if we've reached the threshold
-            if (currentCount >= USAGE_THRESHOLD) {
+            if (currentCount >= threshold) {
                 // Reset the counter for next cycle
                 prefs.edit().putInt(KEY_CALCULATOR_USAGE_COUNT, 0).apply()
-                Log.d("AdFrequency", "Threshold reached ($currentCount >= $USAGE_THRESHOLD). Showing ad and resetting counter.")
+                Log.d("AdFrequency", "Threshold reached ($currentCount >= $threshold). Showing ad and resetting counter.")
                 return true
             }
 
-            Log.d("AdFrequency", "Threshold not reached ($currentCount < $USAGE_THRESHOLD). Ad not shown.")
+            Log.d("AdFrequency", "Threshold not reached ($currentCount < $threshold). Ad not shown.")
             return false
         }
 
@@ -102,23 +102,6 @@ class AdFrequencyManager {
         }
 
         /**
-         * Reset the usage counter (useful for testing or specific scenarios)
-         */
-        fun resetUsageCounter(context: Context) {
-            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            prefs.edit().putInt(KEY_CALCULATOR_USAGE_COUNT, 0).apply()
-            Log.d("AdFrequency", "Usage counter reset to 0")
-        }
-
-        /**
-         * Get current usage count (useful for debugging or showing to user)
-         */
-        fun getCurrentUsageCount(context: Context): Int {
-            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            return prefs.getInt(KEY_CALCULATOR_USAGE_COUNT, 0)
-        }
-
-        /**
          * Mark that an ad was shown in current session to prevent showing multiple ads
          * in quick succession if user navigates back and forth rapidly
          */
@@ -138,7 +121,9 @@ class AdFrequencyManager {
             val lastAdTime = prefs.getLong(KEY_LAST_AD_SHOWN_SESSION, 0)
             val currentTime = System.currentTimeMillis()
             val timeDifference = currentTime - lastAdTime
-            val cooldownMillis = AD_COOLDOWN_SECONDS * 1000L
+
+            // **NEW: Get cooldown from Remote Config (convert minutes to milliseconds)**
+            val cooldownMillis = FirebaseConfigManager.getAdCooldownMinutes() * 60 * 1000L
 
             val isRecentlyShown = timeDifference < cooldownMillis
 
@@ -151,44 +136,6 @@ class AdFrequencyManager {
             }
 
             return isRecentlyShown
-        }
-
-        /**
-         * Get remaining usage count until next ad
-         */
-        fun getRemainingUsageUntilAd(context: Context): Int {
-            val currentCount = getCurrentUsageCount(context)
-            return maxOf(0, USAGE_THRESHOLD - currentCount)
-        }
-
-        /**
-         * Get configured cooldown period in seconds
-         */
-        fun getCooldownSeconds(): Int {
-            return AD_COOLDOWN_SECONDS
-        }
-
-        /**
-         * Check if cooldown is currently active
-         */
-        fun isCooldownActive(context: Context): Boolean {
-            return wasAdRecentlyShown(context)
-        }
-
-        /**
-         * Get debug information about current state
-         */
-        fun getDebugInfo(context: Context): String {
-            val currentCount = getCurrentUsageCount(context)
-            val remaining = getRemainingUsageUntilAd(context)
-            val cooldownActive = isCooldownActive(context)
-
-            return """
-                Usage Count: $currentCount/$USAGE_THRESHOLD
-                Remaining until ad: $remaining
-                Cooldown active: $cooldownActive
-                Cooldown period: ${AD_COOLDOWN_SECONDS}s
-            """.trimIndent()
         }
     }
 }

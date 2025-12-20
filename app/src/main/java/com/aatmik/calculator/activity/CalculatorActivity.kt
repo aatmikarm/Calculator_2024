@@ -79,6 +79,7 @@ import com.aatmik.calculator.model.Calculator
 import com.aatmik.calculator.util.AdConfig
 import com.aatmik.calculator.util.AdFrequencyManager
 import com.aatmik.calculator.util.AnalyticsManager
+import com.aatmik.calculator.util.FirebaseConfigManager
 import com.aatmik.calculator.util.NetworkUtil
 import com.aatmik.calculator.util.RatingManager
 import com.aatmik.calculator.util.ThemeManager
@@ -316,6 +317,12 @@ class CalculatorActivity : AppCompatActivity() {
             return
         }
 
+        // Check Remote Config
+        if (!FirebaseConfigManager.shouldShowInterstitialAds()) {
+            Log.d("InterstitialAd", "Interstitial ads disabled via Remote Config")
+            return
+        }
+
         // Check if ad should be shown based on usage frequency
         if (!AdFrequencyManager.shouldShowInterstitialAd(this)) {
             Log.d("InterstitialAd", "Ad not shown - usage threshold not met")
@@ -379,6 +386,13 @@ class CalculatorActivity : AppCompatActivity() {
         // Check if ads are enabled (will be false if user is premium)
         if (!AdConfig.areAdsEnabled()) {
             Log.d("BannerAd", "Ads disabled (premium user)")
+            binding.adViewContainer.visibility = View.GONE
+            return
+        }
+
+        // Check Remote Config
+        if (!FirebaseConfigManager.shouldShowBannerAds()) {
+            Log.d("BannerAd", "Banner ads disabled via Remote Config")
             binding.adViewContainer.visibility = View.GONE
             return
         }

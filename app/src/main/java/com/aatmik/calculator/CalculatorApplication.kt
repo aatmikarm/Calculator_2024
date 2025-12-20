@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.aatmik.calculator.util.AdFrequencyManager
 import com.aatmik.calculator.util.AnalyticsManager
+import com.aatmik.calculator.util.FirebaseConfigManager
 import com.aatmik.calculator.util.SubscriptionManager
 import com.google.firebase.FirebaseApp
 
@@ -29,6 +30,12 @@ class CalculatorApplication : Application(), Application.ActivityLifecycleCallba
         // Initialize Firebase
         FirebaseApp.initializeApp(this)
         Log.d(TAG, "Firebase initialized")
+
+        FirebaseConfigManager.initialize { success ->
+            Log.d(TAG, "Remote Config loaded: $success")
+            // Update AdConfig based on remote values
+            updateAdConfigFromRemote()
+        }
 
         // Initialize Analytics
         AnalyticsManager.init(this)
@@ -108,5 +115,10 @@ class CalculatorApplication : Application(), Application.ActivityLifecycleCallba
 
     override fun onActivityDestroyed(activity: Activity) {
         Log.d(TAG, "Activity Destroyed: ${activity.localClassName}")
+    }
+
+    private fun updateAdConfigFromRemote() {
+        // This will be called after Remote Config loads
+        Log.d(TAG, "Updating ad settings from Remote Config")
     }
 }
