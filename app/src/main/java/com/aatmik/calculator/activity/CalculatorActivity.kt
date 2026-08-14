@@ -345,6 +345,7 @@ class CalculatorActivity : AppCompatActivity() {
         interstitialAd?.let { ad ->
             Log.d("InterstitialAd", "Showing interstitial ad NOW")
             AdFrequencyManager.markAdShownInSession(this)
+            AdFrequencyManager.onInterstitialActuallyShown(this)
             ad.show(this)
 
             // Log ad shown event
@@ -353,9 +354,10 @@ class CalculatorActivity : AppCompatActivity() {
             // Preload next ad for future use
             preloadInterstitialAd()
         } ?: run {
-            Log.d("InterstitialAd", "Ad not shown - interstitialAd is null (not loaded yet)")
-            // If ad is not loaded, preload it for next time
-            preloadInterstitialAd()
+            Log.d("InterstitialAd", "Ad not shown - interstitialAd is null (not loaded yet, skipping reload)")
+            // preloadInterstitialAd() intentionally removed here — was firing a
+            // fresh request every onStop() when ad wasn't ready, wasting requests
+            // that got matched but never shown before the activity died.
         }
     }
 

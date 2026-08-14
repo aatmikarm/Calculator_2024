@@ -40,23 +40,22 @@ class AdFrequencyManager {
          */
         fun shouldShowInterstitialAd(context: Context): Boolean {
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-
-            // Get current usage count
             val currentCount = prefs.getInt(KEY_CALCULATOR_USAGE_COUNT, 0)
-
-            // **NEW: Get threshold from Remote Config**
             val threshold = FirebaseConfigManager.getInterstitialFrequency()
 
-            // Check if we've reached the threshold
-            if (currentCount >= threshold) {
-                // Reset the counter for next cycle
-                prefs.edit().putInt(KEY_CALCULATOR_USAGE_COUNT, 0).apply()
-                Log.d("AdFrequency", "Threshold reached ($currentCount >= $threshold). Showing ad and resetting counter.")
-                return true
-            }
+            val reached = currentCount >= threshold
+            Log.d("AdFrequency", "Threshold check: $currentCount >= $threshold -> $reached")
+            return reached
+        }
 
-            Log.d("AdFrequency", "Threshold not reached ($currentCount < $threshold). Ad not shown.")
-            return false
+        /**
+         * Call this ONLY after the interstitial ad has actually been shown (ad.show() executed).
+         * This consumes the usage count — not the check.
+         */
+        fun onInterstitialActuallyShown(context: Context) {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            prefs.edit().putInt(KEY_CALCULATOR_USAGE_COUNT, 0).apply()
+            Log.d("AdFrequency", "Ad actually shown - counter reset")
         }
 
         fun trackBasicCalculatorCalculation(context: Context) {
@@ -86,13 +85,20 @@ class AdFrequencyManager {
                 return false
             }
 
+            Log.d("AdFrequency", "Basic calc: Eligible to show after $calculationCount calculations")
+            return true
+        }
+
+        /**
+         * Call this ONLY after the interstitial ad has actually been shown for Basic Calculator.
+         */
+        fun onBasicCalcInterstitialActuallyShown(context: Context) {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             prefs.edit()
                 .putInt(KEY_BASIC_CALC_CALCULATION_COUNT, 0)
-                .putLong(KEY_BASIC_CALC_LAST_AD_TIME, currentTime)
+                .putLong(KEY_BASIC_CALC_LAST_AD_TIME, System.currentTimeMillis())
                 .apply()
-
-            Log.d("AdFrequency", "Basic calc: Showing interstitial ad after $calculationCount calculations")
-            return true
+            Log.d("AdFrequency", "Basic calc ad actually shown - counter reset")
         }
 
         fun resetBasicCalculatorCount(context: Context) {

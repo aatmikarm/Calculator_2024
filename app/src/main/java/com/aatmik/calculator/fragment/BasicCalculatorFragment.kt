@@ -241,13 +241,14 @@ class BasicCalculatorFragment : Fragment() {
         }
 
         interstitialAd?.let { ad ->
+            AdFrequencyManager.onBasicCalcInterstitialActuallyShown(requireContext())
             ad.show(requireActivity())
             Log.d("BasicCalcInterstitial", "Showing interstitial ad")
             AnalyticsManager.log("interstitial_shown", "location" to "basic_calculator")
             preloadInterstitialAd()
         } ?: run {
-            Log.d("BasicCalcInterstitial", "Ad not loaded yet")
-            preloadInterstitialAd()
+            Log.d("BasicCalcInterstitial", "Ad not loaded yet, skipping reload to avoid wasted requests")
+            // preloadInterstitialAd() intentionally removed here — same reasoning as CalculatorActivity
         }
     }
 
